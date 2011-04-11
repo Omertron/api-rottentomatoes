@@ -29,7 +29,7 @@ public class Test extends TestCase {
         HashSet<Link> response = rt.getLists();
         
         for (Link link : response) {
-            System.out.println(link.getType() + ": " + link.getUrl());
+            System.out.println(link.getLinkType() + ": " + link.getLinkUrl());
         }
         
         System.out.println("Finished");

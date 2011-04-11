@@ -26,6 +26,7 @@ public class Movie {
     private HashSet<Link>           links           = new HashSet<Link>();
     private HashSet<String>         genres          = new HashSet<String>();
     private String                  certification   = "";
+    private HashSet<String>         directors       = new HashSet<String>();
     
     public void addArtwork(Artwork artwork) {
         this.artwork.add(artwork);
@@ -137,6 +138,45 @@ public class Movie {
     
     public void setCertification(String certification) {
         this.certification = certification;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("[Movie=[title=");
+        builder.append(title);
+        builder.append("][year=");
+        builder.append(year);
+        builder.append("][runtime=");
+        builder.append(runtime);
+        builder.append("][releaseDates=");
+        builder.append(releaseDates);
+        builder.append("][ratings=");
+        builder.append(ratings);
+        builder.append("][synopsis=");
+        builder.append(synopsis);
+        builder.append("][artwork=");
+        builder.append(artwork);
+        builder.append("][cast=");
+        builder.append(cast);
+        builder.append("][links=");
+        builder.append(links);
+        builder.append("][genres=");
+        builder.append(genres);
+        builder.append("][certification=");
+        builder.append(certification);
+        builder.append("][directors=");
+        builder.append(directors);
+        builder.append("]]");
+        return builder.toString();
+    }
+
+    public HashSet<String> getDirectors() {
+        return directors;
+    }
+
+    public void setDirectors(HashSet<String> directors) {
+        this.directors = directors;
     }
     
 }

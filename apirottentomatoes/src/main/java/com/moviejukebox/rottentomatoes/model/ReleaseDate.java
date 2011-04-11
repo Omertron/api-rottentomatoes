@@ -12,43 +12,43 @@
  */
 package com.moviejukebox.rottentomatoes.model;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class ReleaseDate {
-    private String type;
-    private Date releaseDate;
+    private String releaseType;
+    private String releaseDate;
     
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
     public ReleaseDate() {
-        this.type = "";
-        this.releaseDate = null;
+        this.releaseType = null;
+        this.releaseDate = "";
     }
 
-    public ReleaseDate(String type, Date releaseDate) {
-        this.type = type;
+    public ReleaseDate(String releaseType, String releaseDate) {
+        this.releaseType = releaseType;
         this.releaseDate = releaseDate;
     }
 
-    public String getType() {
-        return type;
+    public String getReleaseType() {
+        return releaseType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setReleaseType(String releaseType) {
+        this.releaseType = releaseType;
     }
-
-    public Date getReleaseDate() {
+    
+    public String getReleaseDate() {
         return releaseDate;
     }
 
-    public void setReleaseDate(Date releaseDate) {
+    public void setReleaseDate(String releaseDate) {
         this.releaseDate = releaseDate;
     }
-
-    public static SimpleDateFormat getDateFormat() {
-        return dateFormat;
+    
+    @Override
+    public String toString() {
+        StringBuffer rd = new StringBuffer("[ReleaseDate=");
+        rd.append("[releaseType=").append(releaseType).append("]"); 
+        rd.append("[releaseDate=").append(releaseDate).append("]");
+        rd.append("]");
+        return rd.toString();
     }
     
     

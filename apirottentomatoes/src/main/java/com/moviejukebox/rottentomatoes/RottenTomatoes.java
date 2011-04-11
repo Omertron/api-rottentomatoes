@@ -20,6 +20,7 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.xerial.json.JSONArray;
 import org.xerial.json.JSONException;
 import org.xerial.json.JSONObject;
@@ -84,7 +85,7 @@ public class RottenTomatoes {
             url.append(URL_PAGE_LIMIT);
         }
         
-        logger.fine("BuildUrl: " + url.toString());
+        System.out.println("BuildUrl: " + url.toString());
         
         return url.toString();
     }
@@ -139,7 +140,7 @@ public class RottenTomatoes {
             
             for (int loop = 0 ; loop < jsonMovies.size() ; ++loop) {
                 JSONObject singleMovie = jsonMovies.getJSONObject(loop);
-                Movie movie = RTParser.processMovie(singleMovie);
+                Movie movie = RTParser.parseMovie(singleMovie);
                 movies.add(movie);
                 logger.fine("Movie #" + loop + " - " + movie.getTitle());
             }
@@ -186,7 +187,6 @@ public class RottenTomatoes {
         return null;
     }
     
-
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
         loggerFormatter.addApiKey(apiKey);
@@ -227,5 +227,29 @@ public class RottenTomatoes {
     public void setTimeout(int webTimeoutConnect, int webTimeoutRead) {
         WebBrowser.setWebTimeoutConnect(webTimeoutConnect);
         WebBrowser.setWebTimeoutRead(webTimeoutRead);
+    }
+
+    /**
+     * Check the string passed to see if it is invalid.
+     * Invalid strings are null or blank
+     * @param testString The string to test
+     * @return True if the string is invalid, false otherwise
+     */
+    public static boolean isNotValidString(String testString) {
+        return !isValidString(testString);
+    }
+
+    /**
+     * Check the string passed to see if it contains a value.
+     * @param testString The string to test
+     * @return False if the string is empty or null, True otherwise
+     */
+    public static boolean isValidString(String testString) {
+        // Checks if a String is whitespace, empty ("") or null.
+        if (StringUtils.isBlank(testString)) {
+            return false;
+        }
+        
+        return true;
     }
 }

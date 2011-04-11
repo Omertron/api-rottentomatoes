@@ -13,33 +13,42 @@
 package com.moviejukebox.rottentomatoes.model;
 
 public class Rating {
-    private String type;
-    private int rating;
+    private String ratingType;
+    private int    ratingScore;
     
     public Rating() {
-        this.type = "";
-        this.rating = 0;
+        this.ratingType = null;
+        this.ratingScore = 0;
     }
 
-    public Rating(String type, int rating) {
-        this.type = type;
-        this.rating = rating;
+    public Rating(String ratingType, int ratingScore) {
+        this.ratingType = ratingType;
+        this.ratingScore = ratingScore;
     }
 
-    public String getType() {
-        return type;
+    public String getRatingType() {
+        return ratingType;
     }
     
-    public void setType(String type) {
-        this.type = type;
+    public void setRatingType(String ratingType) {
+        this.ratingType = ratingType;
     }
     
-    public int getRating() {
-        return rating;
+    public int getRatingScore() {
+        return ratingScore;
     }
     
-    public void setRating(int rating) {
-        this.rating = rating;
+    public void setRatingScore(int ratingScore) {
+        this.ratingScore = ratingScore;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("[Rating=");
+        builder.append("[ratingType=").append(ratingType).append("]");
+        builder.append("[ratingScore=").append(ratingScore).append("]");
+        builder.append("]");
+        return builder.toString();
     }
     
 }

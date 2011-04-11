@@ -13,32 +13,44 @@
 package com.moviejukebox.rottentomatoes.model;
 
 public class Link {
-    private String type;
-    private String url;
+    private String linkType;
+    private String linkUrl;
     
     public Link() {
-        this.type = "";
-        this.url = "";
+        this.linkType = "";
+        this.linkUrl = "";
     }
 
-    public Link(String type, String url) {
-        this.type = type;
-        this.url = url;
+    public Link(String linkType, String linkUrl) {
+        this.linkType = linkType;
+        this.linkUrl = linkUrl;
     }
 
-    public String getType() {
-        return type;
+    public String getLinkType() {
+        return linkType;
     }
-    
-    public void setType(String type) {
-        this.type = type;
+
+    public String getLinkUrl() {
+        return linkUrl;
     }
-    
-    public String getUrl() {
-        return url;
+
+    public void setLinkType(String linkType) {
+        this.linkType = linkType;
     }
-    
-    public void setUrl(String url) {
-        this.url = url;
+
+    public void setLinkUrl(String linkUrl) {
+        this.linkUrl = linkUrl;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("[Link=[linkType=");
+        builder.append(linkType);
+        builder.append("][linkUrl=");
+        builder.append(linkUrl);
+        builder.append("]]");
+        return builder.toString();
+    }
+
 }
