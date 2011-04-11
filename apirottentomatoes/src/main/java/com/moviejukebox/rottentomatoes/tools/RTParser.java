@@ -2,8 +2,8 @@ package com.moviejukebox.rottentomatoes.tools;
 
 import java.util.logging.Logger;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.xerial.json.JSONException;
+import org.xerial.json.JSONObject;
 
 import com.moviejukebox.rottentomatoes.model.Movie;
 

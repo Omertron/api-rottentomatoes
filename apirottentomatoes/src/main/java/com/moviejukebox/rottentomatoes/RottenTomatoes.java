@@ -15,15 +15,14 @@ package com.moviejukebox.rottentomatoes;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.xerial.json.JSONArray;
+import org.xerial.json.JSONException;
+import org.xerial.json.JSONObject;
 
 import com.moviejukebox.rottentomatoes.model.Link;
 import com.moviejukebox.rottentomatoes.model.Movie;
@@ -135,20 +134,14 @@ public class RottenTomatoes {
         HashSet<Movie> movies = new HashSet<Movie>();
 
         if (movieObject != null) {
-            try {
-                logger.fine("Number of movies: " + movieObject.get("total"));
-                JSONArray jsonMovies = movieObject.getJSONArray("movies");
-                
-                for (int loop = 0 ; loop < jsonMovies.length() ; ++loop) {
-                    JSONObject singleMovie = jsonMovies.getJSONObject(loop);
-                    Movie movie = RTParser.processMovie(singleMovie);
-                    movies.add(movie);
-                    logger.fine("Movie #" + loop + " - " + movie.getTitle());
-                }
-                
-                
-            } catch (JSONException e) {
-                e.printStackTrace();
+            logger.fine("Number of movies: " + movieObject.get("total"));
+            JSONArray jsonMovies = movieObject.getJSONArray("movies");
+            
+            for (int loop = 0 ; loop < jsonMovies.size() ; ++loop) {
+                JSONObject singleMovie = jsonMovies.getJSONObject(loop);
+                Movie movie = RTParser.processMovie(singleMovie);
+                movies.add(movie);
+                logger.fine("Movie #" + loop + " - " + movie.getTitle());
             }
             
             return movies;
