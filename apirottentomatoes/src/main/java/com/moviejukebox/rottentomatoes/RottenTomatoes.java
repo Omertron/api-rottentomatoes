@@ -143,6 +143,7 @@ public class RottenTomatoes {
                 Movie movie = RTParser.parseMovie(singleMovie);
                 movies.add(movie);
                 logger.fine("Movie #" + loop + " - " + movie.getTitle());
+                logger.fine(movie.toString());
             }
             
             return movies;

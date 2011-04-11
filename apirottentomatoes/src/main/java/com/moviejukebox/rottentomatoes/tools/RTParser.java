@@ -31,6 +31,7 @@ public class RTParser {
         movie.setCast(parseCast(jMovie));
         movie.setLinks(parseGenericLinks(jMovie, "links"));
         movie.setDirectors(parseDirectors(jMovie));
+        movie.setArtwork(parseGenericLinks(jMovie, "posters"));
         return movie;
     }
     
@@ -43,9 +44,12 @@ public class RTParser {
             JSONObject jCast = jsonCast.getJSONObject(loop);
             Cast cast = new Cast();
             cast.setCastName(readString(jCast, "name"));
-            
-            for (JSONValue character : jCast.getJSONArray("characters")) {
-                cast.addCharacter(character.toString());
+
+            // Sometimes cast doesn't have a character.
+            if (jCast.elementSize() > 1) {
+                for (JSONValue character : jCast.getJSONArray("characters")) {
+                    cast.addCharacter(character.toString());
+                }
             }
             
             response.add(cast);
