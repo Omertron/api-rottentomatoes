@@ -21,14 +21,14 @@ public class Movie {
     private HashSet<ReleaseDate>    releaseDates    = new HashSet<ReleaseDate>();
     private HashSet<Rating>         ratings         = new HashSet<Rating>();
     private String                  synopsis        = "";
-    private HashSet<Artwork>        artwork         = new HashSet<Artwork>();
+    private HashSet<Link>           artwork         = new HashSet<Link>();
     private HashSet<Cast>           cast            = new HashSet<Cast>();
     private HashSet<Link>           links           = new HashSet<Link>();
     private HashSet<String>         genres          = new HashSet<String>();
     private String                  certification   = "";
     private HashSet<String>         directors       = new HashSet<String>();
     
-    public void addArtwork(Artwork artwork) {
+    public void addArtwork(Link artwork) {
         this.artwork.add(artwork);
     }
     
@@ -100,11 +100,11 @@ public class Movie {
         this.synopsis = synopsis;
     }
     
-    public HashSet<Artwork> getArtwork() {
+    public HashSet<Link> getArtwork() {
         return artwork;
     }
     
-    public void setArtwork(HashSet<Artwork> artwork) {
+    public void setArtwork(HashSet<Link> artwork) {
         this.artwork = artwork;
     }
     
@@ -145,27 +145,27 @@ public class Movie {
         StringBuilder builder = new StringBuilder();
         builder.append("[Movie=[title=");
         builder.append(title);
-        builder.append("][year=");
+        builder.append("], [year=");
         builder.append(year);
-        builder.append("][runtime=");
+        builder.append("], [runtime=");
         builder.append(runtime);
-        builder.append("][releaseDates=");
+        builder.append("], [releaseDates=");
         builder.append(releaseDates);
-        builder.append("][ratings=");
+        builder.append("], [ratings=");
         builder.append(ratings);
-        builder.append("][synopsis=");
+        builder.append("], [synopsis=");
         builder.append(synopsis);
-        builder.append("][artwork=");
+        builder.append("], [artwork=");
         builder.append(artwork);
-        builder.append("][cast=");
+        builder.append("], [cast=");
         builder.append(cast);
-        builder.append("][links=");
+        builder.append("], [links=");
         builder.append(links);
-        builder.append("][genres=");
+        builder.append("], [genres=");
         builder.append(genres);
-        builder.append("][certification=");
+        builder.append("], [certification=");
         builder.append(certification);
-        builder.append("][directors=");
+        builder.append("], [directors=");
         builder.append(directors);
         builder.append("]]");
         return builder.toString();

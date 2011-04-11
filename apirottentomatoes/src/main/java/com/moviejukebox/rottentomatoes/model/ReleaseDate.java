@@ -44,12 +44,13 @@ public class ReleaseDate {
     
     @Override
     public String toString() {
-        StringBuffer rd = new StringBuffer("[ReleaseDate=");
-        rd.append("[releaseType=").append(releaseType).append("]"); 
-        rd.append("[releaseDate=").append(releaseDate).append("]");
-        rd.append("]");
-        return rd.toString();
+        StringBuilder builder = new StringBuilder();
+        builder.append("[ReleaseDate=[releaseType=");
+        builder.append(releaseType);
+        builder.append("], [releaseDate=");
+        builder.append(releaseDate);
+        builder.append("]]");
+        return builder.toString();
     }
-    
     
 }

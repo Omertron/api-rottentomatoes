@@ -44,10 +44,12 @@ public class Rating {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder("[Rating=");
-        builder.append("[ratingType=").append(ratingType).append("]");
-        builder.append("[ratingScore=").append(ratingScore).append("]");
-        builder.append("]");
+        StringBuilder builder = new StringBuilder();
+        builder.append("[Rating=[ratingType=");
+        builder.append(ratingType);
+        builder.append("], [ratingScore=");
+        builder.append(ratingScore);
+        builder.append("]]");
         return builder.toString();
     }
     

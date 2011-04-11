@@ -53,7 +53,7 @@ public class Cast {
         StringBuilder builder = new StringBuilder();
         builder.append("[Cast=[castName=");
         builder.append(castName);
-        builder.append("][characters=");
+        builder.append("], [characters=");
         builder.append(characters);
         builder.append("]]");
         return builder.toString();

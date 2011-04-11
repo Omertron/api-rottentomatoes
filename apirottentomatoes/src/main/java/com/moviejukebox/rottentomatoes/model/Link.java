@@ -47,7 +47,7 @@ public class Link {
         StringBuilder builder = new StringBuilder();
         builder.append("[Link=[linkType=");
         builder.append(linkType);
-        builder.append("][linkUrl=");
+        builder.append("], [linkUrl=");
         builder.append(linkUrl);
         builder.append("]]");
         return builder.toString();

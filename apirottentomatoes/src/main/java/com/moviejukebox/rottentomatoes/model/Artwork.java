@@ -41,5 +41,16 @@ public class Artwork {
     public void setUrl(String url) {
         this.url = url;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("[Artwork=[type=");
+        builder.append(type);
+        builder.append("], [url=");
+        builder.append(url);
+        builder.append("]]");
+        return builder.toString();
+    }
     
 }

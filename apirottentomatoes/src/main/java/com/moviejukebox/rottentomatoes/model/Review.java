@@ -72,4 +72,21 @@ public class Review {
     public void addLink(Link link) {
         this.links.add(link);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("[Review=[critic=");
+        builder.append(critic);
+        builder.append("], [reviewDate=");
+        builder.append(reviewDate);
+        builder.append("], [publication=");
+        builder.append(publication);
+        builder.append("], [quote=");
+        builder.append(quote);
+        builder.append("], [links=");
+        builder.append(links);
+        builder.append("]]");
+        return builder.toString();
+    }
 }
