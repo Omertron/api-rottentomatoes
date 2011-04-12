@@ -5,6 +5,7 @@ import java.util.HashSet;
 import junit.framework.TestCase;
 
 import com.moviejukebox.rottentomatoes.RottenTomatoes;
+import com.moviejukebox.rottentomatoes.model.Cast;
 import com.moviejukebox.rottentomatoes.model.Link;
 import com.moviejukebox.rottentomatoes.model.Movie;
 
@@ -95,7 +96,7 @@ public class Test extends TestCase {
         System.out.println("Finished >>" + this.getName() + "<<");
     }
 
-    public void testUpcomingMovies() {
+    public void NOtestUpcomingMovies() {
         System.out.println("Starting >>" + this.getName() + "<<");
         
         int maxMovies = 10;
@@ -110,13 +111,50 @@ public class Test extends TestCase {
         System.out.println("Finished >>" + this.getName() + "<<");
     }
 
-    /*
-     * newReleaseDvds
-     * movieInfo
-     * movieCast
-     * movieReviews
-     * 
-     */
+    public void NOtestNewReleaseDvds() {
+        System.out.println("Starting >>" + this.getName() + "<<");
+        
+        int maxMovies = 10;
+        
+        HashSet<Movie> response = rt.newReleaseDvds(maxMovies);
+        for (Movie movie : response) {
+            System.out.println(movie.toString());
+        }
+        
+        assertTrue((response.size() > 0) && (response.size() <= maxMovies));
+        
+        System.out.println("Finished >>" + this.getName() + "<<");
+    }
+
+    public void NOtestMovieInfo() {
+        System.out.println("Starting >>" + this.getName() + "<<");
+        
+        Movie movie = rt.movieInfo(12886);
+        System.out.println(movie.toString());
+        
+        assertEquals("Blade Runner", movie.getTitle());
+        
+        System.out.println("Finished >>" + this.getName() + "<<");
+    }
     
-    
+    public void testMovieCast() {
+        System.out.println("Starting >>" + this.getName() + "<<");
+        
+        HashSet<Cast> castList = rt.movieCast(12886);
+        assertTrue(castList.size() > 0);
+        
+        System.out.println("Finished >>" + this.getName() + "<<");
+    }
+
+    public void testMovieReviews() {
+        System.out.println("Starting >>" + this.getName() + "<<");
+        
+        Movie movie = rt.movieReviews(12886, "all");
+        System.out.println(movie.toString());
+        
+        assertEquals("Blade Runner", movie.getTitle());
+        
+        System.out.println("Finished >>" + this.getName() + "<<");
+    }
+
 }

@@ -14,13 +14,12 @@ package com.moviejukebox.rottentomatoes.tools;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.logging.Logger;
 
-import org.xerial.json.JSONArray;
-import org.xerial.json.JSONErrorCode;
-import org.xerial.json.JSONException;
-import org.xerial.json.JSONObject;
-import org.xerial.json.JSONValue;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.moviejukebox.rottentomatoes.model.Cast;
 import com.moviejukebox.rottentomatoes.model.Link;
@@ -31,83 +30,140 @@ import com.moviejukebox.rottentomatoes.model.ReleaseDate;
 public class RTParser {
     private static Logger logger = Logger.getLogger("rottentomatoes");
 
+    private final static String CAST_ABRIDGED = "abridged_cast";
+    private final static String CAST_FULL = "cast";
+    private final static String CHARACTERS = "characters";
+    private final static String DIRECTORS_ABDRIDGED = "abridged_directors";
+    private final static String GENRES = "genres";
+    private final static String ID = "id";
+    private final static String LINKS = "links";
+    private final static String MOVIE = "movie";
+    private final static String MOVIES = "movies";
+    private final static String MPAA_RATING = "mpaa_rating";
+    private final static String NAME = "name";
+    private final static String POSTERS = "posters";
+    private final static String RATINGS = "ratings"; 
+    private final static String RELEASE_DATES = "release_dates";
+    private final static String RUNTIME = "runtime"; 
+    private final static String SYNOPSIS = "synopsis"; 
+    private final static String TITLE = "title";
+    private final static String YEAR = "year";
+    
     /**
-     * Parse a JSON object for all the movie information
-     * @param jMovie
+     * Get multiple movies and process them
+     * @param searchUrl
      * @return
      */
-    public static Movie parseMovie(JSONObject jMovie) {
-        Movie movie = new Movie();
-
-        movie.setId(readInt(jMovie, "id"));
-        movie.setTitle(readString(jMovie, "title"));
-        movie.setYear(readInt(jMovie, "year"));
-        movie.setRuntime(readInt(jMovie, "runtime"));
-        movie.setSynopsis(readString(jMovie, "synopsis"));
-        movie.setReleaseDates(parseReleaseDates(jMovie));
-        movie.setRatings(parseRatings(jMovie));
-        movie.setLinks(parseGenericLinks(jMovie, "posters"));
-        movie.setCast(parseCast(jMovie));
-        movie.setLinks(parseGenericLinks(jMovie, "links"));
-        // Try and get the movie id from the link data
-        if (movie.getId() <= 0) {
-            movie.setId(getIdFromLinks(movie.getLinks()));
+    public static HashSet<Movie> getMovies(String searchUrl) {
+        JSONObject movieObject = new JSONObject();
+        HashSet<Movie> movies = new HashSet<Movie>();
+        
+        try {
+            String response = WebBrowser.request(searchUrl);
+            movieObject = new JSONObject(response);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return movies;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return movies;
         }
-        movie.setDirectors(parseDirectors(jMovie));
-        movie.setArtwork(parseGenericLinks(jMovie, "posters"));
-        return movie;
+
+        try {
+            if (movieObject.length() > 0) {
+                JSONArray jsonMovies = movieObject.getJSONArray(MOVIES);
+                logger.fine("Number of movies: " + jsonMovies.length());
+                
+                for (int loop = 0 ; loop < jsonMovies.length() ; loop++) {
+                    Movie movie = parseMovie(jsonMovies.getJSONObject(loop));
+                    
+                    System.out.println("Movie #" + (loop) + " - " + movie.getTitle() + " (" + movie.getId() + ")");
+                    movies.add(movie);
+                }
+                
+                return movies;
+            } else {
+                return movies;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        
+        return movies;
     }
     
     /**
-     * Get the movie-id from the "self" link if it exists
-     * @param links
+     * Process a single movie
+     * @param searchUrl
      * @return
      */
-    private static int getIdFromLinks(HashSet<Link> links) {
-        for (Link link : links) {
-            if ("self".equalsIgnoreCase(link.getLinkType())) {
-                String linkText = link.getLinkUrl();
-                int start = linkText.indexOf("/movies/");
-                if (start > 0) {
-                    start += "/movies/".length();
-                    int end = linkText.indexOf(".json", start);
-                    if (start < end) {
-                        try {
-                            return Integer.parseInt(new String(linkText.substring(start, end)));
-                        } catch (Exception error) {
-                            return 0;
-                        }
-                    }
-                }
-            }
+    public static Movie getSingleMovie(String searchUrl) {
+        JSONObject movieObject = new JSONObject();
+        Movie movie = new Movie();
+        
+        try {
+            String response = WebBrowser.request(searchUrl);
+            movieObject = new JSONObject(response);
+            
+            movie = parseMovie(movieObject);
+            
+            return movie;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return movie;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return movie;
+        }
+}
+
+    
+    public static HashSet<Cast> getCastList(String searchUrl) {
+        JSONObject castObject = new JSONObject();
+        HashSet<Cast> castList = new HashSet<Cast>();
+        
+        try {
+            String response = WebBrowser.request(searchUrl);
+            castObject = new JSONObject(response);
+            castList = parseCast(castObject, CAST_FULL);    
+            return castList;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         
-        return 0;
+        return castList;
     }
-
+    
     /**
      * Parse the movie JSON object for Cast information
      * @param jMovie
      * @return
      */
-    private static HashSet<Cast> parseCast(JSONObject jMovie) {
+    private static HashSet<Cast> parseCast(JSONObject jMovie, String castType) {
         HashSet<Cast> response = new HashSet<Cast>();
         
-        JSONArray jsonCast = jMovie.getJSONArray("abridged_cast");
-        
-        for (int loop = 0 ; loop < jsonCast.size() ; ++loop) {
-            JSONObject jCast = jsonCast.getJSONObject(loop);
-            Cast cast = new Cast();
-            cast.setCastName(readString(jCast, "name"));
-
-            // Sometimes cast doesn't have a character.
-            if (jCast.elementSize() > 1) {
-                for (JSONValue character : jCast.getJSONArray("characters")) {
-                    cast.addCharacter(character.toString());
-                }
-            }
+        try {
+            JSONArray jsonCast = jMovie.getJSONArray(castType);
             
-            response.add(cast);
+            for (int loop = 0 ; loop < jsonCast.length() ; ++loop) {
+                JSONObject jCast = jsonCast.getJSONObject(loop);
+                Cast cast = new Cast();
+                cast.setCastName(readString(jCast, NAME));
+    
+                // Sometimes the cast member doesn't have a character name.
+                if (jCast.length() > 1) {
+                    JSONArray charList = jCast.getJSONArray(CHARACTERS);
+                    for (int loop2 = 0; loop2 < charList.length(); loop2++) {
+                        cast.addCharacter(charList.getString(loop2));
+                    }
+                }
+                
+                response.add(cast);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         
         return response;
@@ -116,70 +172,23 @@ public class RTParser {
     /**
      * Parse the movie JSON object for the director names
      * @param jMovie
+     * @param directorsAbdridged 
      * @return
      */
-    private static HashSet<String> parseDirectors(JSONObject jMovie) {
+    private static HashSet<String> parseDirectors(JSONObject jMovie, String directorType) {
         HashSet<String> response = new HashSet<String>();
         
-        JSONArray jsonCast = jMovie.getJSONArray("abridged_cast");
-        
-        for (int loop = 0 ; loop < jsonCast.size() ; ++loop) {
-            JSONObject jCast = jsonCast.getJSONObject(loop);
-            response.add(readString(jCast, "name"));
-        }
-        
-        return response;
-    }
-    
-    /**
-     * Parse the movie JSON object for the release dates.
-     * The whole object is passed in so we can trap the JSON Exceptions
-     * @param jMovie
-     * @return
-     */
-    private static HashSet<ReleaseDate> parseReleaseDates(JSONObject jMovie) {
-        HashSet<ReleaseDate> response = new HashSet<ReleaseDate>();
-
-        JSONObject jObject;
+        JSONArray jsonCast;
         try {
-            jObject = jMovie.getJSONObject("release_dates");
+            jsonCast = jMovie.getJSONArray(directorType);
+            for (int loop = 0 ; loop < jsonCast.length() ; ++loop) {
+                JSONObject jCast = jsonCast.getJSONObject(loop);
+                response.add(readString(jCast, NAME));
+            }
         } catch (JSONException e) {
-            logger.fine("No release dates for the movie");
-            return null;
+            e.printStackTrace();
         }
         
-        for (String type : jObject.getKeyValueMap().keySet()) {
-            ReleaseDate rd = new ReleaseDate();
-            rd.setReleaseType(type);
-            rd.setReleaseDate(readString(jObject, type));
-            response.add(rd);
-        }
-        return response;
-    }
-    
-    /**
-     * Parse the movie JSON object for the ratings.
-     * The whole object is passed in so we can trap the JSON Exceptions
-     * @param jMovie
-     * @return
-     */
-    private static HashSet<Rating> parseRatings(JSONObject jMovie) {
-        HashSet<Rating> response = new HashSet<Rating>();
-
-        JSONObject jObject;
-        try {
-            jObject = jMovie.getJSONObject("ratings");
-        } catch (JSONException e) {
-            logger.fine("No ratings for the movie");
-            return null;
-        }
-        
-        for (String type : jObject.getKeyValueMap().keySet()) {
-            Rating rating = new Rating();
-            rating.setRatingType(type);
-            rating.setRatingScore(readInt(jObject, type));
-            response.add(rating);
-        }
         
         return response;
     }
@@ -200,61 +209,43 @@ public class RTParser {
             logger.fine("No " + linkType + " in the object");
             return null;
         }
+
+        @SuppressWarnings("unchecked")
+        Iterator<String> linkList = jObject.keys();
         
-        for (String type : jObject.getKeyValueMap().keySet()) {
+        while (linkList.hasNext()) {
+            String type = (String)linkList.next();
+            
             Link link = new Link();
             link.setLinkType(type);
             link.setLinkUrl(readString(jObject, type));
+            
             response.add(link);
         }
         
         return response;
     }
     
-    /**
-     * Get a string from a JSON object
-     * @param jObject
-     * @param item
-     * @return
-     */
-    private static String readString(JSONObject jObject, String item) {
-        String response = "";
+    private static HashSet<String> parseGenres(JSONObject jMovie) {
+        HashSet<String> response = new HashSet<String>();
         
         try {
-            response = jObject.getString(item);
-        } catch (JSONException error) {
-            if (error.getErrorCode() == JSONErrorCode.KeyIsNotFound) {
-                // This is fine, return back the empty string
-                return "";
-            } else {
-                logger.fine("RTParse: Error reading " + item + " from movie");
-                error.printStackTrace();
+            JSONArray jGenres = jMovie.getJSONArray(GENRES);
+            
+            if (jGenres.length() > 1) {
+                for (int loop = 0; loop < jGenres.length(); loop++) {
+                    response.add(jGenres.getString(loop));
+                }
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         
         return response;
-    }
+}
     
     /**
-     * Get an int from a JSON Object
-     * @param jObject
-     * @param item
-     * @return
-     */
-    private static int readInt(JSONObject jObject, String item) {
-        int response = 0;
-        
-        try {
-            response = jObject.getInt(item);
-            return response;
-        } catch (JSONException ignore) {
-            // We can't read this as an integer, so it's probably null or an empty string
-            return 0;
-        }
-    }
-    
-    /**
-     * Retrieve the link list from the url
+     * Retrieve the link list from the URL
      * @param listUrl
      * @param listType
      * @return
@@ -274,41 +265,132 @@ public class RTParser {
         
         return response;
     }
+    
+    /**
+     * Parse a JSON object for all the movie information
+     * @param jMovie
+     * @return
+     */
+    public static Movie parseMovie(JSONObject jMovie) {
+        Movie movie = new Movie();
 
-    public static HashSet<Movie> getMovies(String searchUrl) {
-        JSONObject movieObject = new JSONObject();
-        HashSet<Movie> movies = new HashSet<Movie>();
+        movie.setId(readInt(jMovie, ID));
+        movie.setTitle(readString(jMovie, TITLE));
+        movie.setYear(readInt(jMovie, YEAR));
+        movie.setGenres(parseGenres(jMovie));
+        movie.setCertification(readString(jMovie, MPAA_RATING));
+        movie.setRuntime(readInt(jMovie, RUNTIME));
+        movie.setReleaseDates(parseReleaseDates(jMovie));
+        movie.setRatings(parseRatings(jMovie));
+        movie.setSynopsis(readString(jMovie, SYNOPSIS));
+        movie.setArtwork(parseGenericLinks(jMovie, POSTERS));
+        movie.setCast(parseCast(jMovie, CAST_ABRIDGED));
+        movie.setDirectors(parseDirectors(jMovie, DIRECTORS_ABDRIDGED));
+        movie.setLinks(parseGenericLinks(jMovie, LINKS));
+        return movie;
+    }
+    
+    /**
+     * Parse the movie JSON object for the ratings.
+     * The whole object is passed in so we can trap the JSON Exceptions
+     * @param jMovie
+     * @return
+     */
+    private static HashSet<Rating> parseRatings(JSONObject jMovie) {
+        HashSet<Rating> response = new HashSet<Rating>();
+
+        JSONObject jObject;
+        try {
+            jObject = jMovie.getJSONObject(RATINGS);
+        } catch (JSONException e) {
+            logger.fine("No ratings for the movie");
+            return null;
+        }
+        
+        @SuppressWarnings("unchecked")
+        Iterator<String> ratingList = jObject.keys();
+        
+        while (ratingList.hasNext()) {
+            String type = (String)ratingList.next();
+            
+            Rating rating = new Rating();
+            rating.setRatingType(type);
+            rating.setRatingScore(readInt(jObject, type));
+            
+            response.add(rating);
+        }
+        
+        return response;
+    }
+    
+    /**
+     * Parse the movie JSON object for the release dates.
+     * The whole object is passed in so we can trap the JSON Exceptions
+     * @param jMovie
+     * @return
+     */
+    private static HashSet<ReleaseDate> parseReleaseDates(JSONObject jMovie) {
+        HashSet<ReleaseDate> response = new HashSet<ReleaseDate>();
+
+        JSONObject jObject;
+        try {
+            jObject = jMovie.getJSONObject(RELEASE_DATES);
+        } catch (JSONException e) {
+            logger.fine("No release dates for the movie");
+            return null;
+        }
+        
+        @SuppressWarnings("unchecked")
+        Iterator<String> releaseDateList = jObject.keys();
+        
+        while (releaseDateList.hasNext()) {
+            String type = (String)releaseDateList.next();
+            
+            ReleaseDate rd = new ReleaseDate();
+            rd.setReleaseType(type);
+            rd.setReleaseDate(readString(jObject, type));
+            
+            response.add(rd);
+        }
+        
+        return response;
+    }
+
+    /**
+     * Get an integer from a JSON Object
+     * @param jObject
+     * @param item
+     * @return
+     */
+    private static int readInt(JSONObject jObject, String item) {
+        int response = 0;
         
         try {
-            String response = WebBrowser.request(searchUrl);
-            System.out.println("Response size: " + response.length());
-            movieObject = new JSONObject(response);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return movies;
-        } catch (JSONException e) {
-            if (e.getErrorCode() == JSONErrorCode.InvalidJSONData) {
-                System.out.println("Error reading the data");
-            }
-            e.printStackTrace();
-            return movies;
+            response = jObject.getInt(item);
+            return response;
+        } catch (JSONException ignore) {
+            // We can't read this as an integer, so it's probably null or an empty string
+            return 0;
         }
-
-        if (movieObject.elementSize() > 0) {
-            JSONArray jsonMovies = movieObject.getJSONArray("movies");
-            logger.fine("Number of movies: " + jsonMovies.size());
-            
-            for (int loop = 0 ; loop < jsonMovies.size() ; loop++) {
-                Movie movie = RTParser.parseMovie(jsonMovies.getJSONObject(loop));
-                
-                System.out.println("Movie #" + (loop) + " - " + movie.getTitle() + " (" + movie.getId() + ")");
-                movies.add(movie);
-            }
-            
-            return movies;
-        } else {
-            return movies;
+    }
+    
+    /**
+     * Get a string from a JSON object
+     * @param jObject
+     * @param item
+     * @return
+     */
+    private static String readString(JSONObject jObject, String item) {
+        String response = "";
+        
+        try {
+            response = jObject.getString(item);
+        } catch (JSONException error) {
+            logger.fine("RTParse: Error reading " + item + " from movie");
+            error.printStackTrace();
         }
+        
+        return response;
     }
     
 }

@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.moviejukebox.rottentomatoes.model.Cast;
 import com.moviejukebox.rottentomatoes.model.Link;
 import com.moviejukebox.rottentomatoes.model.Movie;
 import com.moviejukebox.rottentomatoes.tools.LogFormatter;
@@ -53,6 +54,8 @@ public class RottenTomatoes {
     private final static String URL_MOVIE_CAST       = "/movies/{movie-id}/cast.json?apikey=";
     private final static String URL_MOVIE_REVIEWS    = "/movies/{movie-id}/reviews.json?apikey=";
 
+    private final static String MOVIE_ID            = "{movie-id}";
+    
     private final static String PREFIX_MOVIE        = "&q=";
     private final static String PREFIX_LIMIT        = "&limit=";
     private final static String PREFIX_PAGE_LIMIT   = "&page_limit=";
@@ -67,6 +70,12 @@ public class RottenTomatoes {
 
     private String buildUrl(String baseUrl) {
         return buildUrl(baseUrl, "", "", false);
+    }
+    
+    private String buildMovieUrl(String baseUrl, int movieId) {
+        //Need to replace the string {movie-id} with the movieId
+        String newUrl = baseUrl.replace(MOVIE_ID, "" + movieId);
+        return buildUrl(newUrl);
     }
     
     private String buildUrl(String baseUrl, String prefix, String additional, boolean appendPageLimit) {
@@ -135,7 +144,7 @@ public class RottenTomatoes {
             returnLimit = RESULTS_MAX;
         }
         
-        String url = buildUrl(URL_OPENING_MOVIES, PREFIX_LIMIT, "" + returnLimit, false);
+        String url = buildUrl(URL_OPENING_MOVIES, PREFIX_PAGE_LIMIT, "" + returnLimit, false);
         return RTParser.getMovies(url);
     }
     
@@ -147,23 +156,34 @@ public class RottenTomatoes {
             returnLimit = RESULTS_MAX;
         }
         
-        String url = buildUrl(URL_UPCOMING_MOVIES, PREFIX_LIMIT, "" + returnLimit, false);
+        String url = buildUrl(URL_UPCOMING_MOVIES, PREFIX_PAGE_LIMIT, "" + returnLimit, false);
         return RTParser.getMovies(url);
     }
     
-    public String newReleaseDvds() {
-        return null;
+    public HashSet<Movie> newReleaseDvds(int limit) {
+        int returnLimit = limit;
+        if (returnLimit < 0) {
+            returnLimit = RESULTS_DEFAULT;
+        } else if (returnLimit > RESULTS_MAX) {
+            returnLimit = RESULTS_MAX;
+        }
+        
+        String url = buildUrl(URL_NEW_RELEASE_DVDS, PREFIX_PAGE_LIMIT, "" + returnLimit, false);
+        return RTParser.getMovies(url);
     }
     
-    public String movieInfo() {
-        return null;
+    public Movie movieInfo(int movieId) {
+        String searchUrl = buildMovieUrl(URL_MOVIE_INFO, movieId);
+        return  RTParser.getSingleMovie(searchUrl);
     }
     
-    public String movieCast() {
-        return null;
+    public HashSet<Cast> movieCast(int movieId) {
+        String searchUrl = buildMovieUrl(URL_MOVIE_CAST, movieId);
+        
+        return RTParser.getCastList(searchUrl);
     }
     
-    public String movieReviews() {
+    public Movie movieReviews(int i, String string) {
         return null;
     }
     
