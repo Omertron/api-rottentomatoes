@@ -15,6 +15,7 @@ package com.moviejukebox.rottentomatoes.model;
 import java.util.HashSet;
 
 public class Movie {
+    private int                     id              = 0;
     private String                  title           = "";
     private int                     year            = 0;
     private int                     runtime         = 0;
@@ -143,29 +144,31 @@ public class Movie {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("[Movie=[title=");
+        builder.append("[Movie=[id=");
+        builder.append(id);
+        builder.append("][title=");
         builder.append(title);
-        builder.append("], [year=");
+        builder.append("][year=");
         builder.append(year);
-        builder.append("], [runtime=");
+        builder.append("][runtime=");
         builder.append(runtime);
-        builder.append("], [releaseDates=");
+        builder.append("][releaseDates=");
         builder.append(releaseDates);
-        builder.append("], [ratings=");
+        builder.append("][ratings=");
         builder.append(ratings);
-        builder.append("], [synopsis=");
+        builder.append("][synopsis=");
         builder.append(synopsis);
-        builder.append("], [artwork=");
+        builder.append("][artwork=");
         builder.append(artwork);
-        builder.append("], [cast=");
+        builder.append("][cast=");
         builder.append(cast);
-        builder.append("], [links=");
+        builder.append("][links=");
         builder.append(links);
-        builder.append("], [genres=");
+        builder.append("][genres=");
         builder.append(genres);
-        builder.append("], [certification=");
+        builder.append("][certification=");
         builder.append(certification);
-        builder.append("], [directors=");
+        builder.append("][directors=");
         builder.append(directors);
         builder.append("]]");
         return builder.toString();
@@ -177,6 +180,14 @@ public class Movie {
 
     public void setDirectors(HashSet<String> directors) {
         this.directors = directors;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
     
 }

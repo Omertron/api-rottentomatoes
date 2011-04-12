@@ -12,7 +12,6 @@
  */
 package com.moviejukebox.rottentomatoes;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashSet;
@@ -21,9 +20,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
-import org.xerial.json.JSONArray;
-import org.xerial.json.JSONException;
-import org.xerial.json.JSONObject;
 
 import com.moviejukebox.rottentomatoes.model.Link;
 import com.moviejukebox.rottentomatoes.model.Movie;
@@ -44,15 +40,11 @@ public class RottenTomatoes {
     private static Logger logger = Logger.getLogger("rottentomatoes");
     private static LogFormatter loggerFormatter = new LogFormatter();
     private static ConsoleHandler loggerConsoleHandler = new ConsoleHandler();
-
-    // Only get 10 movies per search
-    private final static int    RESULTS_PER_PAGE     = 10;
-    private final static String URL_PAGE_LIMIT       = "&page_limit=" + RESULTS_PER_PAGE;
    
     private final static String URL_LISTS            = ".json?apiKey=";
     private final static String URL_MOVIE_SEARCH     = "/movies.json?apikey=";
     private final static String URL_LIST_DIR         = "/lists.json?apikey=";
-    private final static String URL_MOVIE_LIST       = "/lists/movies.json?apikey=";
+    private final static String URL_MOVIE_LISTS      = "/lists/movies.json?apikey=";
     private final static String URL_DVD_LIST         = "/lists/dvds.json?apikey=";
     private final static String URL_OPENING_MOVIES   = "/lists/movies/opening.json?apikey=";
     private final static String URL_UPCOMING_MOVIES  = "/lists/movies/upcoming.json?apikey=";
@@ -60,29 +52,40 @@ public class RottenTomatoes {
     private final static String URL_MOVIE_INFO       = "/movies/{movie-id}.json?apikey=";
     private final static String URL_MOVIE_CAST       = "/movies/{movie-id}/cast.json?apikey=";
     private final static String URL_MOVIE_REVIEWS    = "/movies/{movie-id}/reviews.json?apikey=";
+
+    private final static String PREFIX_MOVIE        = "&q=";
+    private final static String PREFIX_LIMIT        = "&limit=";
+    private final static String PREFIX_PAGE_LIMIT   = "&page_limit=";
     
+    private final static int RESULTS_DEFAULT        = 10;
+    private final static int RESULTS_MAX            = 20;
+
     public RottenTomatoes(String apiKey) {
         setLogger(logger);
         setApiKey(apiKey);
     }
 
     private String buildUrl(String baseUrl) {
-        return buildUrl(baseUrl, "");
+        return buildUrl(baseUrl, "", "", false);
     }
     
-    private String buildUrl(String baseUrl, String additional) {
+    private String buildUrl(String baseUrl, String prefix, String additional, boolean appendPageLimit) {
         StringBuffer url = new StringBuffer(API_SITE);
         url.append(baseUrl);
         url.append(apiKey);
-        if (additional != null && !("").equals(additional)) {
-            url.append("&q=");
+        if (isValidString(additional)) {
+            url.append(prefix);
             try {
                 url.append(URLEncoder.encode(additional, "UTF-8"));
             } catch (UnsupportedEncodingException ignore) {
                 // There's an issue with the encoding. so try the "raw" string
                 url.append(additional);
             }
-            url.append(URL_PAGE_LIMIT);
+        }
+        
+        if (appendPageLimit) {
+            url.append(PREFIX_PAGE_LIMIT);
+            url.append(RESULTS_DEFAULT);
         }
         
         System.out.println("BuildUrl: " + url.toString());
@@ -95,81 +98,57 @@ public class RottenTomatoes {
      * @return
      */
     public HashSet<Link> getLists() {
-        String url = buildUrl(URL_LISTS);
-        JSONObject objMaster;
-        
-        HashSet<Link> response = new HashSet<Link>();
-        
-        try {
-            objMaster = new JSONObject(WebBrowser.request(url));
-
-            objMaster = objMaster.getJSONObject("links");
-
-            response.add(new Link("lists", objMaster.get("lists").toString()));
-            response.add(new Link("movies", objMaster.get("movies").toString()));
-        } catch (JSONException error) {
-            error.printStackTrace();
-        } catch (IOException error) {
-            error.printStackTrace();
-        }
-        
-        return response;
+        return RTParser.parseLists(buildUrl(URL_LISTS), "links");
     }
     
+    /**
+     * Search for a specific movie.
+     * If the movie is found, just return that one, otherwise return all
+     * @param movieName
+     * @return
+     */
     public HashSet<Movie> moviesSearch(String movieName) {
-        String url = buildUrl(URL_MOVIE_SEARCH, movieName);
-        String response = "";
-        JSONObject movieObject = new JSONObject();
+        return RTParser.getMovies(buildUrl(URL_MOVIE_SEARCH, PREFIX_MOVIE, movieName, true));
+    }
+    
+    public HashSet<Link> listsDirectory() {
+        return RTParser.parseLists(buildUrl(URL_LIST_DIR), "links");
+    }
+    
+    public HashSet<Link> movieListsDirectory() {
+        return RTParser.parseLists(buildUrl(URL_MOVIE_LISTS), "links");
+    }
+    
+    public HashSet<Link> dvdListsDirectory() {
+        return RTParser.parseLists(buildUrl(URL_DVD_LIST), "links");
+    }
+
+    public HashSet<Movie> openingMovies() {
+        return openingMovies(RESULTS_DEFAULT);
+    }
+    
+    public HashSet<Movie> openingMovies(int limit) {
+        int returnLimit = limit;
+        if (returnLimit < 0) {
+            returnLimit = RESULTS_DEFAULT;
+        } else if (returnLimit > RESULTS_MAX) {
+            returnLimit = RESULTS_MAX;
+        }
         
-        try {
-            response = WebBrowser.request(url);
-            movieObject = new JSONObject(response);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
+        String url = buildUrl(URL_OPENING_MOVIES, PREFIX_LIMIT, "" + returnLimit, false);
+        return RTParser.getMovies(url);
+    }
+    
+    public HashSet<Movie> upcomingMovies(int limit) {
+        int returnLimit = limit;
+        if (returnLimit < 0) {
+            returnLimit = RESULTS_DEFAULT;
+        } else if (returnLimit > RESULTS_MAX) {
+            returnLimit = RESULTS_MAX;
         }
-
-        HashSet<Movie> movies = new HashSet<Movie>();
-
-        if (movieObject != null) {
-            logger.fine("Number of movies: " + movieObject.get("total"));
-            JSONArray jsonMovies = movieObject.getJSONArray("movies");
-            
-            for (int loop = 0 ; loop < jsonMovies.size() ; ++loop) {
-                JSONObject singleMovie = jsonMovies.getJSONObject(loop);
-                Movie movie = RTParser.parseMovie(singleMovie);
-                movies.add(movie);
-                logger.fine("Movie #" + loop + " - " + movie.getTitle());
-                logger.fine(movie.toString());
-            }
-            
-            return movies;
-        } else {
-            return null;
-        }
-    }
-    
-    public String listsDirectory() {
-        return null;
-    }
-    
-    public String movieListsDirectory() {
-        return null;
-    }
-    
-    public String dvdListsDirectory() {
-        return null;
-    }
-
-    public String openingMovies() {
-        return null;
-    }
-    
-    public String upcomingMovies() {
-        return null;
+        
+        String url = buildUrl(URL_UPCOMING_MOVIES, PREFIX_LIMIT, "" + returnLimit, false);
+        return RTParser.getMovies(url);
     }
     
     public String newReleaseDvds() {
@@ -253,4 +232,5 @@ public class RottenTomatoes {
         
         return true;
     }
+
 }
