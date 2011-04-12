@@ -12,15 +12,13 @@
  */
 package com.moviejukebox.rottentomatoes.model;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashSet;
 
 public class Review {
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
+    public static enum ReviewType {all, top_critic, dvd};
+    
     private String          critic      = "";
-    private Date            reviewDate  = null;
+    private String          reviewDate  = "";
     private String          publication = "";
     private String          quote       = "";
     private HashSet<Link>   links       = new HashSet<Link>();
@@ -33,11 +31,11 @@ public class Review {
         this.critic = critic;
     }
     
-    public Date getReviewDate() {
+    public String getReviewDate() {
         return reviewDate;
     }
     
-    public void setReviewDate(Date reviewDate) {
+    public void setReviewDate(String reviewDate) {
         this.reviewDate = reviewDate;
     }
     
@@ -65,10 +63,6 @@ public class Review {
         this.links = links;
     }
     
-    public static SimpleDateFormat getDateformat() {
-        return dateFormat;
-    }
-
     public void addLink(Link link) {
         this.links.add(link);
     }

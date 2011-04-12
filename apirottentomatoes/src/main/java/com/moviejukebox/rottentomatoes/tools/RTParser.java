@@ -26,6 +26,7 @@ import com.moviejukebox.rottentomatoes.model.Link;
 import com.moviejukebox.rottentomatoes.model.Movie;
 import com.moviejukebox.rottentomatoes.model.Rating;
 import com.moviejukebox.rottentomatoes.model.ReleaseDate;
+import com.moviejukebox.rottentomatoes.model.Review;
 
 public class RTParser {
     private static Logger logger = Logger.getLogger("rottentomatoes");
@@ -37,7 +38,6 @@ public class RTParser {
     private final static String GENRES = "genres";
     private final static String ID = "id";
     private final static String LINKS = "links";
-    private final static String MOVIE = "movie";
     private final static String MOVIES = "movies";
     private final static String MPAA_RATING = "mpaa_rating";
     private final static String NAME = "name";
@@ -48,6 +48,11 @@ public class RTParser {
     private final static String SYNOPSIS = "synopsis"; 
     private final static String TITLE = "title";
     private final static String YEAR = "year";
+    private final static String CRITIC = "critic";
+    private final static String DATE = "date";
+    private final static String PUBLICATION = "publication";
+    private final static String QUOTE = "quote";
+    private final static String REVIEWS = "reviews";
     
     /**
      * Get multiple movies and process them
@@ -72,12 +77,9 @@ public class RTParser {
         try {
             if (movieObject.length() > 0) {
                 JSONArray jsonMovies = movieObject.getJSONArray(MOVIES);
-                logger.fine("Number of movies: " + jsonMovies.length());
                 
                 for (int loop = 0 ; loop < jsonMovies.length() ; loop++) {
                     Movie movie = parseMovie(jsonMovies.getJSONObject(loop));
-                    
-                    System.out.println("Movie #" + (loop) + " - " + movie.getTitle() + " (" + movie.getId() + ")");
                     movies.add(movie);
                 }
                 
@@ -117,7 +119,6 @@ public class RTParser {
         }
 }
 
-    
     public static HashSet<Cast> getCastList(String searchUrl) {
         JSONObject castObject = new JSONObject();
         HashSet<Cast> castList = new HashSet<Cast>();
@@ -185,8 +186,8 @@ public class RTParser {
                 JSONObject jCast = jsonCast.getJSONObject(loop);
                 response.add(readString(jCast, NAME));
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } catch (JSONException ignore) {
+            // No directors found, so skip
         }
         
         
@@ -237,8 +238,8 @@ public class RTParser {
                     response.add(jGenres.getString(loop));
                 }
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } catch (JSONException ignore) {
+            // The GENRES weren't found
         }
         
         return response;
@@ -246,17 +247,17 @@ public class RTParser {
     
     /**
      * Retrieve the link list from the URL
-     * @param listUrl
-     * @param listType
+     * @param linkSearchUrl
+     * @param linkType
      * @return
      */
-    public static HashSet<Link> parseLists(String listUrl, String listType) {
+    public static HashSet<Link> parseLinks(String linkSearchUrl, String linkType) {
         JSONObject objMaster;
         HashSet<Link> response = new HashSet<Link>();
         
         try {
-            objMaster = new JSONObject(WebBrowser.request(listUrl));
-            response = RTParser.parseGenericLinks(objMaster, listType);
+            objMaster = new JSONObject(WebBrowser.request(linkSearchUrl));
+            response = RTParser.parseGenericLinks(objMaster, linkType);
         } catch (JSONException error) {
             error.printStackTrace();
         } catch (IOException error) {
@@ -383,14 +384,57 @@ public class RTParser {
     private static String readString(JSONObject jObject, String item) {
         String response = "";
         
+        if (jObject == null) {
+            return response;
+        }
+        
         try {
             response = jObject.getString(item);
         } catch (JSONException error) {
-            logger.fine("RTParse: Error reading " + item + " from movie");
-            error.printStackTrace();
+            // The item wasn't found.
         }
         
         return response;
+    }
+
+    public static HashSet<Review> getReviews(String searchUrl) {
+        JSONObject reviewListObject = new JSONObject();
+        HashSet<Review> reviewList = new HashSet<Review>();
+        
+        try {
+            reviewListObject = new JSONObject(WebBrowser.request(searchUrl));
+            
+            JSONArray array = reviewListObject.getJSONArray(REVIEWS);
+
+            for (int loop = 0; loop < array.length(); loop++) {
+                reviewList.add(parseReview(array.getJSONObject(loop)));
+            }
+            
+            return reviewList;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        
+        return reviewList;
+    }
+    
+    /**
+     * Parse an individual review
+     * @param jReview
+     * @return
+     */
+    private static Review parseReview(JSONObject jReview) {
+        Review review = new Review();
+        
+        review.setCritic(readString(jReview, CRITIC));
+        review.setReviewDate(readString(jReview, DATE));
+        review.setPublication(readString(jReview, PUBLICATION));
+        review.setQuote(readString(jReview, QUOTE));
+        review.setLinks(parseGenericLinks(jReview, LINKS));
+        
+        return review;
     }
     
 }

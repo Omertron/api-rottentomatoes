@@ -24,6 +24,8 @@ import org.apache.commons.lang.StringUtils;
 import com.moviejukebox.rottentomatoes.model.Cast;
 import com.moviejukebox.rottentomatoes.model.Link;
 import com.moviejukebox.rottentomatoes.model.Movie;
+import com.moviejukebox.rottentomatoes.model.Review;
+import com.moviejukebox.rottentomatoes.model.Review.ReviewType;
 import com.moviejukebox.rottentomatoes.tools.LogFormatter;
 import com.moviejukebox.rottentomatoes.tools.RTParser;
 import com.moviejukebox.rottentomatoes.tools.WebBrowser;
@@ -59,6 +61,7 @@ public class RottenTomatoes {
     private final static String PREFIX_MOVIE        = "&q=";
     private final static String PREFIX_LIMIT        = "&limit=";
     private final static String PREFIX_PAGE_LIMIT   = "&page_limit=";
+    private final static String PREFIX_REVIEW_TYPE  = "&review_type=";
     
     private final static int RESULTS_DEFAULT        = 10;
     private final static int RESULTS_MAX            = 20;
@@ -97,8 +100,6 @@ public class RottenTomatoes {
             url.append(RESULTS_DEFAULT);
         }
         
-        System.out.println("BuildUrl: " + url.toString());
-        
         return url.toString();
     }
     
@@ -107,7 +108,7 @@ public class RottenTomatoes {
      * @return
      */
     public HashSet<Link> getLists() {
-        return RTParser.parseLists(buildUrl(URL_LISTS), "links");
+        return RTParser.parseLinks(buildUrl(URL_LISTS), "links");
     }
     
     /**
@@ -121,15 +122,15 @@ public class RottenTomatoes {
     }
     
     public HashSet<Link> listsDirectory() {
-        return RTParser.parseLists(buildUrl(URL_LIST_DIR), "links");
+        return RTParser.parseLinks(buildUrl(URL_LIST_DIR), "links");
     }
     
     public HashSet<Link> movieListsDirectory() {
-        return RTParser.parseLists(buildUrl(URL_MOVIE_LISTS), "links");
+        return RTParser.parseLinks(buildUrl(URL_MOVIE_LISTS), "links");
     }
     
     public HashSet<Link> dvdListsDirectory() {
-        return RTParser.parseLists(buildUrl(URL_DVD_LIST), "links");
+        return RTParser.parseLinks(buildUrl(URL_DVD_LIST), "links");
     }
 
     public HashSet<Movie> openingMovies() {
@@ -179,12 +180,22 @@ public class RottenTomatoes {
     
     public HashSet<Cast> movieCast(int movieId) {
         String searchUrl = buildMovieUrl(URL_MOVIE_CAST, movieId);
-        
         return RTParser.getCastList(searchUrl);
     }
     
-    public Movie movieReviews(int i, String string) {
-        return null;
+    public HashSet<Review> movieReviews(int movieId, String reviewType) {
+        try {
+            ReviewType rt = ReviewType.valueOf(reviewType.toLowerCase());
+            return movieReviews(movieId, rt);
+        } catch (IllegalArgumentException error) {
+            return movieReviews(movieId, Review.ReviewType.all);
+        }
+    }
+    
+    public HashSet<Review> movieReviews(int movieId, ReviewType reviewType) {
+        String searchUrl = buildMovieUrl(URL_MOVIE_REVIEWS, movieId);
+        searchUrl += PREFIX_REVIEW_TYPE + reviewType.toString();
+        return RTParser.getReviews(searchUrl);
     }
     
     public void setApiKey(String apiKey) {
