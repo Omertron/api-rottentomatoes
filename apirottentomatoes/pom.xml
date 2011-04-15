@@ -1,31 +1,296 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.moviejukebox</groupId>
-  <artifactId>apirottentomatoes</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <name>API-RottenTomatoes</name>
-  <dependencies>
-    <dependency>
-    	<groupId>commons-lang</groupId>
-    	<artifactId>commons-lang</artifactId>
-    	<version>2.6</version>
-    </dependency>
-    <dependency>
-    	<groupId>org.json</groupId>
-    	<artifactId>json</artifactId>
-    	<version>20090211</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
-    </dependency>
-  </dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.moviejukebox</groupId>
+	<artifactId>apirottentomatoes</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<name>RottenTomatoes API</name>
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>6</version>
+	</parent>
+	<properties>
+		<skipTests>true</skipTests>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<distribution.format>zip</distribution.format>
+	</properties>
+	<issueManagement>
+		<system>Google Code</system>
+		<url>http://code.google.com/p/fanarttvapi/issues/list</url>
+	</issueManagement>
+	<ciManagement>
+		<system>Jenkins CI</system>
+		<url>http://mediadeveloper.org:8080/job/API-RottenTomatoes/</url>
+	</ciManagement>
+	<scm>
+		<connection>scm:svn:https://apirottentomatoes.googlecode.com/svn/trunk/apirottentomatoes</connection>
+		<developerConnection>scm:svn:https://apirottentomatoes.googlecode.com/svn/trunk/apirottentomatoes</developerConnection>
+		<url>http://code.google.com/p/apirottentomatoes/source/browse/#svn/trunk/apirottentomatoes</url>
+	</scm>
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>2.4.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>2.3.2</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-gpg-plugin</artifactId>
+					<version>1.2</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>2.3.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.7.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>buildnumber-maven-plugin</artifactId>
+					<version>1.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<version>1.5</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<configuration>
+					<getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+					<revisionOnScmFailure>0000</revisionOnScmFailure>
+					<timestampFormat>{0,date,yyyy-MM-dd HH:mm:ss}</timestampFormat>
+				</configuration>
+				<version>1.0</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+					<failOnError>true</failOnError>
+					<verbose>true</verbose>
+					<!-- excludes><exclude>**/*</exclude></excludes -->
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.1</version>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Specification-Title>${project.name}</Specification-Title>
+							<Specification-Version>${project.version}</Specification-Version>
+							<Implementation-Version>${buildNumber}</Implementation-Version>
+							<Implementation-Title>${timestamp}</Implementation-Title>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.7</version>
+				<configuration>
+					<skipTests>${skipTests}</skipTests>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>create-version-txt</id>
+						<phase>generate-resources</phase>
+						<configuration>
+							<target>
+								<property name="version_file" value="${project.build.directory}/version.txt" />
+								<property name="header_line" value="Rotten Tomatoes API${line.separator}" />
+								<property name="build_date_line"
+									value="Build Date: ${timestamp}${line.separator}" />
+								<property name="version_line"
+									value="Version: ${project.version}${line.separator}" />
+								<property name="revision_line"
+									value="Revision: r${buildNumber}${line.separator}" />
+								<echo>Writing version file: ${version_file}</echo>
+								<echo file="${version_file}" append="false">${header_line}</echo>
+								<echo file="${version_file}" append="true">${build_date_line}</echo>
+								<echo file="${version_file}" append="true">${version_line}</echo>
+								<echo file="${version_file}" append="true">${revision_line}</echo>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.1</version>
+				<executions>
+					<execution>
+						<id>distro-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>src/main/resources/bin.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<id>display-plugin-updates</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>display-plugin-updates</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>display-dependency-updates</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>display-dependency-updates</goal>
+						</goals>
+					</execution>
+
+                    <!-- searches the pom for all timestamp locked snapshot versions and replaces them with -SNAPSHOT -->
+                    <execution>
+                        <id>unlock-snapshots</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>unlock-snapshots</goal>
+                        </goals>
+                    </execution>
+					
+					<!-- searches the pom for all -SNAPSHOT versions which have been released and replaces them with the corresponding release version -->
+					<execution>
+						<id>use-releases</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>use-releases</goal>
+						</goals>
+					</execution>
+					
+					<!-- searches the pom for all non-SNAPSHOT versions which have been a newer release and replaces them with the latest release version. -->
+					<execution>
+						<id>use-latest-releases</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>use-latest-releases</goal>
+						</goals>
+					</execution>
+					
+					<!-- searches the pom for all versions which have been a newer version and replaces them with the latest version. -->
+					<execution>
+						<id>use-latest-versions</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>use-latest-versions</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<finalName>${project.artifactId}-${project.version}-r${buildNumber}
+		</finalName>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20090211</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+		</dependency>
+	</dependencies>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>4.5</version>
+				<version>4.8.2</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	<profiles>
+		<profile>
+			<id>release-sign-artifacts</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 </project>
