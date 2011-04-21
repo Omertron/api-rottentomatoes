@@ -257,7 +257,7 @@ public class RottenTomatoes {
      */
     public static boolean isValidString(String testString) {
         // Checks if a String is whitespace, empty ("") or null.
-        if (StringUtils.isBlank(testString)) {
+        if (StringUtils.isEmpty(testString)) {
             return false;
         }
         
