@@ -32,41 +32,6 @@
 	<build>
 		<pluginManagement>
 			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-clean-plugin</artifactId>
-					<version>2.4.1</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>2.3.2</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-gpg-plugin</artifactId>
-					<version>1.2</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-jar-plugin</artifactId>
-					<version>2.3.1</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.7.1</version>
-				</plugin>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>buildnumber-maven-plugin</artifactId>
-					<version>1.0</version>
-				</plugin>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>build-helper-maven-plugin</artifactId>
-					<version>1.5</version>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -119,7 +84,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.7</version>
+				<version>2.8</version>
 				<configuration>
 					<skipTests>${skipTests}</skipTests>
 				</configuration>
@@ -159,7 +124,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.1</version>
+				<version>2.2.1</version>
 				<executions>
 					<execution>
 						<id>distro-assembly</id>
@@ -179,58 +144,21 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>versions-maven-plugin</artifactId>
 				<version>1.2</version>
-				<executions>
-					<execution>
-						<id>display-plugin-updates</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>display-plugin-updates</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>display-dependency-updates</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>display-dependency-updates</goal>
-						</goals>
-					</execution>
-
-                    <!-- searches the pom for all timestamp locked snapshot versions and replaces them with -SNAPSHOT -->
-                    <execution>
-                        <id>unlock-snapshots</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>unlock-snapshots</goal>
-                        </goals>
-                    </execution>
-					
-					<!-- searches the pom for all -SNAPSHOT versions which have been released and replaces them with the corresponding release version -->
-					<execution>
-						<id>use-releases</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>use-releases</goal>
-						</goals>
-					</execution>
-					
-					<!-- searches the pom for all non-SNAPSHOT versions which have been a newer release and replaces them with the latest release version. -->
-					<execution>
-						<id>use-latest-releases</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>use-latest-releases</goal>
-						</goals>
-					</execution>
-					
-					<!-- searches the pom for all versions which have been a newer version and replaces them with the latest version. -->
-					<execution>
-						<id>use-latest-versions</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>use-latest-versions</goal>
-						</goals>
-					</execution>
-				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.4.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.2</version>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.5</version>
 			</plugin>
 		</plugins>
 		<finalName>${project.artifactId}-${project.version}-r${buildNumber}
