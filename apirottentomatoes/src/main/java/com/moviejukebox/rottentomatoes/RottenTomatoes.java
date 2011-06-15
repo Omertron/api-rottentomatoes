@@ -67,6 +67,10 @@ public class RottenTomatoes {
     private final static int RESULTS_MAX            = 20;
 
     public RottenTomatoes(String apiKey) {
+        if (isNotValidString(apiKey)) {
+            throw new RuntimeException("RottenTomatoesAPI: No API Key provided!");
+        }
+        
         setLogger(logger);
         setApiKey(apiKey);
     }
