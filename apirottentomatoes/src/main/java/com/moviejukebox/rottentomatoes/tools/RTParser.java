@@ -234,8 +234,8 @@ public class RTParser {
                 }
             }
         } catch (JSONException e) {
-            // The GENRES weren't found
-            throw new RuntimeException("RottenTomatoesAPI: Error parsing genres - " + e.getMessage());
+            // The GENRES weren't found, we can ignore this error
+            // throw new RuntimeException("RottenTomatoesAPI: Error parsing genres - " + e.getMessage());
         }
         
         return response;
