@@ -13,6 +13,7 @@
 package com.moviejukebox.rottentomatoes.tools;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.logging.Logger;
@@ -24,7 +25,6 @@ import org.json.JSONObject;
 import com.moviejukebox.rottentomatoes.model.Cast;
 import com.moviejukebox.rottentomatoes.model.Link;
 import com.moviejukebox.rottentomatoes.model.Movie;
-import com.moviejukebox.rottentomatoes.model.Rating;
 import com.moviejukebox.rottentomatoes.model.ReleaseDate;
 import com.moviejukebox.rottentomatoes.model.Review;
 
@@ -297,8 +297,8 @@ public class RTParser {
      * @param jMovie
      * @return
      */
-    private static HashSet<Rating> parseRatings(JSONObject jMovie) {
-        HashSet<Rating> response = new HashSet<Rating>();
+    private static HashMap<String, Integer> parseRatings(JSONObject jMovie) {
+        HashMap<String, Integer> response = new HashMap<String, Integer>();
 
         JSONObject jObject;
         try {
@@ -311,14 +311,12 @@ public class RTParser {
         @SuppressWarnings("unchecked")
         Iterator<String> ratingList = jObject.keys();
         
+        String type = null;
+        int score = 0;
         while (ratingList.hasNext()) {
-            String type = (String)ratingList.next();
-            
-            Rating rating = new Rating();
-            rating.setRatingType(type);
-            rating.setRatingScore(readInt(jObject, type));
-            
-            response.add(rating);
+            type = (String)ratingList.next();
+            score =  readInt(jObject, type);
+            response.put(type, score);
         }
         
         return response;
