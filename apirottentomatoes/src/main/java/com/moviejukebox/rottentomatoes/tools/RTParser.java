@@ -183,7 +183,8 @@ public class RTParser {
                 response.add(readString(jCast, NAME));
             }
         } catch (JSONException e) {
-            throw new RuntimeException("RottenTomatoesAPI: Error parsing directors - " + e.getMessage());
+            // The GENRES weren't found, we can safely ignore this error
+            // throw new RuntimeException("RottenTomatoesAPI: Error parsing directors - " + e.getMessage());
         }
         
         return response;
@@ -234,7 +235,7 @@ public class RTParser {
                 }
             }
         } catch (JSONException e) {
-            // The GENRES weren't found, we can ignore this error
+            // The GENRES weren't found, we can safely ignore this error
             // throw new RuntimeException("RottenTomatoesAPI: Error parsing genres - " + e.getMessage());
         }
         
