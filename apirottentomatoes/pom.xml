@@ -22,7 +22,7 @@
 	</issueManagement>
 	<ciManagement>
 		<system>Jenkins CI</system>
-		<url>http://mediadeveloper.org:8080/job/API-RottenTomatoes/</url>
+		<url>http://jenkins.omertron.com/job/API-RottenTomatoes/</url>
 	</ciManagement>
 	<scm>
 		<connection>scm:svn:https://apirottentomatoes.googlecode.com/svn/trunk/apirottentomatoes</connection>
