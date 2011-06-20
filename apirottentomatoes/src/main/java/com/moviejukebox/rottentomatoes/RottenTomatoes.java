@@ -35,7 +35,6 @@ import com.moviejukebox.rottentomatoes.tools.WebBrowser;
  * @author Stuart.Boston
  *
  */
-@SuppressWarnings("unused")
 public class RottenTomatoes {
     private String apiKey;
     private static final String API_SITE = "http://api.rottentomatoes.com/api/public/v1.0";
@@ -149,7 +148,7 @@ public class RottenTomatoes {
             returnLimit = RESULTS_MAX;
         }
         
-        String url = buildUrl(URL_OPENING_MOVIES, PREFIX_PAGE_LIMIT, "" + returnLimit, false);
+        String url = buildUrl(URL_OPENING_MOVIES, PREFIX_LIMIT, "" + returnLimit, false);
         return RTParser.getMovies(url);
     }
     

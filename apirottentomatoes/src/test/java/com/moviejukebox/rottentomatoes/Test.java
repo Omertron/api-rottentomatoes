@@ -59,7 +59,7 @@ public class Test extends TestCase {
     
     public void testDvdListsDirectory() {
         HashSet<Link> response = rt.dvdListsDirectory();
-        assertEquals(1, response.size());
+        assertTrue(response.size() > 0);
     }
 
     public void testOpeningMovies() {
@@ -94,5 +94,5 @@ public class Test extends TestCase {
         HashSet<Review> reviewList = rt.movieReviews(12886, Review.ReviewType.all);
         assertTrue(reviewList.size() > 0);
     }
-
+    
 }
