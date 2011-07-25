@@ -19,6 +19,7 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.json.JSONArray;
@@ -34,40 +35,43 @@ import com.moviejukebox.rottentomatoes.model.Review;
 public class RTParser {
     private static Logger logger = Logger.getLogger("rottentomatoes");
 
-    private final static String CAST_ABRIDGED = "abridged_cast";
-    private final static String CAST_FULL = "cast";
-    private final static String CHARACTERS = "characters";
-    private final static String DIRECTORS_ABDRIDGED = "abridged_directors";
-    private final static String GENRES = "genres";
-    private final static String ID = "id";
-    private final static String LINKS = "links";
-    private final static String MOVIES = "movies";
-    private final static String MPAA_RATING = "mpaa_rating";
-    private final static String NAME = "name";
-    private final static String POSTERS = "posters";
-    private final static String RATINGS = "ratings"; 
-    private final static String RELEASE_DATES = "release_dates";
-    private final static String RUNTIME = "runtime"; 
-    private final static String SYNOPSIS = "synopsis"; 
-    private final static String TITLE = "title";
-    private final static String YEAR = "year";
-    private final static String CRITIC = "critic";
-    private final static String DATE = "date";
-    private final static String PUBLICATION = "publication";
-    private final static String QUOTE = "quote";
-    private final static String REVIEWS = "reviews";
+    private static final String CAST_ABRIDGED = "abridged_cast";
+    private static final String CAST_FULL = "cast";
+    private static final String CHARACTERS = "characters";
+    private static final String DIRECTORS_ABDRIDGED = "abridged_directors";
+    private static final String GENRES = "genres";
+    private static final String ID = "id";
+    private static final String LINKS = "links";
+    private static final String MOVIES = "movies";
+    private static final String MPAA_RATING = "mpaa_rating";
+    private static final String NAME = "name";
+    private static final String POSTERS = "posters";
+    private static final String RATINGS = "ratings"; 
+    private static final String RELEASE_DATES = "release_dates";
+    private static final String RUNTIME = "runtime"; 
+    private static final String SYNOPSIS = "synopsis"; 
+    private static final String TITLE = "title";
+    private static final String YEAR = "year";
+    private static final String CRITIC = "critic";
+    private static final String DATE = "date";
+    private static final String PUBLICATION = "publication";
+    private static final String QUOTE = "quote";
+    private static final String REVIEWS = "reviews";
     
     // Hide the constructor
-    private RTParser() {};
+    protected RTParser() {
+        // prevents calls from subclass
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Get multiple movies and process them
      * @param searchUrl
      * @return
      */
-    public static HashSet<Movie> getMovies(String searchUrl) {
+    public static Set<Movie> getMovies(String searchUrl) {
         JSONObject movieObject;
-        HashSet<Movie> movies = new HashSet<Movie>();
+        Set<Movie> movies = new HashSet<Movie>();
         
         try {
             String response = WebBrowser.request(searchUrl);
@@ -100,8 +104,8 @@ public class RTParser {
             } else {
                 return movies;
             }
-        } catch (JSONException e) {
-            throw new RuntimeException("RottenTomatoesAPI: Error getting list of movies - " + e.getMessage());
+        } catch (JSONException error) {
+            throw new RuntimeException("RottenTomatoesAPI: Error getting list of movies - " + error.getMessage(), error);
         }
     }
     
@@ -128,9 +132,9 @@ public class RTParser {
         }
 }
 
-    public static HashSet<Cast> getCastList(String searchUrl) {
+    public static Set<Cast> getCastList(String searchUrl) {
         JSONObject castObject;
-        HashSet<Cast> castList = new HashSet<Cast>();
+        Set<Cast> castList = new HashSet<Cast>();
         
         try {
             String response = WebBrowser.request(searchUrl);
@@ -159,8 +163,8 @@ public class RTParser {
      * @param jMovie
      * @return
      */
-    private static HashSet<Cast> parseCast(JSONObject jMovie, String castType) {
-        HashSet<Cast> response = new HashSet<Cast>();
+    private static Set<Cast> parseCast(JSONObject jMovie, String castType) {
+        Set<Cast> response = new HashSet<Cast>();
         
         try {
             JSONArray jsonCast = jMovie.getJSONArray(castType);
@@ -193,8 +197,8 @@ public class RTParser {
      * @param directorsAbdridged 
      * @return
      */
-    private static HashSet<String> parseDirectors(JSONObject jMovie, String directorType) {
-        HashSet<String> response = new HashSet<String>();
+    private static Set<String> parseDirectors(JSONObject jMovie, String directorType) {
+        Set<String> response = new HashSet<String>();
         
         JSONArray jsonCast;
         try {
@@ -217,8 +221,8 @@ public class RTParser {
      * @param linkType
      * @return
      */
-    public static HashSet<Link> parseGenericLinks(JSONObject jMovie, String linkType) {
-        HashSet<Link> response = new HashSet<Link>();
+    public static Set<Link> parseGenericLinks(JSONObject jMovie, String linkType) {
+        Set<Link> response = new HashSet<Link>();
 
         JSONObject jObject;
         try {
@@ -244,8 +248,8 @@ public class RTParser {
         return response;
     }
     
-    private static HashSet<String> parseGenres(JSONObject jMovie) {
-        HashSet<String> response = new HashSet<String>();
+    private static Set<String> parseGenres(JSONObject jMovie) {
+        Set<String> response = new HashSet<String>();
         
         try {
             JSONArray jGenres = jMovie.getJSONArray(GENRES);
@@ -269,9 +273,9 @@ public class RTParser {
      * @param linkType
      * @return
      */
-    public static HashSet<Link> parseLinks(String linkSearchUrl, String linkType) {
+    public static Set<Link> parseLinks(String linkSearchUrl, String linkType) {
         JSONObject objMaster;
-        HashSet<Link> response;
+        Set<Link> response;
         
         try {
             objMaster = new JSONObject(WebBrowser.request(linkSearchUrl));
@@ -346,8 +350,8 @@ public class RTParser {
      * @param jMovie
      * @return
      */
-    private static HashSet<ReleaseDate> parseReleaseDates(JSONObject jMovie) {
-        HashSet<ReleaseDate> response = new HashSet<ReleaseDate>();
+    private static Set<ReleaseDate> parseReleaseDates(JSONObject jMovie) {
+        Set<ReleaseDate> response = new HashSet<ReleaseDate>();
 
         JSONObject jObject;
         try {
@@ -413,9 +417,9 @@ public class RTParser {
         return response;
     }
 
-    public static HashSet<Review> getReviews(String searchUrl) {
+    public static Set<Review> getReviews(String searchUrl) {
         JSONObject reviewListObject;
-        HashSet<Review> reviewList = new HashSet<Review>();
+        Set<Review> reviewList = new HashSet<Review>();
         
         try {
             reviewListObject = new JSONObject(WebBrowser.request(searchUrl));

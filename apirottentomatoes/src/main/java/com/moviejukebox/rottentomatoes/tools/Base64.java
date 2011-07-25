@@ -13,13 +13,16 @@
 package com.moviejukebox.rottentomatoes.tools;
 
 public class Base64 {
-    private final static String base64code = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    private static final String BASE64_CODE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-    private final static int PADDING = 3;
-    private final static int HEX_VALUE = 0x3f;
+    private static final int PADDING = 3;
+    private static final int HEX_VALUE = 0x3f;
     
     // Hide the constructor
-    private Base64() {}
+    protected Base64() {
+        // prevents calls from subclass
+        throw new UnsupportedOperationException();
+    }
 
     public static String base64Encode(String string) {
         String unEncoded = string; // Copy the string so we can modify it
@@ -32,10 +35,10 @@ public class Base64 {
         // worry about CRLF insertions later
         for (int i = 0; i < unEncoded.length(); i += PADDING) {
             int j = (unEncoded.charAt(i) << 16) + (unEncoded.charAt(i + 1) << 8) + unEncoded.charAt(i + 2);
-            encoded.append(base64code.charAt((j >> 18) & HEX_VALUE) + 
-                           base64code.charAt((j >> 12) & HEX_VALUE) + 
-                           base64code.charAt((j >> 6) & HEX_VALUE)+ 
-                           base64code.charAt(j & HEX_VALUE));
+            encoded.append(BASE64_CODE.charAt((j >> 18) & HEX_VALUE) + 
+                           BASE64_CODE.charAt((j >> 12) & HEX_VALUE) + 
+                           BASE64_CODE.charAt((j >> 6) & HEX_VALUE)+ 
+                           BASE64_CODE.charAt(j & HEX_VALUE));
         }
         
         // replace encoded padding nulls with "="

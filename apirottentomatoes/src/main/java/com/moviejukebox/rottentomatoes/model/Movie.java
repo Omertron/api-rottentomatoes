@@ -14,21 +14,23 @@ package com.moviejukebox.rottentomatoes.model;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class Movie {
     private int                     id              = 0;
     private String                  title           = "";
     private int                     year            = 0;
     private int                     runtime         = 0;
-    private HashSet<ReleaseDate>    releaseDates    = new HashSet<ReleaseDate>();
-    private HashMap<String, Integer>ratings         = new HashMap<String, Integer>();
+    private Set<ReleaseDate>        releaseDates    = new HashSet<ReleaseDate>();
+    private Map<String, Integer>    ratings         = new HashMap<String, Integer>();
     private String                  synopsis        = "";
-    private HashSet<Link>           artwork         = new HashSet<Link>();
-    private HashSet<Cast>           cast            = new HashSet<Cast>();
-    private HashSet<Link>           links           = new HashSet<Link>();
-    private HashSet<String>         genres          = new HashSet<String>();
+    private Set<Link>               artwork         = new HashSet<Link>();
+    private Set<Cast>               cast            = new HashSet<Cast>();
+    private Set<Link>               links           = new HashSet<Link>();
+    private Set<String>             genres          = new HashSet<String>();
     private String                  certification   = "";
-    private HashSet<String>         directors       = new HashSet<String>();
+    private Set<String>             directors       = new HashSet<String>();
     
     public void addArtwork(Link artwork) {
         this.artwork.add(artwork);
@@ -54,11 +56,11 @@ public class Movie {
         this.releaseDates.add(releaseDate);
     }
     
-    public HashSet<Link> getArtwork() {
+    public Set<Link> getArtwork() {
         return artwork;
     }
     
-    public HashSet<Cast> getCast() {
+    public Set<Cast> getCast() {
         return cast;
     }
     
@@ -66,11 +68,11 @@ public class Movie {
         return certification;
     }
     
-    public HashSet<String> getDirectors() {
+    public Set<String> getDirectors() {
         return directors;
     }
     
-    public HashSet<String> getGenres() {
+    public Set<String> getGenres() {
         return genres;
     }
     
@@ -78,7 +80,7 @@ public class Movie {
         return id;
     }
     
-    public HashSet<Link> getLinks() {
+    public Set<Link> getLinks() {
         return links;
     }
     
@@ -86,11 +88,11 @@ public class Movie {
         return this.ratings.get(ratingType);
     }
     
-    public HashMap<String, Integer> getRatings() {
+    public Map<String, Integer> getRatings() {
         return ratings;
     }
     
-    public HashSet<ReleaseDate> getReleaseDates() {
+    public Set<ReleaseDate> getReleaseDates() {
         return releaseDates;
     }
     
@@ -110,11 +112,11 @@ public class Movie {
         return year;
     }
     
-    public void setArtwork(HashSet<Link> artwork) {
+    public void setArtwork(Set<Link> artwork) {
         this.artwork = artwork;
     }
     
-    public void setCast(HashSet<Cast> cast) {
+    public void setCast(Set<Cast> cast) {
         this.cast = cast;
     }
     
@@ -122,11 +124,11 @@ public class Movie {
         this.certification = certification;
     }
     
-    public void setDirectors(HashSet<String> directors) {
+    public void setDirectors(Set<String> directors) {
         this.directors = directors;
     }
     
-    public void setGenres(HashSet<String> genres) {
+    public void setGenres(Set<String> genres) {
         this.genres = genres;
     }
     
@@ -134,15 +136,15 @@ public class Movie {
         this.id = id;
     }
     
-    public void setLinks(HashSet<Link> links) {
+    public void setLinks(Set<Link> links) {
         this.links = links;
     }
     
-    public void setRatings(HashMap<String, Integer> ratings) {
+    public void setRatings(Map<String, Integer> ratings) {
         this.ratings = ratings;
     }
     
-    public void setReleaseDates(HashSet<ReleaseDate> releaseDates) {
+    public void setReleaseDates(Set<ReleaseDate> releaseDates) {
         this.releaseDates = releaseDates;
     }
 

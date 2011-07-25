@@ -14,7 +14,7 @@ package com.moviejukebox.rottentomatoes;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,29 +43,29 @@ public class RottenTomatoes {
     private static LogFormatter loggerFormatter = new LogFormatter();
     private static ConsoleHandler loggerConsoleHandler = new ConsoleHandler();
    
-    private final static String URL_LISTS            = ".json?apiKey=";
-    private final static String URL_MOVIE_SEARCH     = "/movies.json?apikey=";
-    private final static String URL_LIST_DIR         = "/lists.json?apikey=";
-    private final static String URL_MOVIE_LISTS      = "/lists/movies.json?apikey=";
-    private final static String URL_DVD_LIST         = "/lists/dvds.json?apikey=";
-    private final static String URL_OPENING_MOVIES   = "/lists/movies/opening.json?apikey=";
-    private final static String URL_UPCOMING_MOVIES  = "/lists/movies/upcoming.json?apikey=";
-    private final static String URL_NEW_RELEASE_DVDS = "/lists/dvds/new_releases.json?apikey=";
-    private final static String URL_MOVIE_INFO       = "/movies/{movie-id}.json?apikey=";
-    private final static String URL_MOVIE_CAST       = "/movies/{movie-id}/cast.json?apikey=";
-    private final static String URL_MOVIE_REVIEWS    = "/movies/{movie-id}/reviews.json?apikey=";
+    private static final String URL_LISTS            = ".json?apiKey=";
+    private static final String URL_MOVIE_SEARCH     = "/movies.json?apikey=";
+    private static final String URL_LIST_DIR         = "/lists.json?apikey=";
+    private static final String URL_MOVIE_LISTS      = "/lists/movies.json?apikey=";
+    private static final String URL_DVD_LIST         = "/lists/dvds.json?apikey=";
+    private static final String URL_OPENING_MOVIES   = "/lists/movies/opening.json?apikey=";
+    private static final String URL_UPCOMING_MOVIES  = "/lists/movies/upcoming.json?apikey=";
+    private static final String URL_NEW_RELEASE_DVDS = "/lists/dvds/new_releases.json?apikey=";
+    private static final String URL_MOVIE_INFO       = "/movies/{movie-id}.json?apikey=";
+    private static final String URL_MOVIE_CAST       = "/movies/{movie-id}/cast.json?apikey=";
+    private static final String URL_MOVIE_REVIEWS    = "/movies/{movie-id}/reviews.json?apikey=";
 
-    private final static String MOVIE_ID            = "{movie-id}";
+    private static final String MOVIE_ID            = "{movie-id}";
     
-    private final static String PREFIX_MOVIE        = "&q=";
-    private final static String PREFIX_LIMIT        = "&limit=";
-    private final static String PREFIX_PAGE_LIMIT   = "&page_limit=";
-    private final static String PREFIX_REVIEW_TYPE  = "&review_type=";
+    private static final String PREFIX_MOVIE        = "&q=";
+    private static final String PREFIX_LIMIT        = "&limit=";
+    private static final String PREFIX_PAGE_LIMIT   = "&page_limit=";
+    private static final String PREFIX_REVIEW_TYPE  = "&review_type=";
     
-    private final static String LINKS               = "links";
+    private static final String LINKS               = "links";
     
-    private final static int RESULTS_DEFAULT        = 10;
-    private final static int RESULTS_MAX            = 20;
+    private static final int RESULTS_DEFAULT        = 10;
+    private static final int RESULTS_MAX            = 20;
 
     public RottenTomatoes(String apiKey) {
         if (isNotValidString(apiKey)) {
@@ -112,7 +112,7 @@ public class RottenTomatoes {
      * Get the lists from the base JSON API. These have no real use.
      * @return
      */
-    public HashSet<Link> getLists() {
+    public Set<Link> getLists() {
         return RTParser.parseLinks(buildUrl(URL_LISTS), LINKS);
     }
     
@@ -122,27 +122,27 @@ public class RottenTomatoes {
      * @param movieName
      * @return
      */
-    public HashSet<Movie> moviesSearch(String movieName) {
+    public Set<Movie> moviesSearch(String movieName) {
         return RTParser.getMovies(buildUrl(URL_MOVIE_SEARCH, PREFIX_MOVIE, movieName, true));
     }
     
-    public HashSet<Link> listsDirectory() {
+    public Set<Link> listsDirectory() {
         return RTParser.parseLinks(buildUrl(URL_LIST_DIR), LINKS);
     }
     
-    public HashSet<Link> movieListsDirectory() {
+    public Set<Link> movieListsDirectory() {
         return RTParser.parseLinks(buildUrl(URL_MOVIE_LISTS), LINKS);
     }
     
-    public HashSet<Link> dvdListsDirectory() {
+    public Set<Link> dvdListsDirectory() {
         return RTParser.parseLinks(buildUrl(URL_DVD_LIST), LINKS);
     }
 
-    public HashSet<Movie> openingMovies() {
+    public Set<Movie> openingMovies() {
         return openingMovies(RESULTS_DEFAULT);
     }
     
-    public HashSet<Movie> openingMovies(int limit) {
+    public Set<Movie> openingMovies(int limit) {
         int returnLimit = limit;
         if (returnLimit < 0) {
             returnLimit = RESULTS_DEFAULT;
@@ -154,7 +154,7 @@ public class RottenTomatoes {
         return RTParser.getMovies(url);
     }
     
-    public HashSet<Movie> upcomingMovies(int limit) {
+    public Set<Movie> upcomingMovies(int limit) {
         int returnLimit = limit;
         if (returnLimit < 0) {
             returnLimit = RESULTS_DEFAULT;
@@ -166,7 +166,7 @@ public class RottenTomatoes {
         return RTParser.getMovies(url);
     }
     
-    public HashSet<Movie> newReleaseDvds(int limit) {
+    public Set<Movie> newReleaseDvds(int limit) {
         int returnLimit = limit;
         if (returnLimit < 0) {
             returnLimit = RESULTS_DEFAULT;
@@ -183,12 +183,12 @@ public class RottenTomatoes {
         return  RTParser.getSingleMovie(searchUrl);
     }
     
-    public HashSet<Cast> movieCast(int movieId) {
+    public Set<Cast> movieCast(int movieId) {
         String searchUrl = buildMovieUrl(URL_MOVIE_CAST, movieId);
         return RTParser.getCastList(searchUrl);
     }
     
-    public HashSet<Review> movieReviews(int movieId, String reviewType) {
+    public Set<Review> movieReviews(int movieId, String reviewType) {
         try {
             ReviewType rt = ReviewType.valueOf(reviewType.toLowerCase());
             return movieReviews(movieId, rt);
@@ -197,7 +197,7 @@ public class RottenTomatoes {
         }
     }
     
-    public HashSet<Review> movieReviews(int movieId, ReviewType reviewType) {
+    public Set<Review> movieReviews(int movieId, ReviewType reviewType) {
         String searchUrl = buildMovieUrl(URL_MOVIE_REVIEWS, movieId);
         searchUrl += PREFIX_REVIEW_TYPE + reviewType.toString();
         return RTParser.getReviews(searchUrl);
