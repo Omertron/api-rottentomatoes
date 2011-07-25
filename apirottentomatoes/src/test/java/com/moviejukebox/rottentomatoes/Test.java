@@ -12,11 +12,10 @@
  */
 package com.moviejukebox.rottentomatoes;
 
-import java.util.HashSet;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
-import com.moviejukebox.rottentomatoes.RottenTomatoes;
 import com.moviejukebox.rottentomatoes.model.Cast;
 import com.moviejukebox.rottentomatoes.model.Link;
 import com.moviejukebox.rottentomatoes.model.Movie;
@@ -38,45 +37,45 @@ public class Test extends TestCase {
     }
 
     public void testGetLists() {
-        HashSet<Link> response = rt.getLists();
+        Set<Link> response = rt.getLists();
         assertEquals(2, response.size());
     }
     
     public void testMoviesSearch() {
-        HashSet<Movie> response = rt.moviesSearch("Blade Runner");
+        Set<Movie> response = rt.moviesSearch("Blade Runner");
         assertEquals(3, response.size());
     }
 
     public void NOtestListsDirectory() {
-        HashSet<Link> response = rt.listsDirectory();
+        Set<Link> response = rt.listsDirectory();
         assertEquals(2, response.size());
     }
     
     public void testMovieListsDirectory() {
-        HashSet<Link> response = rt.movieListsDirectory();
+        Set<Link> response = rt.movieListsDirectory();
         assertEquals(4, response.size());
     }
     
     public void testDvdListsDirectory() {
-        HashSet<Link> response = rt.dvdListsDirectory();
+        Set<Link> response = rt.dvdListsDirectory();
         assertTrue(response.size() > 0);
     }
 
     public void testOpeningMovies() {
         int maxMovies = 10;
-        HashSet<Movie> response = rt.openingMovies(maxMovies);
+        Set<Movie> response = rt.openingMovies(maxMovies);
         assertTrue(response.size() <= maxMovies);
     }
 
     public void testUpcomingMovies() {
         int maxMovies = 10;
-        HashSet<Movie> response = rt.upcomingMovies(maxMovies);
+        Set<Movie> response = rt.upcomingMovies(maxMovies);
         assertTrue((response.size() > 0) && (response.size() <= maxMovies));
     }
 
     public void testNewReleaseDvds() {
         int maxMovies = 10;
-        HashSet<Movie> response = rt.newReleaseDvds(maxMovies);
+        Set<Movie> response = rt.newReleaseDvds(maxMovies);
         assertTrue((response.size() > 0) && (response.size() <= maxMovies));
     }
 
@@ -86,12 +85,12 @@ public class Test extends TestCase {
     }
     
     public void testMovieCast() {
-        HashSet<Cast> castList = rt.movieCast(12886);
+        Set<Cast> castList = rt.movieCast(12886);
         assertTrue(castList.size() > 0);
     }
 
     public void testMovieReviews() {
-        HashSet<Review> reviewList = rt.movieReviews(12886, Review.ReviewType.all);
+        Set<Review> reviewList = rt.movieReviews(12886, Review.ReviewType.all);
         assertTrue(reviewList.size() > 0);
     }
     
