@@ -23,7 +23,7 @@ public class Artwork {
 
     public Artwork() {
         this.type = "";
-        this.type = "";
+        this.url= "";
     }
     
     public String getType() {

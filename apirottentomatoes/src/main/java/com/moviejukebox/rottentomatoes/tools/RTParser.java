@@ -60,7 +60,7 @@ public class RTParser {
      * @return
      */
     public static HashSet<Movie> getMovies(String searchUrl) {
-        JSONObject movieObject = new JSONObject();
+        JSONObject movieObject;
         HashSet<Movie> movies = new HashSet<Movie>();
         
         try {
@@ -79,8 +79,7 @@ public class RTParser {
                 JSONArray jsonMovies = movieObject.getJSONArray(MOVIES);
                 
                 for (int loop = 0 ; loop < jsonMovies.length() ; loop++) {
-                    Movie movie = parseMovie(jsonMovies.getJSONObject(loop));
-                    movies.add(movie);
+                    movies.add(parseMovie(jsonMovies.getJSONObject(loop)));
                 }
                 
                 return movies;
@@ -98,8 +97,8 @@ public class RTParser {
      * @return
      */
     public static Movie getSingleMovie(String searchUrl) {
-        JSONObject movieObject = new JSONObject();
-        Movie movie = new Movie();
+        JSONObject movieObject;
+        Movie movie;
         
         try {
             String response = WebBrowser.request(searchUrl);
@@ -116,7 +115,7 @@ public class RTParser {
 }
 
     public static HashSet<Cast> getCastList(String searchUrl) {
-        JSONObject castObject = new JSONObject();
+        JSONObject castObject;
         HashSet<Cast> castList = new HashSet<Cast>();
         
         try {
@@ -250,7 +249,7 @@ public class RTParser {
      */
     public static HashSet<Link> parseLinks(String linkSearchUrl, String linkType) {
         JSONObject objMaster;
-        HashSet<Link> response = new HashSet<Link>();
+        HashSet<Link> response;
         
         try {
             objMaster = new JSONObject(WebBrowser.request(linkSearchUrl));
@@ -393,7 +392,7 @@ public class RTParser {
     }
 
     public static HashSet<Review> getReviews(String searchUrl) {
-        JSONObject reviewListObject = new JSONObject();
+        JSONObject reviewListObject;
         HashSet<Review> reviewList = new HashSet<Review>();
         
         try {
