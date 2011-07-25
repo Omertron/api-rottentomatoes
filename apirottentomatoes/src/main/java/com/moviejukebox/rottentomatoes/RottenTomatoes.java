@@ -62,6 +62,8 @@ public class RottenTomatoes {
     private final static String PREFIX_PAGE_LIMIT   = "&page_limit=";
     private final static String PREFIX_REVIEW_TYPE  = "&review_type=";
     
+    private final static String LINKS               = "links";
+    
     private final static int RESULTS_DEFAULT        = 10;
     private final static int RESULTS_MAX            = 20;
 
@@ -111,7 +113,7 @@ public class RottenTomatoes {
      * @return
      */
     public HashSet<Link> getLists() {
-        return RTParser.parseLinks(buildUrl(URL_LISTS), "links");
+        return RTParser.parseLinks(buildUrl(URL_LISTS), LINKS);
     }
     
     /**
@@ -125,15 +127,15 @@ public class RottenTomatoes {
     }
     
     public HashSet<Link> listsDirectory() {
-        return RTParser.parseLinks(buildUrl(URL_LIST_DIR), "links");
+        return RTParser.parseLinks(buildUrl(URL_LIST_DIR), LINKS);
     }
     
     public HashSet<Link> movieListsDirectory() {
-        return RTParser.parseLinks(buildUrl(URL_MOVIE_LISTS), "links");
+        return RTParser.parseLinks(buildUrl(URL_MOVIE_LISTS), LINKS);
     }
     
     public HashSet<Link> dvdListsDirectory() {
-        return RTParser.parseLinks(buildUrl(URL_DVD_LIST), "links");
+        return RTParser.parseLinks(buildUrl(URL_DVD_LIST), LINKS);
     }
 
     public HashSet<Movie> openingMovies() {

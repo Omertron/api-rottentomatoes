@@ -13,6 +13,9 @@
 package com.moviejukebox.rottentomatoes.tools;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -54,6 +57,9 @@ public class RTParser {
     private final static String QUOTE = "quote";
     private final static String REVIEWS = "reviews";
     
+    // Hide the constructor
+    private RTParser() {};
+
     /**
      * Get multiple movies and process them
      * @param searchUrl
@@ -66,11 +72,19 @@ public class RTParser {
         try {
             String response = WebBrowser.request(searchUrl);
             movieObject = new JSONObject(response);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException error) {
+            logger.severe("RottenTomatoesAPI (getMovies): " + error.getMessage());
+            final Writer eResult = new StringWriter();
+            final PrintWriter printWriter = new PrintWriter(eResult);
+            error.printStackTrace(printWriter);
+            logger.severe(eResult.toString());
             return movies;
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } catch (JSONException error) {
+            logger.severe("RottenTomatoesAPI (getMovies): " + error.getMessage());
+            final Writer eResult = new StringWriter();
+            final PrintWriter printWriter = new PrintWriter(eResult);
+            error.printStackTrace(printWriter);
+            logger.severe(eResult.toString());
             return movies;
         }
 
@@ -107,10 +121,10 @@ public class RTParser {
             movie = parseMovie(movieObject);
             
             return movie;
-        } catch (IOException e) {
-            throw new RuntimeException("RottenTomatoesAPI: Incorrect Movie ID - " + e.getMessage());
-        } catch (JSONException e) {
-            throw new RuntimeException("RottenTomatoesAPI: Incorrect Movie ID - " + e.getMessage());
+        } catch (IOException error) {
+            throw new RuntimeException("RottenTomatoesAPI: Incorrect Movie ID - " + error.getMessage(), error);
+        } catch (JSONException error) {
+            throw new RuntimeException("RottenTomatoesAPI: Incorrect Movie ID - " + error.getMessage(), error);
         }
 }
 
@@ -123,10 +137,18 @@ public class RTParser {
             castObject = new JSONObject(response);
             castList = parseCast(castObject, CAST_FULL);    
             return castList;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } catch (IOException error) {
+            logger.severe("RottenTomatoesAPI (CastList): " + error.getMessage());
+            final Writer eResult = new StringWriter();
+            final PrintWriter printWriter = new PrintWriter(eResult);
+            error.printStackTrace(printWriter);
+            logger.severe(eResult.toString());
+        } catch (JSONException error) {
+            logger.severe("RottenTomatoesAPI (CastList): " + error.getMessage());
+            final Writer eResult = new StringWriter();
+            final PrintWriter printWriter = new PrintWriter(eResult);
+            error.printStackTrace(printWriter);
+            logger.severe(eResult.toString());
         }
         
         return castList;
@@ -158,8 +180,8 @@ public class RTParser {
                 
                 response.add(cast);
             }
-        } catch (JSONException e) {
-            throw new RuntimeException("RottenTomatoesAPI: Error parsing cast - " + e.getMessage());
+        } catch (JSONException error) {
+            throw new RuntimeException("RottenTomatoesAPI: Error parsing cast - " + error.getMessage(), error);
         }
         
         return response;
@@ -254,10 +276,10 @@ public class RTParser {
         try {
             objMaster = new JSONObject(WebBrowser.request(linkSearchUrl));
             response = RTParser.parseGenericLinks(objMaster, linkType);
-        } catch (JSONException e) {
-            throw new RuntimeException("RottenTomatoesAPI: Error parsing links - " + e.getMessage());
-        } catch (IOException e) {
-            throw new RuntimeException("RottenTomatoesAPI: Error parsing links - " + e.getMessage());
+        } catch (JSONException error) {
+            throw new RuntimeException("RottenTomatoesAPI: Error parsing links - " + error.getMessage(), error);
+        } catch (IOException error) {
+            throw new RuntimeException("RottenTomatoesAPI: Error parsing links - " + error.getMessage(), error);
         }
         
         return response;
@@ -405,10 +427,10 @@ public class RTParser {
             }
             
             return reviewList;
-        } catch (IOException e) {
-            throw new RuntimeException("RottenTomatoesAPI: Error getting reviews - " + e.getMessage());
-        } catch (JSONException e) {
-            throw new RuntimeException("RottenTomatoesAPI: Error getting reviews - " + e.getMessage());
+        } catch (IOException error) {
+            throw new RuntimeException("RottenTomatoesAPI: Error getting reviews - " + error.getMessage(), error);
+        } catch (JSONException error) {
+            throw new RuntimeException("RottenTomatoesAPI: Error getting reviews - " + error.getMessage(), error);
         }
     }
     

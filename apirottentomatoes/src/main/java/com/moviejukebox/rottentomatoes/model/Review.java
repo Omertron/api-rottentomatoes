@@ -13,15 +13,16 @@
 package com.moviejukebox.rottentomatoes.model;
 
 import java.util.HashSet;
+import java.util.Set;
 
 public class Review {
     public static enum ReviewType {all, top_critic, dvd};
     
-    private String          critic      = "";
-    private String          reviewDate  = "";
-    private String          publication = "";
-    private String          quote       = "";
-    private HashSet<Link>   links       = new HashSet<Link>();
+    private String      critic      = "";
+    private String      reviewDate  = "";
+    private String      publication = "";
+    private String      quote       = "";
+    private Set<Link>   links       = new HashSet<Link>();
 
     public String getCritic() {
         return critic;
@@ -55,11 +56,11 @@ public class Review {
         this.quote = quote;
     }
     
-    public HashSet<Link> getLinks() {
+    public Set<Link> getLinks() {
         return links;
     }
     
-    public void setLinks(HashSet<Link> links) {
+    public void setLinks(Set<Link> links) {
         this.links = links;
     }
     

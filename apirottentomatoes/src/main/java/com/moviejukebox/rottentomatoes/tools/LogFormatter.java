@@ -17,8 +17,8 @@ import java.util.logging.LogRecord;
 
 public class LogFormatter extends java.util.logging.Formatter 
 {
-    private static String API_KEY = null;
-    private static String EOL = (String)java.security.AccessController.doPrivileged(new PrivilegedAction<Object>() {
+    private static String apiKey = null;
+    private static final String EOL = (String)java.security.AccessController.doPrivileged(new PrivilegedAction<Object>() {
         public Object run() {
             return System.getProperty("line.separator");
         }
@@ -27,7 +27,7 @@ public class LogFormatter extends java.util.logging.Formatter
     public synchronized String format(LogRecord logRecord) {
         String logMessage = logRecord.getMessage();
 
-        logMessage = "[RottenTomatoes API] " + logMessage.replace(API_KEY, "[APIKEY]") + EOL;
+        logMessage = "[RottenTomatoes API] " + logMessage.replace(apiKey, "[APIKEY]") + EOL;
         
         Throwable thrown = logRecord.getThrown();
         if (thrown != null) { 
@@ -37,7 +37,7 @@ public class LogFormatter extends java.util.logging.Formatter
     }
     
     public void addApiKey(String apiKey) {
-        API_KEY = apiKey; 
+        LogFormatter.apiKey = apiKey; 
         return;
     }
 }

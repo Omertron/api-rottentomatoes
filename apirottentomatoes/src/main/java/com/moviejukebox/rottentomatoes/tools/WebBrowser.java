@@ -47,6 +47,9 @@ public final class WebBrowser {
         cookies = new HashMap<String, Map<String, String>>();
     }
     
+    // Hide the constructor
+    private WebBrowser() {};
+    
     public static String request(String url) throws IOException {
         return request(new URL(url));
     }

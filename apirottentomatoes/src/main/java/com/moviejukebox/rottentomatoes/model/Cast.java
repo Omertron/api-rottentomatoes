@@ -13,17 +13,18 @@
 package com.moviejukebox.rottentomatoes.model;
 
 import java.util.HashSet;
+import java.util.Set;
 
 public class Cast {
     private String castName;
-    private HashSet<String> characters;
+    private Set<String> characters;
     
     public Cast() {
         this.castName = "";
         this.characters = new HashSet<String>();
     }
 
-    public Cast(String castName, HashSet<String> characters) {
+    public Cast(String castName, Set<String> characters) {
         this.castName = castName;
         this.characters = characters;
     }
@@ -36,11 +37,11 @@ public class Cast {
         this.castName = castName;
     }
 
-    public HashSet<String> getCharacters() {
+    public Set<String> getCharacters() {
         return characters;
     }
 
-    public void setCharacters(HashSet<String> characters) {
+    public void setCharacters(Set<String> characters) {
         this.characters = characters;
     }
     
