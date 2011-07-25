@@ -48,7 +48,10 @@ public final class WebBrowser {
     }
     
     // Hide the constructor
-    private WebBrowser() {};
+    protected WebBrowser() {
+        // prevents calls from subclass
+        throw new UnsupportedOperationException();
+    }
     
     public static String request(String url) throws IOException {
         return request(new URL(url));
