@@ -1,9 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.moviejukebox</groupId>
 	<artifactId>apirottentomatoes</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 	<name>RottenTomatoes API</name>
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
@@ -25,9 +24,9 @@
 		<url>http://jenkins.omertron.com/job/API-RottenTomatoes/</url>
 	</ciManagement>
 	<scm>
-		<connection>scm:svn:https://apirottentomatoes.googlecode.com/svn/trunk/apirottentomatoes</connection>
-		<developerConnection>scm:svn:https://apirottentomatoes.googlecode.com/svn/trunk/apirottentomatoes</developerConnection>
-		<url>http://code.google.com/p/apirottentomatoes/source/browse/#svn/trunk/apirottentomatoes</url>
+		<connection>scm:svn:https://apirottentomatoes.googlecode.com/svn/tags/apirottentomatoes-1.0</connection>
+		<developerConnection>scm:svn:https://apirottentomatoes.googlecode.com/svn/tags/apirottentomatoes-1.0</developerConnection>
+		<url>http://code.google.com/p/apirottentomatoes/source/browse/#svn/tags/apirottentomatoes-1.0</url>
 	</scm>
 	<build>
 		<pluginManagement>
@@ -97,15 +96,11 @@
 							<phase>generate-resources</phase>
 							<configuration>
 								<target>
-									<property name="version_file"
-										value="${project.build.directory}/version.txt" />
+									<property name="version_file" value="${project.build.directory}/version.txt" />
 									<property name="header_line" value="Rotten Tomatoes API${line.separator}" />
-									<property name="build_date_line"
-										value="Build Date: ${timestamp}${line.separator}" />
-									<property name="version_line"
-										value="Version: ${project.version}${line.separator}" />
-									<property name="revision_line"
-										value="Revision: r${buildNumber}${line.separator}" />
+									<property name="build_date_line" value="Build Date: ${timestamp}${line.separator}" />
+									<property name="version_line" value="Version: ${project.version}${line.separator}" />
+									<property name="revision_line" value="Revision: r${buildNumber}${line.separator}" />
 									<echo>Writing version file: ${version_file}</echo>
 									<echo file="${version_file}" append="false">${header_line}</echo>
 									<echo file="${version_file}" append="true">${build_date_line}</echo>
