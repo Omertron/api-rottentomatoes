@@ -10,7 +10,7 @@
 		<version>6</version>
 	</parent>
 	<properties>
-		<skipTests>false</skipTests>
+		<skipTests>true</skipTests>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<distribution.format>zip</distribution.format>

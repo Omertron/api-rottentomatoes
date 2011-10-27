@@ -29,7 +29,7 @@ public class RottenTomatoesTest extends TestCase {
 
     @Before
     public void setUp() throws Exception {
-        rt = new RottenTomatoes("rnt8xak564a8sxkts5xkqj5z");
+        rt = new RottenTomatoes("");
     }
 
     @Test
