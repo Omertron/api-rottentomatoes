@@ -3,7 +3,7 @@
 	<groupId>com.moviejukebox</groupId>
 	<artifactId>apirottentomatoes</artifactId>
 	<version>1.1-SNAPSHOT</version>
-	<name>RottenTomatoes API</name>
+	<name>API-RottenTomatoes</name>
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
 		<artifactId>oss-parent</artifactId>
