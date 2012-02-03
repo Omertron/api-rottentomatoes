@@ -34,7 +34,7 @@ import org.apache.commons.codec.binary.Base64;
 public final class WebBrowser {
 
     private static Map<String, String> browserProperties = new HashMap<String, String>();
-    private static Map<String, Map<String, String>> cookies;
+    private static Map<String, Map<String, String>> cookies = new HashMap<String, Map<String, String>>();
     private static String proxyHost = null;
     private static String proxyPort = null;
     private static String proxyUsername = null;
@@ -43,15 +43,19 @@ public final class WebBrowser {
     private static int webTimeoutConnect = 25000;   // 25 second timeout
     private static int webTimeoutRead = 90000;      // 90 second timeout
 
-    static {
-        browserProperties.put("User-Agent", "Mozilla/5.25 Netscape/5.0 (Windows; I; Win95)");
-        cookies = new HashMap<String, Map<String, String>>();
-    }
-
     // Hide the constructor
     protected WebBrowser() {
         // prevents calls from subclass
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Populate the browser properties
+     */
+    private static void populateBrowserProperties() {
+        if (browserProperties.isEmpty()) {
+            browserProperties.put("User-Agent", "Mozilla/5.25 Netscape/5.0 (Windows; I; Win95)");
+        }
     }
 
     public static String request(String url) throws IOException {
@@ -110,6 +114,8 @@ public final class WebBrowser {
     }
 
     private static void sendHeader(URLConnection cnx) {
+        populateBrowserProperties();
+
         // send browser properties
         for (Map.Entry<String, String> browserProperty : browserProperties.entrySet()) {
             cnx.setRequestProperty(browserProperty.getKey(), browserProperty.getValue());

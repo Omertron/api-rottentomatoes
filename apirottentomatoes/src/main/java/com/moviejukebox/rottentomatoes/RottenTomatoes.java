@@ -62,7 +62,7 @@ public class RottenTomatoes {
 
     public RottenTomatoes(String apiKey) {
         if (isNotValidString(apiKey)) {
-            throw new UnsupportedOperationException("RottenTomatoesAPI: No API Key provided!");
+            throw new UnsupportedOperationException("No API Key provided!");
         }
         this.apiKey = apiKey;
 
