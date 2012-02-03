@@ -1,33 +1,31 @@
 /*
  *      Copyright (c) 2004-2012 YAMJ Members
- *      http://code.google.com/p/moviejukebox/people/list 
- *  
+ *      http://code.google.com/p/moviejukebox/people/list
+ *
  *      Web: http://code.google.com/p/moviejukebox/
- *  
+ *
  *      This software is licensed under a Creative Commons License
  *      See this page: http://code.google.com/p/moviejukebox/wiki/License
- *  
- *      For any reuse or distribution, you must make clear to others the 
- *      license terms of this work.  
+ *
+ *      For any reuse or distribution, you must make clear to others the
+ *      license terms of this work.
  */
 package com.moviejukebox.rottentomatoes;
-
-import java.util.Set;
-
-import junit.framework.TestCase;
-
-import org.junit.Before;
-import org.junit.Test;
 
 import com.moviejukebox.rottentomatoes.model.Cast;
 import com.moviejukebox.rottentomatoes.model.Link;
 import com.moviejukebox.rottentomatoes.model.Movie;
 import com.moviejukebox.rottentomatoes.model.Review;
+import java.util.Set;
+import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 public class RottenTomatoesTest extends TestCase {
     public RottenTomatoes rt;
 
     @Before
+    @Override
     public void setUp() throws Exception {
         rt = new RottenTomatoes("");
     }
@@ -37,7 +35,7 @@ public class RottenTomatoesTest extends TestCase {
         Set<Link> response = rt.getLists();
         assertEquals(2, response.size());
     }
-    
+
     @Test
     public void testMoviesSearch() {
         Set<Movie> response = rt.moviesSearch("Blade Runner");
@@ -49,13 +47,13 @@ public class RottenTomatoesTest extends TestCase {
         Set<Link> response = rt.listsDirectory();
         assertEquals(2, response.size());
     }
-    
+
     @Test
     public void testMovieListsDirectory() {
         Set<Link> response = rt.movieListsDirectory();
         assertEquals(4, response.size());
     }
-    
+
     @Test
     public void testDvdListsDirectory() {
         Set<Link> response = rt.dvdListsDirectory();
@@ -88,7 +86,7 @@ public class RottenTomatoesTest extends TestCase {
         Movie movie = rt.movieInfo(12886);
         assertEquals("Blade Runner", movie.getTitle());
     }
-    
+
     @Test
     public void testMovieCast() {
         Set<Cast> castList = rt.movieCast(12886);
@@ -100,5 +98,5 @@ public class RottenTomatoesTest extends TestCase {
         Set<Review> reviewList = rt.movieReviews(12886, Review.ReviewType.all);
         assertTrue(reviewList.size() > 0);
     }
-    
+
 }
