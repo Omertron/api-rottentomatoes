@@ -17,10 +17,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.text.ParseException;
+import java.util.*;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -63,7 +61,7 @@ public class RTParser {
      * @param searchUrl
      * @return
      */
-    public static Set<Movie> getMovies(String searchUrl) {
+    public static Set<Movie> getMovies(String searchUrl) throws ParseException {
         JSONObject movieObject;
         Set<Movie> movies = new HashSet<Movie>();
 
@@ -99,7 +97,7 @@ public class RTParser {
                 return movies;
             }
         } catch (JSONException error) {
-            throw new RuntimeException("RottenTomatoesAPI: Error getting list of movies - " + error.getMessage(), error);
+            throw new ParseException("RottenTomatoesAPI: Error getting list of movies - " + error.getMessage(), 0);
         }
     }
 
@@ -120,9 +118,9 @@ public class RTParser {
 
             return movie;
         } catch (IOException error) {
-            throw new RuntimeException("RottenTomatoesAPI: Incorrect Movie ID - " + error.getMessage(), error);
+            throw new IllegalArgumentException("RottenTomatoesAPI: Invalid Movie ID - " + error.getMessage(), error);
         } catch (JSONException error) {
-            throw new RuntimeException("RottenTomatoesAPI: Incorrect Movie ID - " + error.getMessage(), error);
+            throw new IllegalArgumentException("RottenTomatoesAPI: Invalid Movie ID - " + error.getMessage(), error);
         }
 }
 
@@ -147,6 +145,12 @@ public class RTParser {
             final PrintWriter printWriter = new PrintWriter(eResult);
             error.printStackTrace(printWriter);
             logger.warn(eResult.toString());
+        } catch (ParseException error) {
+            logger.warn("RottenTomatoesAPI (CastList): " + error.getMessage());
+            final Writer eResult = new StringWriter();
+            final PrintWriter printWriter = new PrintWriter(eResult);
+            error.printStackTrace(printWriter);
+            logger.warn(eResult.toString());
         }
 
         return castList;
@@ -157,7 +161,7 @@ public class RTParser {
      * @param jMovie
      * @return
      */
-    private static Set<Cast> parseCast(JSONObject jMovie, String castType) {
+    private static Set<Cast> parseCast(JSONObject jMovie, String castType) throws ParseException {
         Set<Cast> response = new HashSet<Cast>();
 
         try {
@@ -179,7 +183,7 @@ public class RTParser {
                 response.add(cast);
             }
         } catch (JSONException error) {
-            throw new RuntimeException("RottenTomatoesAPI: Error parsing cast - " + error.getMessage(), error);
+            throw new ParseException("RottenTomatoesAPI: Error parsing cast - " + error.getMessage(), 0);
         }
 
         return response;
@@ -267,7 +271,7 @@ public class RTParser {
      * @param linkType
      * @return
      */
-    public static Set<Link> parseLinks(String linkSearchUrl, String linkType) {
+    public static Set<Link> parseLinks(String linkSearchUrl, String linkType) throws ParseException {
         JSONObject objMaster;
         Set<Link> response;
 
@@ -275,9 +279,9 @@ public class RTParser {
             objMaster = new JSONObject(WebBrowser.request(linkSearchUrl));
             response = RTParser.parseGenericLinks(objMaster, linkType);
         } catch (JSONException error) {
-            throw new RuntimeException("RottenTomatoesAPI: Error parsing links - " + error.getMessage(), error);
+            throw new ParseException("RottenTomatoesAPI: Error parsing links - " + error.getMessage(), 0);
         } catch (IOException error) {
-            throw new RuntimeException("RottenTomatoesAPI: Error parsing links - " + error.getMessage(), error);
+            throw new ParseException("RottenTomatoesAPI: Error parsing links - " + error.getMessage(), 0);
         }
 
         return response;
@@ -301,7 +305,11 @@ public class RTParser {
         movie.setRatings(parseRatings(jMovie));
         movie.setSynopsis(readString(jMovie, SYNOPSIS));
         movie.setArtwork(parseGenericLinks(jMovie, POSTERS));
-        movie.setCast(parseCast(jMovie, CAST_ABRIDGED));
+        try {
+            movie.setCast(parseCast(jMovie, CAST_ABRIDGED));
+        } catch (ParseException ex) {
+            movie.setCast(new HashSet<Cast>());
+        }
         movie.setDirectors(parseDirectors(jMovie, DIRECTORS_ABDRIDGED));
         movie.setLinks(parseGenericLinks(jMovie, LINKS));
         return movie;
@@ -313,7 +321,7 @@ public class RTParser {
      * @param jMovie
      * @return
      */
-    private static HashMap<String, Integer> parseRatings(JSONObject jMovie) {
+    private static Map<String, Integer> parseRatings(JSONObject jMovie) {
         HashMap<String, Integer> response = new HashMap<String, Integer>();
 
         JSONObject jObject;
@@ -408,7 +416,7 @@ public class RTParser {
         return response;
     }
 
-    public static Set<Review> getReviews(String searchUrl) {
+    public static Set<Review> getReviews(String searchUrl) throws ParseException {
         JSONObject reviewListObject;
         Set<Review> reviewList = new HashSet<Review>();
 
@@ -423,9 +431,9 @@ public class RTParser {
 
             return reviewList;
         } catch (IOException error) {
-            throw new RuntimeException("RottenTomatoesAPI: Error getting reviews - " + error.getMessage(), error);
+            throw new ParseException("RottenTomatoesAPI: Error getting reviews - " + error.getMessage(), 0);
         } catch (JSONException error) {
-            throw new RuntimeException("RottenTomatoesAPI: Error getting reviews - " + error.getMessage(), error);
+            throw new ParseException("RottenTomatoesAPI: Error getting reviews - " + error.getMessage(), 0);
         }
     }
 
