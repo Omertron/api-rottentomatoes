@@ -210,32 +210,32 @@ public final class WebBrowser {
         return proxyHost;
     }
 
-    public static void setProxyHost(String tvdbProxyHost) {
-        WebBrowser.proxyHost = tvdbProxyHost;
+    public static void setProxyHost(String myProxyHost) {
+        WebBrowser.proxyHost = myProxyHost;
     }
 
     public static String getProxyPort() {
         return proxyPort;
     }
 
-    public static void setProxyPort(String tvdbProxyPort) {
-        WebBrowser.proxyPort = tvdbProxyPort;
+    public static void setProxyPort(String myProxyPort) {
+        WebBrowser.proxyPort = myProxyPort;
     }
 
     public static String getProxyUsername() {
         return proxyUsername;
     }
 
-    public static void setProxyUsername(String tvdbProxyUsername) {
-        WebBrowser.proxyUsername = tvdbProxyUsername;
+    public static void setProxyUsername(String myProxyUsername) {
+        WebBrowser.proxyUsername = myProxyUsername;
     }
 
     public static String getProxyPassword() {
         return proxyPassword;
     }
 
-    public static void setProxyPassword(String tvdbProxyPassword) {
-        WebBrowser.proxyPassword = tvdbProxyPassword;
+    public static void setProxyPassword(String myProxyPassword) {
+        WebBrowser.proxyPassword = myProxyPassword;
 
         if (proxyUsername != null) {
             proxyEncodedPassword = proxyUsername + ":" + proxyPassword;
