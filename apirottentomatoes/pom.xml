@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.moviejukebox</groupId>
     <artifactId>apirottentomatoes</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1</version>
     <name>API-RottenTomatoes</name>
     <parent>
         <groupId>org.sonatype.oss</groupId>
@@ -25,9 +25,9 @@
         <url>http://jenkins.omertron.com/job/API-RottenTomatoes/</url>
     </ciManagement>
     <scm>
-        <connection>scm:svn:https://apirottentomatoes.googlecode.com/svn/trunk/apirottentomatoes</connection>
-        <developerConnection>scm:svn:https://apirottentomatoes.googlecode.com/svn/trunk/apirottentomatoes</developerConnection>
-        <url>http://code.google.com/p/apirottentomatoes/source/browse/#svn/trunk/apirottentomatoes</url>
+        <connection>scm:svn:https://apirottentomatoes.googlecode.com/svn/tags/apirottentomatoes-1.1</connection>
+        <developerConnection>scm:svn:https://apirottentomatoes.googlecode.com/svn/tags/apirottentomatoes-1.1</developerConnection>
+        <url>http://code.google.com/p/apirottentomatoes/source/browse/#svn/tags/apirottentomatoes-1.1</url>
     </scm>
     <build>
         <pluginManagement>
