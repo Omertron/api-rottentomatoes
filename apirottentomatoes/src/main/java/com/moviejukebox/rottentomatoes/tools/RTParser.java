@@ -25,8 +25,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class RTParser {
-    private static Logger logger = Logger.getLogger(RTParser.class);
 
+    private static final Logger LOGGER = Logger.getLogger(RTParser.class);
     private static final String CAST_ABRIDGED = "abridged_cast";
     private static final String CAST_FULL = "cast";
     private static final String CHARACTERS = "characters";
@@ -58,6 +58,7 @@ public class RTParser {
 
     /**
      * Get multiple movies and process them
+     *
      * @param searchUrl
      * @return
      */
@@ -69,18 +70,18 @@ public class RTParser {
             String response = WebBrowser.request(searchUrl);
             movieObject = new JSONObject(response);
         } catch (IOException error) {
-            logger.warn("RottenTomatoesAPI (getMovies): " + error.getMessage());
+            LOGGER.warn("RottenTomatoesAPI (getMovies): " + error.getMessage());
             final Writer eResult = new StringWriter();
             final PrintWriter printWriter = new PrintWriter(eResult);
             error.printStackTrace(printWriter);
-            logger.warn(eResult.toString());
+            LOGGER.warn(eResult.toString());
             return movies;
         } catch (JSONException error) {
-            logger.warn("RottenTomatoesAPI (getMovies): " + error.getMessage());
+            LOGGER.warn("RottenTomatoesAPI (getMovies): " + error.getMessage());
             final Writer eResult = new StringWriter();
             final PrintWriter printWriter = new PrintWriter(eResult);
             error.printStackTrace(printWriter);
-            logger.warn(eResult.toString());
+            LOGGER.warn(eResult.toString());
             return movies;
         }
 
@@ -88,7 +89,7 @@ public class RTParser {
             if (movieObject.length() > 0) {
                 JSONArray jsonMovies = movieObject.getJSONArray(MOVIES);
 
-                for (int loop = 0 ; loop < jsonMovies.length() ; loop++) {
+                for (int loop = 0; loop < jsonMovies.length(); loop++) {
                     movies.add(parseMovie(jsonMovies.getJSONObject(loop)));
                 }
 
@@ -103,6 +104,7 @@ public class RTParser {
 
     /**
      * Process a single movie
+     *
      * @param searchUrl
      * @return
      */
@@ -122,7 +124,7 @@ public class RTParser {
         } catch (JSONException error) {
             throw new IllegalArgumentException("RottenTomatoesAPI: Invalid Movie ID - " + error.getMessage(), error);
         }
-}
+    }
 
     public static Set<Cast> getCastList(String searchUrl) {
         JSONObject castObject;
@@ -134,23 +136,23 @@ public class RTParser {
             castList = parseCast(castObject, CAST_FULL);
             return castList;
         } catch (IOException error) {
-            logger.warn("RottenTomatoesAPI (CastList): " + error.getMessage());
+            LOGGER.warn("RottenTomatoesAPI (CastList): " + error.getMessage());
             final Writer eResult = new StringWriter();
             final PrintWriter printWriter = new PrintWriter(eResult);
             error.printStackTrace(printWriter);
-            logger.warn(eResult.toString());
+            LOGGER.warn(eResult.toString());
         } catch (JSONException error) {
-            logger.warn("RottenTomatoesAPI (CastList): " + error.getMessage());
+            LOGGER.warn("RottenTomatoesAPI (CastList): " + error.getMessage());
             final Writer eResult = new StringWriter();
             final PrintWriter printWriter = new PrintWriter(eResult);
             error.printStackTrace(printWriter);
-            logger.warn(eResult.toString());
+            LOGGER.warn(eResult.toString());
         } catch (ParseException error) {
-            logger.warn("RottenTomatoesAPI (CastList): " + error.getMessage());
+            LOGGER.warn("RottenTomatoesAPI (CastList): " + error.getMessage());
             final Writer eResult = new StringWriter();
             final PrintWriter printWriter = new PrintWriter(eResult);
             error.printStackTrace(printWriter);
-            logger.warn(eResult.toString());
+            LOGGER.warn(eResult.toString());
         }
 
         return castList;
@@ -158,6 +160,7 @@ public class RTParser {
 
     /**
      * Parse the movie JSON object for Cast information
+     *
      * @param jMovie
      * @return
      */
@@ -167,16 +170,21 @@ public class RTParser {
         try {
             JSONArray jsonCast = jMovie.getJSONArray(castType);
 
-            for (int loop = 0 ; loop < jsonCast.length() ; ++loop) {
+            for (int loop = 0; loop < jsonCast.length(); ++loop) {
                 JSONObject jCast = jsonCast.getJSONObject(loop);
                 Cast cast = new Cast();
                 cast.setCastName(readString(jCast, NAME));
 
                 // Sometimes the cast member doesn't have a character name.
                 if (jCast.length() > 1) {
-                    JSONArray charList = jCast.getJSONArray(CHARACTERS);
-                    for (int loop2 = 0; loop2 < charList.length(); loop2++) {
-                        cast.addCharacter(charList.getString(loop2));
+                    try {
+                        JSONArray charList = jCast.getJSONArray(CHARACTERS);
+                        for (int charLoop = 0; charLoop < charList.length(); charLoop++) {
+                            cast.addCharacter(charList.getString(charLoop));
+                        }
+                    } catch (JSONException ignore) {
+                        // Sometimes there is no "value for characters" error
+                        // We don't need to worry about this
                     }
                 }
 
@@ -191,6 +199,7 @@ public class RTParser {
 
     /**
      * Parse the movie JSON object for the director names
+     *
      * @param jMovie
      * @param directorsAbdridged
      * @return
@@ -201,7 +210,7 @@ public class RTParser {
         JSONArray jsonCast;
         try {
             jsonCast = jMovie.getJSONArray(directorType);
-            for (int loop = 0 ; loop < jsonCast.length() ; ++loop) {
+            for (int loop = 0; loop < jsonCast.length(); ++loop) {
                 JSONObject jCast = jsonCast.getJSONObject(loop);
                 response.add(readString(jCast, NAME));
             }
@@ -215,6 +224,7 @@ public class RTParser {
 
     /**
      * Parse the movie JSON object for a link object
+     *
      * @param jMovie
      * @param linkType
      * @return
@@ -226,7 +236,7 @@ public class RTParser {
         try {
             jObject = jMovie.getJSONObject(linkType);
         } catch (JSONException e) {
-            logger.debug("No " + linkType + " in the object");
+            LOGGER.debug("No " + linkType + " in the object");
             return null;
         }
 
@@ -234,7 +244,7 @@ public class RTParser {
         Iterator<String> linkList = jObject.keys();
 
         while (linkList.hasNext()) {
-            String type = (String)linkList.next();
+            String type = (String) linkList.next();
 
             Link link = new Link();
             link.setLinkType(type);
@@ -263,10 +273,11 @@ public class RTParser {
         }
 
         return response;
-}
+    }
 
     /**
      * Retrieve the link list from the URL
+     *
      * @param linkSearchUrl
      * @param linkType
      * @return
@@ -289,6 +300,7 @@ public class RTParser {
 
     /**
      * Parse a JSON object for all the movie information
+     *
      * @param jMovie
      * @return
      */
@@ -316,8 +328,9 @@ public class RTParser {
     }
 
     /**
-     * Parse the movie JSON object for the ratings.
-     * The whole object is passed in so we can trap the JSON Exceptions
+     * Parse the movie JSON object for the ratings. The whole object is passed
+     * in so we can trap the JSON Exceptions
+     *
      * @param jMovie
      * @return
      */
@@ -328,7 +341,7 @@ public class RTParser {
         try {
             jObject = jMovie.getJSONObject(RATINGS);
         } catch (JSONException e) {
-            logger.debug("No ratings for the movie");
+            LOGGER.debug("No ratings for the movie");
             return null;
         }
 
@@ -338,8 +351,8 @@ public class RTParser {
         String type;
         int score;
         while (ratingList.hasNext()) {
-            type = (String)ratingList.next();
-            score =  readInt(jObject, type);
+            type = (String) ratingList.next();
+            score = readInt(jObject, type);
             response.put(type, score);
         }
 
@@ -347,8 +360,9 @@ public class RTParser {
     }
 
     /**
-     * Parse the movie JSON object for the release dates.
-     * The whole object is passed in so we can trap the JSON Exceptions
+     * Parse the movie JSON object for the release dates. The whole object is
+     * passed in so we can trap the JSON Exceptions
+     *
      * @param jMovie
      * @return
      */
@@ -359,7 +373,7 @@ public class RTParser {
         try {
             jObject = jMovie.getJSONObject(RELEASE_DATES);
         } catch (JSONException e) {
-            logger.debug("No release dates for the movie");
+            LOGGER.debug("No release dates for the movie");
             return null;
         }
 
@@ -367,7 +381,7 @@ public class RTParser {
         Iterator<String> releaseDateList = jObject.keys();
 
         while (releaseDateList.hasNext()) {
-            String type = (String)releaseDateList.next();
+            String type = (String) releaseDateList.next();
 
             ReleaseDate rd = new ReleaseDate();
             rd.setReleaseType(type);
@@ -381,6 +395,7 @@ public class RTParser {
 
     /**
      * Get an integer from a JSON Object
+     *
      * @param jObject
      * @param item
      * @return
@@ -396,6 +411,7 @@ public class RTParser {
 
     /**
      * Get a string from a JSON object
+     *
      * @param jObject
      * @param item
      * @return
@@ -439,6 +455,7 @@ public class RTParser {
 
     /**
      * Parse an individual review
+     *
      * @param jReview
      * @return
      */
@@ -453,5 +470,4 @@ public class RTParser {
 
         return review;
     }
-
 }

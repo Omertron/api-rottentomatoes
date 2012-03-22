@@ -39,7 +39,7 @@ public class RottenTomatoes {
 
     private String apiKey;
     private static final String API_SITE = "http://api.rottentomatoes.com/api/public/v1.0";
-    private static Logger logger = Logger.getLogger(RottenTomatoes.class);
+    private static final Logger LOGGER = Logger.getLogger(RottenTomatoes.class);
     private static final String URL_LISTS = ".json?apiKey=";
     private static final String URL_MOVIE_SEARCH = "/movies.json?apikey=";
     private static final String URL_LIST_DIR = "/lists.json?apikey=";
@@ -98,7 +98,7 @@ public class RottenTomatoes {
             url.append(RESULTS_DEFAULT);
         }
 
-        logger.debug("URL: " + url.toString());
+        LOGGER.debug("URL: " + url.toString());
         return url.toString();
     }
 
@@ -111,7 +111,7 @@ public class RottenTomatoes {
         try {
             return RTParser.parseLinks(buildUrl(URL_LISTS), LINKS);
         } catch (ParseException ex) {
-            logger.warn("Failed to get lists.");
+            LOGGER.warn("Failed to get lists.");
             return new HashSet<Link>();
         }
     }
@@ -127,7 +127,7 @@ public class RottenTomatoes {
         try {
             return RTParser.getMovies(buildUrl(URL_MOVIE_SEARCH, PREFIX_MOVIE, movieName, true));
         } catch (ParseException ex) {
-            logger.warn("Failed to find movie " + movieName);
+            LOGGER.warn("Failed to find movie " + movieName);
             return new HashSet<Movie>();
         }
     }
@@ -136,7 +136,7 @@ public class RottenTomatoes {
         try {
             return RTParser.parseLinks(buildUrl(URL_LIST_DIR), LINKS);
         } catch (ParseException ex) {
-            logger.warn("Failed to get directory list");
+            LOGGER.warn("Failed to get directory list");
             return new HashSet<Link>();
         }
     }
@@ -145,7 +145,7 @@ public class RottenTomatoes {
         try {
             return RTParser.parseLinks(buildUrl(URL_MOVIE_LISTS), LINKS);
         } catch (ParseException ex) {
-            logger.warn("Failed to get movie directory list");
+            LOGGER.warn("Failed to get movie directory list");
             return new HashSet<Link>();
         }
     }
@@ -154,7 +154,7 @@ public class RottenTomatoes {
         try {
             return RTParser.parseLinks(buildUrl(URL_DVD_LIST), LINKS);
         } catch (ParseException ex) {
-            logger.warn("Failed to get DVD directory list");
+            LOGGER.warn("Failed to get DVD directory list");
             return new HashSet<Link>();
         }
     }
@@ -176,7 +176,7 @@ public class RottenTomatoes {
         try {
             return RTParser.getMovies(url);
         } catch (ParseException ex) {
-            logger.warn("Failed to get opening movies");
+            LOGGER.warn("Failed to get opening movies");
             return new HashSet<Movie>();
         }
     }
@@ -194,7 +194,7 @@ public class RottenTomatoes {
         try {
             return RTParser.getMovies(url);
         } catch (ParseException ex) {
-            logger.warn("Failed to get upcoming movies");
+            LOGGER.warn("Failed to get upcoming movies");
             return new HashSet<Movie>();
         }
     }
@@ -211,7 +211,7 @@ public class RottenTomatoes {
         try {
             return RTParser.getMovies(url);
         } catch (ParseException ex) {
-            logger.warn("Failed to get new release DVDs");
+            LOGGER.warn("Failed to get new release DVDs");
             return new HashSet<Movie>();
         }
     }
@@ -241,7 +241,7 @@ public class RottenTomatoes {
         try {
             return RTParser.getReviews(searchUrl);
         } catch (ParseException ex) {
-            logger.warn("Failed to get movie reviews for " + movieId);
+            LOGGER.warn("Failed to get movie reviews for " + movieId);
             return new HashSet<Review>();
         }
     }
