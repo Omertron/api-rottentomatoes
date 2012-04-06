@@ -12,21 +12,24 @@
  */
 package com.moviejukebox.rottentomatoes;
 
+import com.moviejukebox.rottentomatoes.RottenTomatoesException.RottenTomatoesExceptionType;
 import com.moviejukebox.rottentomatoes.model.Cast;
-import com.moviejukebox.rottentomatoes.model.Link;
-import com.moviejukebox.rottentomatoes.model.Movie;
+import com.moviejukebox.rottentomatoes.model.Clip;
+import com.moviejukebox.rottentomatoes.model.RTMovie;
 import com.moviejukebox.rottentomatoes.model.Review;
-import com.moviejukebox.rottentomatoes.model.Review.ReviewType;
+import com.moviejukebox.rottentomatoes.tools.ApiBuilder;
 import com.moviejukebox.rottentomatoes.tools.FilteringLayout;
-import com.moviejukebox.rottentomatoes.tools.RTParser;
 import com.moviejukebox.rottentomatoes.tools.WebBrowser;
+import com.moviejukebox.rottentomatoes.wrapper.WrapperLists;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.ParseException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * Connect to the Rotten Tomatoes web site and get the rating for a specific
@@ -37,213 +40,62 @@ import org.apache.log4j.Logger;
  */
 public class RottenTomatoes {
 
-    private String apiKey;
-    private static final String API_SITE = "http://api.rottentomatoes.com/api/public/v1.0";
+    // Logger
     private static final Logger LOGGER = Logger.getLogger(RottenTomatoes.class);
-    private static final String URL_LISTS = ".json?apiKey=";
-    private static final String URL_MOVIE_SEARCH = "/movies.json?apikey=";
-    private static final String URL_LIST_DIR = "/lists.json?apikey=";
-    private static final String URL_MOVIE_LISTS = "/lists/movies.json?apikey=";
-    private static final String URL_DVD_LIST = "/lists/dvds.json?apikey=";
-    private static final String URL_OPENING_MOVIES = "/lists/movies/opening.json?apikey=";
-    private static final String URL_UPCOMING_MOVIES = "/lists/movies/upcoming.json?apikey=";
-    private static final String URL_NEW_RELEASE_DVDS = "/lists/dvds/new_releases.json?apikey=";
-    private static final String URL_MOVIE_INFO = "/movies/{movie-id}.json?apikey=";
-    private static final String URL_MOVIE_CAST = "/movies/{movie-id}/cast.json?apikey=";
-    private static final String URL_MOVIE_REVIEWS = "/movies/{movie-id}/reviews.json?apikey=";
-    private static final String MOVIE_ID = "{movie-id}";
-    private static final String PREFIX_MOVIE = "&q=";
-    private static final String PREFIX_LIMIT = "&limit=";
-    private static final String PREFIX_PAGE_LIMIT = "&page_limit=";
-    private static final String PREFIX_REVIEW_TYPE = "&review_type=";
-    private static final String LINKS = "links";
-    private static final int RESULTS_DEFAULT = 10;
-    private static final int RESULTS_MAX = 20;
+    // Properties map
+    HashMap<String, String> properties = new HashMap<String, String>();
+    // Main API site (Can't imagine why you need it!)
+    private static final String URL_LISTS = ".json?apikey=";
 
-    public RottenTomatoes(String apiKey) {
-        if (isNotValidString(apiKey)) {
-            throw new UnsupportedOperationException("No API Key provided!");
+    /*
+     * RTMovie Lists
+     */
+    private static final String URL_BOX_OFFICE = "/lists/movies/box_office";
+    private static final String URL_IN_THEATERS = "/lists/movies/in_theaters";
+    private static final String URL_OPENING_MOVIES = "/lists/movies/opening";
+    private static final String URL_UPCOMING_MOVIES = "/lists/movies/upcoming";
+
+    /*
+     * DVD Lists
+     */
+    private static final String URL_TOP_RENTALS = "/lists/dvds/top_rentals";
+    private static final String URL_CURRENT_RELEASE_DVDS = "/lists/dvds/current_releases";
+    private static final String URL_NEW_RELEASE_DVDS = "/lists/dvds/new_releases";
+    private static final String URL_UPCOMING_DVDS = "/lists/dvds/upcoming";
+
+    /*
+     * Detailed Info
+     */
+    private static final String URL_MOVIES_INFO = "/movies/{movie-id}";
+    private static final String URL_CAST_INFO = "/movies/{movie-id}/cast";
+    private static final String URL_MOVIE_CLIPS = "/movies/{movie-id}/clips";
+    private static final String URL_MOVIES_REVIEWS = "/movies/{movie-id}/reviews";
+    private static final String URL_MOVIES_SIMILAR = "/movies/{movie-id}/similar";
+    private static final String URL_MOVIES_ALIAS = "/movie_alias";
+
+    /*
+     * Search
+     */
+    private static final String URL_MOVIES_SEARCH = "/movies";
+
+    /*
+     * Top Level Lists
+     */
+    private static final String URL_LISTS_DIRECTORY = "/lists";
+    private static final String URL_MOVIE_LISTS = "/lists/movies";
+    private static final String URL_DVD_LISTS = "/lists/dvds";
+    /*
+     * Jackson JSON configuration
+     */
+    private static ObjectMapper mapper = new ObjectMapper();
+
+    public RottenTomatoes(String apiKey) throws RottenTomatoesException {
+        if (StringUtils.isBlank(apiKey)) {
+            throw new RottenTomatoesException(RottenTomatoesExceptionType.NO_API_KEY, "No API Key provided!");
         }
-        this.apiKey = apiKey;
 
         FilteringLayout.addApiKey(apiKey);
-    }
-
-    private String buildUrl(String baseUrl) {
-        return buildUrl(baseUrl, "", "", false);
-    }
-
-    private String buildMovieUrl(String baseUrl, int movieId) {
-        //Need to replace the string {movie-id} with the movieId
-        String newUrl = baseUrl.replace(MOVIE_ID, "" + movieId);
-        return buildUrl(newUrl);
-    }
-
-    private String buildUrl(String baseUrl, String prefix, String additional, boolean appendPageLimit) {
-        StringBuilder url = new StringBuilder(API_SITE);
-        url.append(baseUrl);
-        url.append(apiKey);
-        if (isValidString(additional)) {
-            url.append(prefix);
-            try {
-                url.append(URLEncoder.encode(additional, "UTF-8"));
-            } catch (UnsupportedEncodingException ignore) {
-                // There's an issue with the encoding. so try the "raw" string
-                url.append(additional);
-            }
-        }
-
-        if (appendPageLimit) {
-            url.append(PREFIX_PAGE_LIMIT);
-            url.append(RESULTS_DEFAULT);
-        }
-
-        LOGGER.debug("URL: " + url.toString());
-        return url.toString();
-    }
-
-    /**
-     * Get the lists from the base JSON API. These have no real use.
-     *
-     * @return
-     */
-    public Set<Link> getLists() {
-        try {
-            return RTParser.parseLinks(buildUrl(URL_LISTS), LINKS);
-        } catch (ParseException ex) {
-            LOGGER.warn("Failed to get lists.");
-            return new HashSet<Link>();
-        }
-    }
-
-    /**
-     * Search for a specific movie. If the movie is found, just return that one,
-     * otherwise return all
-     *
-     * @param movieName
-     * @return
-     */
-    public Set<Movie> moviesSearch(String movieName) {
-        try {
-            return RTParser.getMovies(buildUrl(URL_MOVIE_SEARCH, PREFIX_MOVIE, movieName, true));
-        } catch (ParseException ex) {
-            LOGGER.warn("Failed to find movie " + movieName);
-            return new HashSet<Movie>();
-        }
-    }
-
-    public Set<Link> listsDirectory() {
-        try {
-            return RTParser.parseLinks(buildUrl(URL_LIST_DIR), LINKS);
-        } catch (ParseException ex) {
-            LOGGER.warn("Failed to get directory list");
-            return new HashSet<Link>();
-        }
-    }
-
-    public Set<Link> movieListsDirectory() {
-        try {
-            return RTParser.parseLinks(buildUrl(URL_MOVIE_LISTS), LINKS);
-        } catch (ParseException ex) {
-            LOGGER.warn("Failed to get movie directory list");
-            return new HashSet<Link>();
-        }
-    }
-
-    public Set<Link> dvdListsDirectory() {
-        try {
-            return RTParser.parseLinks(buildUrl(URL_DVD_LIST), LINKS);
-        } catch (ParseException ex) {
-            LOGGER.warn("Failed to get DVD directory list");
-            return new HashSet<Link>();
-        }
-    }
-
-    public Set<Movie> openingMovies() {
-        return openingMovies(RESULTS_DEFAULT);
-    }
-
-    public Set<Movie> openingMovies(int limit) {
-        int returnLimit = limit;
-        if (returnLimit < 0) {
-            returnLimit = RESULTS_DEFAULT;
-        } else if (returnLimit > RESULTS_MAX) {
-            returnLimit = RESULTS_MAX;
-        }
-
-        String url = buildUrl(URL_OPENING_MOVIES, PREFIX_LIMIT, "" + returnLimit, false);
-
-        try {
-            return RTParser.getMovies(url);
-        } catch (ParseException ex) {
-            LOGGER.warn("Failed to get opening movies");
-            return new HashSet<Movie>();
-        }
-    }
-
-    public Set<Movie> upcomingMovies(int limit) {
-        int returnLimit = limit;
-        if (returnLimit < 0) {
-            returnLimit = RESULTS_DEFAULT;
-        } else if (returnLimit > RESULTS_MAX) {
-            returnLimit = RESULTS_MAX;
-        }
-
-        String url = buildUrl(URL_UPCOMING_MOVIES, PREFIX_PAGE_LIMIT, "" + returnLimit, false);
-
-        try {
-            return RTParser.getMovies(url);
-        } catch (ParseException ex) {
-            LOGGER.warn("Failed to get upcoming movies");
-            return new HashSet<Movie>();
-        }
-    }
-
-    public Set<Movie> newReleaseDvds(int limit) {
-        int returnLimit = limit;
-        if (returnLimit < 0) {
-            returnLimit = RESULTS_DEFAULT;
-        } else if (returnLimit > RESULTS_MAX) {
-            returnLimit = RESULTS_MAX;
-        }
-
-        String url = buildUrl(URL_NEW_RELEASE_DVDS, PREFIX_PAGE_LIMIT, "" + returnLimit, false);
-        try {
-            return RTParser.getMovies(url);
-        } catch (ParseException ex) {
-            LOGGER.warn("Failed to get new release DVDs");
-            return new HashSet<Movie>();
-        }
-    }
-
-    public Movie movieInfo(int movieId) {
-        String searchUrl = buildMovieUrl(URL_MOVIE_INFO, movieId);
-        return RTParser.getSingleMovie(searchUrl);
-    }
-
-    public Set<Cast> movieCast(int movieId) {
-        String searchUrl = buildMovieUrl(URL_MOVIE_CAST, movieId);
-        return RTParser.getCastList(searchUrl);
-    }
-
-    public Set<Review> movieReviews(int movieId, String reviewType) {
-        try {
-            ReviewType rt = ReviewType.valueOf(reviewType.toLowerCase());
-            return movieReviews(movieId, rt);
-        } catch (IllegalArgumentException error) {
-            return movieReviews(movieId, Review.ReviewType.all);
-        }
-    }
-
-    public Set<Review> movieReviews(int movieId, ReviewType reviewType) {
-        String searchUrl = buildMovieUrl(URL_MOVIE_REVIEWS, movieId);
-        searchUrl += PREFIX_REVIEW_TYPE + reviewType.toString();
-        try {
-            return RTParser.getReviews(searchUrl);
-        } catch (ParseException ex) {
-            LOGGER.warn("Failed to get movie reviews for " + movieId);
-            return new HashSet<Review>();
-        }
+        ApiBuilder.addApiKey(apiKey);
     }
 
     /**
@@ -273,28 +125,534 @@ public class RottenTomatoes {
     }
 
     /**
-     * Check the string passed to see if it is invalid. Invalid strings are null
-     * or blank
+     * Displays top box office earning movies, sorted by most recent weekend
+     * gross ticket sales.
      *
-     * @param testString The string to test
-     * @return True if the string is invalid, false otherwise
+     * @param limit Limits the number of movies returned
+     * @param country Provides localized data for the selected country
      */
-    public static boolean isNotValidString(String testString) {
-        return !isValidString(testString);
+    public List<RTMovie> getBoxOffice(String country, int limit) throws RottenTomatoesException {
+        properties.clear();
+        properties.put(ApiBuilder.PROPERTY_URL, URL_BOX_OFFICE);
+        properties.put(ApiBuilder.PROPERTY_LIMIT, ApiBuilder.validateLimit(limit));
+        properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
+
+        try {
+            String urlString = ApiBuilder.create(properties);
+            String webPage = WebBrowser.request(urlString);
+
+            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            if (wl.isValid()) {
+                return wl.getMovies();
+            } else {
+                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
+            }
+        } catch (IOException ex) {
+            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        }
     }
 
     /**
-     * Check the string passed to see if it contains a value.
+     * Retrieves movies currently in theaters
      *
-     * @param testString The string to test
-     * @return False if the string is empty or null, True otherwise
+     * @param country Provides localized data for the selected country
+     * @param page The selected page of in theaters movies
+     * @param pageLimit The amount of movies in theaters to show per page
+     * @return
+     * @throws RottenTomatoesException
      */
-    public static boolean isValidString(String testString) {
-        // Checks if a String is whitespace, empty ("") or null.
-        if (StringUtils.isEmpty(testString)) {
-            return false;
-        }
+    public List<RTMovie> getInTheaters(String country, int page, int pageLimit) throws RottenTomatoesException {
+        properties.clear();
+        properties.put(ApiBuilder.PROPERTY_URL, URL_IN_THEATERS);
+        properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
+        properties.put(ApiBuilder.PROPERTY_PAGE, ApiBuilder.validatePage(page));
+        properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
 
-        return true;
+        try {
+            String urlString = ApiBuilder.create(properties);
+            String webPage = WebBrowser.request(urlString);
+
+            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            if (wl.isValid()) {
+                return wl.getMovies();
+            } else {
+                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
+            }
+        } catch (IOException ex) {
+            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        }
+    }
+
+    /**
+     * Retrieves current opening movies
+     *
+     * @param country Provides localized data for the selected country
+     * @param limit Limits the number of opening movies returned
+     * @return
+     * @throws RottenTomatoesException
+     */
+    public List<RTMovie> getOpeningMovies(String country, int limit) throws RottenTomatoesException {
+        properties.clear();
+        properties.put(ApiBuilder.PROPERTY_URL, URL_OPENING_MOVIES);
+        properties.put(ApiBuilder.PROPERTY_LIMIT, ApiBuilder.validateLimit(limit));
+        properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
+
+        try {
+            String urlString = ApiBuilder.create(properties);
+            String webPage = WebBrowser.request(urlString);
+
+            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            if (wl.isValid()) {
+                return wl.getMovies();
+            } else {
+                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
+            }
+        } catch (IOException ex) {
+            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        }
+    }
+
+    /**
+     * Retrieves upcoming movies
+     *
+     * @param country Provides localized data for the selected country
+     * @param page The selected page of in theaters movies
+     * @param pageLimit The amount of movies in theaters to show per page
+     * @return
+     * @throws RottenTomatoesException
+     */
+    public List<RTMovie> getUpcomingMovies(String country, int page, int pageLimit) throws RottenTomatoesException {
+        properties.clear();
+        properties.put(ApiBuilder.PROPERTY_URL, URL_UPCOMING_MOVIES);
+        properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
+        properties.put(ApiBuilder.PROPERTY_PAGE, ApiBuilder.validatePage(page));
+        properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
+
+        try {
+            String urlString = ApiBuilder.create(properties);
+            String webPage = WebBrowser.request(urlString);
+
+            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            if (wl.isValid()) {
+                return wl.getMovies();
+            } else {
+                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
+            }
+        } catch (IOException ex) {
+            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        }
+    }
+
+    /**
+     * Retrieves the current top DVD rentals
+     *
+     * @param country Provides localized data for the selected country
+     * @param limit Limits the number of opening movies returned
+     * @return
+     * @throws RottenTomatoesException
+     */
+    public List<RTMovie> getTopRentals(String country, int limit) throws RottenTomatoesException {
+        properties.clear();
+        properties.put(ApiBuilder.PROPERTY_URL, URL_TOP_RENTALS);
+        properties.put(ApiBuilder.PROPERTY_LIMIT, ApiBuilder.validateLimit(limit));
+        properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
+
+        try {
+            String urlString = ApiBuilder.create(properties);
+            String webPage = WebBrowser.request(urlString);
+
+            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            if (wl.isValid()) {
+                return wl.getMovies();
+            } else {
+                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
+            }
+        } catch (IOException ex) {
+            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        }
+    }
+
+    /**
+     * Retrieves current release DVDs
+     *
+     * @param country Provides localized data for the selected country
+     * @param page The selected page of in theaters movies
+     * @param pageLimit The amount of movies in theaters to show per page
+     * @return
+     * @throws RottenTomatoesException
+     */
+    public List<RTMovie> getCurrentReleaseDvds(String country, int page, int pageLimit) throws RottenTomatoesException {
+        properties.clear();
+        properties.put(ApiBuilder.PROPERTY_URL, URL_CURRENT_RELEASE_DVDS);
+        properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
+        properties.put(ApiBuilder.PROPERTY_PAGE, ApiBuilder.validatePage(page));
+        properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
+
+        try {
+            String urlString = ApiBuilder.create(properties);
+            String webPage = WebBrowser.request(urlString);
+
+            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            if (wl.isValid()) {
+                return wl.getMovies();
+            } else {
+                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
+            }
+        } catch (IOException ex) {
+            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        }
+    }
+
+    /**
+     * Retrieves new release DVDs
+     *
+     * @param country Provides localized data for the selected country
+     * @param page The selected page of in theaters movies
+     * @param pageLimit The amount of movies in theaters to show per page
+     * @return
+     * @throws RottenTomatoesException
+     */
+    public List<RTMovie> getNewReleaseDvds(String country, int page, int pageLimit) throws RottenTomatoesException {
+        properties.clear();
+        properties.put(ApiBuilder.PROPERTY_URL, URL_NEW_RELEASE_DVDS);
+        properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
+        properties.put(ApiBuilder.PROPERTY_PAGE, ApiBuilder.validatePage(page));
+        properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
+
+        try {
+            String urlString = ApiBuilder.create(properties);
+            String webPage = WebBrowser.request(urlString);
+
+            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            if (wl.isValid()) {
+                return wl.getMovies();
+            } else {
+                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
+            }
+        } catch (IOException ex) {
+            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        }
+    }
+
+    /**
+     * Retrieves current release DVDs
+     *
+     * @param country Provides localized data for the selected country
+     * @param page The selected page of in theaters movies
+     * @param pageLimit The amount of movies in theaters to show per page
+     * @return
+     * @throws RottenTomatoesException
+     */
+    public List<RTMovie> getUpcomingDvds(String country, int page, int pageLimit) throws RottenTomatoesException {
+        properties.clear();
+        properties.put(ApiBuilder.PROPERTY_URL, URL_UPCOMING_DVDS);
+        properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
+        properties.put(ApiBuilder.PROPERTY_PAGE, ApiBuilder.validatePage(page));
+        properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
+
+        try {
+            String urlString = ApiBuilder.create(properties);
+            String webPage = WebBrowser.request(urlString);
+
+            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            if (wl.isValid()) {
+                return wl.getMovies();
+            } else {
+                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
+            }
+        } catch (IOException ex) {
+            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        }
+    }
+
+    /**
+     * Detailed information on a specific movie specified by Id.
+     *
+     * @param movieId RT Movie ID to locate
+     * @return
+     * @throws RottenTomatoesException
+     */
+    public RTMovie getDetailedInfo(int movieId) throws RottenTomatoesException {
+        properties.clear();
+        properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIES_INFO);
+
+        try {
+            String urlString = ApiBuilder.create(properties, movieId);
+            String webPage = WebBrowser.request(urlString);
+
+            RTMovie rtMovie = mapper.readValue(webPage, RTMovie.class);
+            if (rtMovie.isValid()) {
+                return rtMovie;
+            } else {
+                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, rtMovie.getError());
+            }
+        } catch (IOException ex) {
+            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        }
+    }
+
+    /**
+     * Pulls the complete movie cast for a movie
+     *
+     * @param movieId RT Movie ID
+     * @return
+     * @throws RottenTomatoesException
+     */
+    public List<Cast> getCastInfo(int movieId) throws RottenTomatoesException {
+        properties.clear();
+        properties.put(ApiBuilder.PROPERTY_URL, URL_CAST_INFO);
+
+        try {
+            String urlString = ApiBuilder.create(properties, movieId);
+            String webPage = WebBrowser.request(urlString);
+
+            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+
+            if (wl.isValid()) {
+                return wl.getCast();
+            } else {
+                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
+            }
+        } catch (IOException ex) {
+            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        }
+    }
+
+    /**
+     * Related movie clips and trailers for a movie
+     *
+     * @param movieId RT Movie ID
+     * @return
+     * @throws RottenTomatoesException
+     */
+    public List<Clip> getMovieClips(int movieId) throws RottenTomatoesException {
+        properties.clear();
+        properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIE_CLIPS);
+
+        try {
+            String urlString = ApiBuilder.create(properties, movieId);
+            String webPage = WebBrowser.request(urlString);
+
+            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+
+            if (wl.isValid()) {
+                return wl.getClips();
+            } else {
+                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
+            }
+        } catch (IOException ex) {
+            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        }
+    }
+
+    /**
+     * Retrieves the reviews for a movie
+     *
+     * @param movieId
+     * @param reviewType
+     * @param pageLimit
+     * @param page
+     * @param country
+     * @return
+     * @throws RottenTomatoesException
+     */
+    public List<Review> getMoviesReviews(int movieId, String reviewType, int pageLimit, int page, String country) throws RottenTomatoesException {
+        properties.clear();
+        properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIES_REVIEWS);
+        properties.put(ApiBuilder.PROPERTY_REVIEW_TYPE, reviewType);
+        properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
+        properties.put(ApiBuilder.PROPERTY_PAGE, ApiBuilder.validatePage(page));
+        properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
+
+        try {
+            String urlString = ApiBuilder.create(properties, movieId);
+            String webPage = WebBrowser.request(urlString);
+
+            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+
+            if (wl.isValid()) {
+                return wl.getReviews();
+            } else {
+                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
+            }
+        } catch (IOException ex) {
+            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        }
+    }
+
+    /**
+     * Returns similar movies to a movie
+     *
+     * @param movieId RT Movie ID
+     * @param limit Limit number of returned movies
+     * @return
+     * @throws RottenTomatoesException
+     */
+    public List<RTMovie> getMoviesSimilar(int movieId, int limit) throws RottenTomatoesException {
+        properties.clear();
+        properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIES_SIMILAR);
+        properties.put(ApiBuilder.PROPERTY_LIMIT, ApiBuilder.validateLimit(limit));
+
+        try {
+            String urlString = ApiBuilder.create(properties, movieId);
+            String webPage = WebBrowser.request(urlString);
+
+            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+
+            if (wl.isValid()) {
+                return wl.getMovies();
+            } else {
+                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
+            }
+        } catch (IOException ex) {
+            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        }
+    }
+
+    /**
+     * Provides a movie lookup by an id from a different vendor
+     *
+     * @param altMovieId
+     * @param type
+     * @return
+     * @throws RottenTomatoesException
+     */
+    public RTMovie getMoviesAlias(String altMovieId, String type) throws RottenTomatoesException {
+        properties.clear();
+        properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIES_ALIAS);
+        // remove the "tt" from the start of the ID if it's imdb
+        if ("imdb".equalsIgnoreCase(type) && altMovieId.toLowerCase().startsWith("tt")) {
+            properties.put(ApiBuilder.PROPERTY_ID, new String(altMovieId.substring(2)));
+        } else {
+            properties.put(ApiBuilder.PROPERTY_ID, altMovieId);
+        }
+        properties.put(ApiBuilder.PROPERTY_TYPE, type);
+
+        try {
+            String urlString = ApiBuilder.create(properties);
+            String webPage = WebBrowser.request(urlString);
+
+            RTMovie rtMovie = mapper.readValue(webPage, RTMovie.class);
+            if (rtMovie.isValid()) {
+                return rtMovie;
+            } else {
+                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, rtMovie.getError());
+            }
+        } catch (IOException ex) {
+            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        }
+    }
+
+    /**
+     * The movies search endpoint for plain text queries. Let's you search for
+     * movies!
+     *
+     * @param query
+     * @param pageLimit
+     * @param page
+     * @return
+     * @throws RottenTomatoesException
+     */
+    public List<RTMovie> getMoviesSearch(String query, int pageLimit, int page) throws RottenTomatoesException {
+        properties.clear();
+        properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIES_SEARCH);
+        properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
+        properties.put(ApiBuilder.PROPERTY_PAGE, ApiBuilder.validatePage(page));
+
+        try {
+            properties.put(ApiBuilder.PROPERTY_QUERY, URLEncoder.encode(query, "UTF-8"));
+            String urlString = ApiBuilder.create(properties);
+            String webPage = WebBrowser.request(urlString);
+
+            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+
+            if (wl.isValid()) {
+                return wl.getMovies();
+            } else {
+                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
+            }
+        } catch (UnsupportedEncodingException ex) {
+            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        } catch (IOException ex) {
+            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        }
+    }
+
+    /**
+     * Displays the top level lists available in the API
+     *
+     * @return
+     * @throws RottenTomatoesException
+     */
+    public Map<String, String> getListsDirectory() throws RottenTomatoesException {
+        properties.clear();
+        properties.put(ApiBuilder.PROPERTY_URL, URL_LISTS_DIRECTORY);
+
+        try {
+            String urlString = ApiBuilder.create(properties);
+            String webPage = WebBrowser.request(urlString);
+
+            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+
+            if (wl.isValid()) {
+                return wl.getLinks();
+            } else {
+                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
+            }
+        } catch (IOException ex) {
+            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        }
+    }
+
+    /**
+     * Shows the movie lists available
+     *
+     * @return
+     * @throws RottenTomatoesException
+     */
+    public Map<String, String> getMovieListsDirectory() throws RottenTomatoesException {
+        properties.clear();
+        properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIE_LISTS);
+
+        try {
+            String urlString = ApiBuilder.create(properties);
+            String webPage = WebBrowser.request(urlString);
+
+            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+
+            if (wl.isValid()) {
+                return wl.getLinks();
+            } else {
+                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
+            }
+        } catch (IOException ex) {
+            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        }
+    }
+
+    /**
+     * Shows the DVD lists available
+     *
+     * @return
+     * @throws RottenTomatoesException
+     */
+    public Map<String, String> getDvdListsDirectory() throws RottenTomatoesException {
+        properties.clear();
+        properties.put(ApiBuilder.PROPERTY_URL, URL_DVD_LISTS);
+
+        try {
+            String urlString = ApiBuilder.create(properties);
+            String webPage = WebBrowser.request(urlString);
+
+            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+
+            if (wl.isValid()) {
+                return wl.getLinks();
+            } else {
+                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
+            }
+        } catch (IOException ex) {
+            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        }
     }
 }
