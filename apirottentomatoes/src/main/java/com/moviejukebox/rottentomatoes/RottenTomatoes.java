@@ -108,15 +108,15 @@ public class RottenTomatoes {
      * Output the API version information to the debug log
      */
     public static void showVersion() {
-        String rtTitle = RottenTomatoes.class.getPackage().getSpecificationTitle();
+        String apiTitle = RottenTomatoes.class.getPackage().getSpecificationTitle();
 
-        if (StringUtils.isNotBlank(rtTitle)) {
-            String rtVersion = RottenTomatoes.class.getPackage().getSpecificationVersion();
-            String rtRevision = RottenTomatoes.class.getPackage().getImplementationVersion();
+        if (StringUtils.isNotBlank(apiTitle)) {
+            String apiVersion = RottenTomatoes.class.getPackage().getSpecificationVersion();
+            String apiRevision = RottenTomatoes.class.getPackage().getImplementationVersion();
             StringBuilder sv = new StringBuilder();
-            sv.append(rtTitle).append(" ");
-            sv.append(rtVersion).append(" r");
-            sv.append(rtRevision);
+            sv.append(apiTitle).append(" ");
+            sv.append(apiVersion).append(" r");
+            sv.append(apiRevision);
             LOGGER.debug(sv.toString());
         } else {
             LOGGER.debug("API-RottenTomatoes version/revision information not available");
