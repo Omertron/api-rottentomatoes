@@ -44,8 +44,6 @@ public class RottenTomatoes {
     private static final Logger LOGGER = Logger.getLogger(RottenTomatoes.class);
     // Properties map
     HashMap<String, String> properties = new HashMap<String, String>();
-    // Main API site (Can't imagine why you need it!)
-    private static final String URL_LISTS = ".json?apikey=";
 
     /*
      * RTMovie Lists
@@ -88,6 +86,14 @@ public class RottenTomatoes {
      * Jackson JSON configuration
      */
     private static ObjectMapper mapper = new ObjectMapper();
+    /*
+     * Defaults
+     */
+    private static final int DEFAULT_PAGE = 0;
+    private static final int DEFAULT_PAGE_LIMIT = 0;
+    private static final int DEFAULT_LIMIT = 0;
+    private static final String DEFAULT_COUNTRY = "";
+    private static final String DEFAULT_REVIEW = "";
 
     public RottenTomatoes(String apiKey) throws RottenTomatoesException {
         if (StringUtils.isBlank(apiKey)) {
@@ -152,6 +158,14 @@ public class RottenTomatoes {
         }
     }
 
+    public List<RTMovie> getBoxOffice() throws RottenTomatoesException {
+        return getBoxOffice(DEFAULT_COUNTRY, DEFAULT_LIMIT);
+    }
+
+    public List<RTMovie> getBoxOffice(String country) throws RottenTomatoesException {
+        return getBoxOffice(country, DEFAULT_LIMIT);
+    }
+
     /**
      * Retrieves movies currently in theaters
      *
@@ -183,6 +197,14 @@ public class RottenTomatoes {
         }
     }
 
+    public List<RTMovie> getInTheaters(String country) throws RottenTomatoesException {
+        return getInTheaters(country, DEFAULT_PAGE, DEFAULT_PAGE_LIMIT);
+    }
+
+    public List<RTMovie> getInTheaters() throws RottenTomatoesException {
+        return getInTheaters(DEFAULT_COUNTRY);
+    }
+
     /**
      * Retrieves current opening movies
      *
@@ -210,6 +232,14 @@ public class RottenTomatoes {
         } catch (IOException ex) {
             throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
         }
+    }
+
+    public List<RTMovie> getOpeningMovies(String country) throws RottenTomatoesException {
+        return getOpeningMovies(country, DEFAULT_LIMIT);
+    }
+
+    public List<RTMovie> getOpeningMovies() throws RottenTomatoesException {
+        return getOpeningMovies(DEFAULT_COUNTRY);
     }
 
     /**
@@ -243,6 +273,14 @@ public class RottenTomatoes {
         }
     }
 
+    public List<RTMovie> getUpcomingMovies(String country) throws RottenTomatoesException {
+        return getUpcomingMovies(country, DEFAULT_PAGE, DEFAULT_PAGE_LIMIT);
+    }
+
+    public List<RTMovie> getUpcomingMovies() throws RottenTomatoesException {
+        return getUpcomingMovies(DEFAULT_COUNTRY);
+    }
+
     /**
      * Retrieves the current top DVD rentals
      *
@@ -270,6 +308,14 @@ public class RottenTomatoes {
         } catch (IOException ex) {
             throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
         }
+    }
+
+    public List<RTMovie> getTopRentals(String country) throws RottenTomatoesException {
+        return getTopRentals(DEFAULT_COUNTRY, DEFAULT_LIMIT);
+    }
+
+    public List<RTMovie> getTopRentals() throws RottenTomatoesException {
+        return getTopRentals(DEFAULT_COUNTRY);
     }
 
     /**
@@ -303,6 +349,14 @@ public class RottenTomatoes {
         }
     }
 
+    public List<RTMovie> getCurrentReleaseDvds(String country) throws RottenTomatoesException {
+        return getCurrentReleaseDvds(DEFAULT_COUNTRY, DEFAULT_PAGE, DEFAULT_PAGE_LIMIT);
+    }
+
+    public List<RTMovie> getCurrentReleaseDvds() throws RottenTomatoesException {
+        return getCurrentReleaseDvds(DEFAULT_COUNTRY);
+    }
+
     /**
      * Retrieves new release DVDs
      *
@@ -334,6 +388,14 @@ public class RottenTomatoes {
         }
     }
 
+    public List<RTMovie> getNewReleaseDvds(String country) throws RottenTomatoesException {
+        return getNewReleaseDvds(DEFAULT_COUNTRY, DEFAULT_PAGE, DEFAULT_PAGE_LIMIT);
+    }
+
+    public List<RTMovie> getNewReleaseDvds() throws RottenTomatoesException {
+        return getNewReleaseDvds(DEFAULT_COUNTRY);
+    }
+
     /**
      * Retrieves current release DVDs
      *
@@ -363,6 +425,14 @@ public class RottenTomatoes {
         } catch (IOException ex) {
             throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
         }
+    }
+
+    public List<RTMovie> getUpcomingDvds(String country) throws RottenTomatoesException {
+        return getUpcomingDvds(country, DEFAULT_PAGE, DEFAULT_PAGE_LIMIT);
+    }
+
+    public List<RTMovie> getUpcomingDvds() throws RottenTomatoesException {
+        return getUpcomingDvds(DEFAULT_COUNTRY);
     }
 
     /**
@@ -478,6 +548,18 @@ public class RottenTomatoes {
         } catch (IOException ex) {
             throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
         }
+    }
+
+    public List<Review> getMoviesReviews(int movieId, String reviewType, String country) throws RottenTomatoesException {
+        return getMoviesReviews(movieId, reviewType, DEFAULT_PAGE_LIMIT, DEFAULT_PAGE, country);
+    }
+
+    public List<Review> getMoviesReviews(int movieId, String country) throws RottenTomatoesException {
+        return getMoviesReviews(movieId, DEFAULT_REVIEW, DEFAULT_PAGE_LIMIT, DEFAULT_PAGE, country);
+    }
+
+    public List<Review> getMoviesReviews(int movieId) throws RottenTomatoesException {
+        return getMoviesReviews(movieId, DEFAULT_COUNTRY);
     }
 
     /**

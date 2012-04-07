@@ -1,3 +1,15 @@
+/*
+ *      Copyright (c) 2004-2012 YAMJ Members
+ *      http://code.google.com/p/moviejukebox/people/list 
+ *  
+ *      Web: http://code.google.com/p/moviejukebox/
+ *  
+ *      This software is licensed under a Creative Commons License
+ *      See this page: http://code.google.com/p/moviejukebox/wiki/License
+ *  
+ *      For any reuse or distribution, you must make clear to others the 
+ *      license terms of this work.  
+ */
 package com.moviejukebox.rottentomatoes.tools;
 
 import com.moviejukebox.rottentomatoes.RottenTomatoesException;
@@ -100,7 +112,8 @@ public class ApiBuilder {
      */
     public static String validateLimit(int limit) {
         if (limit < 1) {
-            return "1";
+            // 0 is a valid, null value
+            return "";
         }
 
         if (limit > LIMIT_MAX) {
@@ -129,7 +142,7 @@ public class ApiBuilder {
      */
     public static String validatePage(int page) {
         if (page < 1) {
-            return "1";
+            return "";
         }
 
         return String.valueOf(page);
