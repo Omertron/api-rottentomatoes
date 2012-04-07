@@ -53,47 +53,47 @@ public class WrapperLists {
     public String getError() {
         return error;
     }
-    
+
     public void setError(String error) {
         this.error = error;
     }
-    
+
     public List<RTMovie> getMovies() {
         return movies;
     }
-    
+
     public void setMovies(List<RTMovie> movies) {
         this.movies = movies;
     }
-    
+
     public int getTotal() {
         return total;
     }
-    
+
     public void setTotal(int total) {
         this.total = total;
     }
-    
+
     public String getLinkTemplate() {
         return linkTemplate;
     }
-    
+
     public void setLinkTemplate(String linkTemplate) {
         this.linkTemplate = linkTemplate;
     }
-    
+
     public Map<String, String> getLinks() {
         return links;
     }
-    
+
     public void setLinks(Map<String, String> links) {
         this.links = links;
     }
-    
+
     public List<Cast> getCast() {
         return cast;
     }
-    
+
     public void setCast(List<Cast> cast) {
         this.cast = cast;
     }
@@ -113,9 +113,9 @@ public class WrapperLists {
     public void setReviews(List<Review> reviews) {
         this.reviews = reviews;
     }
-    
-    //</editor-fold>
 
+    //</editor-fold>
+    
     /**
      * Handle unknown properties and print a message
      *
@@ -136,10 +136,10 @@ public class WrapperLists {
      * @return
      */
     public boolean isValid() {
+        // If the error string is empty, everything is OK
         if (StringUtils.isBlank(error)) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 }

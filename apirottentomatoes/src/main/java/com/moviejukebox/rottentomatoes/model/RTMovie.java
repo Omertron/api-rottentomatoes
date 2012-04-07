@@ -264,10 +264,10 @@ public class RTMovie {
      * @return
      */
     public boolean isValid() {
+        // If the error string is empty, everything is OK
         if (StringUtils.isBlank(error)) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 }

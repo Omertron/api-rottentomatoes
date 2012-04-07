@@ -15,6 +15,7 @@ package com.moviejukebox.rottentomatoes.tools;
 import com.moviejukebox.rottentomatoes.RottenTomatoesException;
 import com.moviejukebox.rottentomatoes.RottenTomatoesException.RottenTomatoesExceptionType;
 import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -40,7 +41,6 @@ public class ApiBuilder {
     private static final String MOVIE_ID = "{movie-id}";
     // Defaults and max
     private static final int LIMIT_MAX = 50;
-    private static final int RESULTS_MAX = 20;
 
     protected ApiBuilder() {
         throw new UnsupportedOperationException("Class can not be instantiated");
@@ -56,7 +56,7 @@ public class ApiBuilder {
      * @param properties
      * @return
      */
-    public static String create(HashMap<String, String> properties) throws RottenTomatoesException {
+    public static String create(Map<String, String> properties) throws RottenTomatoesException {
         if (StringUtils.isBlank(apiKey)) {
             throw new RottenTomatoesException(RottenTomatoesExceptionType.INVALID_URL, "Missing API Key");
         }
@@ -74,13 +74,14 @@ public class ApiBuilder {
 
         urlBuilder.append(API_PREFIX).append(apiKey);
 
-        for (String key : properties.keySet()) {
+        for (Map.Entry<String, String> property : properties.entrySet()) {
             // Validate the key/value
-            if (StringUtils.isNotBlank(key) && StringUtils.isNotBlank(properties.get(key))) {
-                urlBuilder.append("&").append(key).append("=").append(properties.get(key));
+            if (StringUtils.isNotBlank(property.getKey()) && StringUtils.isNotBlank(property.getValue())) {
+                urlBuilder.append("&").append(property.getKey()).append("=").append(property.getValue());
             }
         }
 
+        LOGGER.trace("URL: " + urlBuilder.toString());
         return urlBuilder.toString();
     }
 
@@ -91,7 +92,7 @@ public class ApiBuilder {
      * @param movieId
      * @return
      */
-    public static String create(HashMap<String, String> properties, int movieId) throws RottenTomatoesException {
+    public static String create(Map<String, String> properties, int movieId) throws RottenTomatoesException {
         String urlBuilder = create(properties);
         return urlBuilder.replace(MOVIE_ID, String.valueOf(movieId));
     }
@@ -156,7 +157,7 @@ public class ApiBuilder {
      */
     public static String validateCountry(String country) {
         if (country.length() > 2) {
-            return new String(country.substring(0, 2));
+            return country.substring(0, 2);
         }
 
         return country;

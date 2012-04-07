@@ -41,6 +41,7 @@ public class RottenTomatoesTest extends TestCase {
     @Override
     public void setUp() throws Exception {
         rt = new RottenTomatoes("rnt8xak564a8sxkts5xkqj5z");
+        RottenTomatoes.showVersion();
     }
 
     /**

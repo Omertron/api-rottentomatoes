@@ -43,7 +43,7 @@ public class RottenTomatoes {
     // Logger
     private static final Logger LOGGER = Logger.getLogger(RottenTomatoes.class);
     // Properties map
-    HashMap<String, String> properties = new HashMap<String, String>();
+    private Map<String, String> properties = new HashMap<String, String>();
 
     /*
      * RTMovie Lists
@@ -102,6 +102,25 @@ public class RottenTomatoes {
 
         FilteringLayout.addApiKey(apiKey);
         ApiBuilder.addApiKey(apiKey);
+    }
+
+    /**
+     * Output the API version information to the debug log
+     */
+    public static void showVersion() {
+        String rtTitle = RottenTomatoes.class.getPackage().getSpecificationTitle();
+
+        if (StringUtils.isNotBlank(rtTitle)) {
+            String rtVersion = RottenTomatoes.class.getPackage().getSpecificationVersion();
+            String rtRevision = RottenTomatoes.class.getPackage().getImplementationVersion();
+            StringBuilder sv = new StringBuilder();
+            sv.append(rtTitle).append(" ");
+            sv.append(rtVersion).append(" r");
+            sv.append(rtRevision);
+            LOGGER.debug(sv.toString());
+        } else {
+            LOGGER.debug("API-RottenTomatoes version/revision information not available");
+        }
     }
 
     /**
@@ -608,7 +627,7 @@ public class RottenTomatoes {
         properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIES_ALIAS);
         // remove the "tt" from the start of the ID if it's imdb
         if ("imdb".equalsIgnoreCase(type) && altMovieId.toLowerCase().startsWith("tt")) {
-            properties.put(ApiBuilder.PROPERTY_ID, new String(altMovieId.substring(2)));
+            properties.put(ApiBuilder.PROPERTY_ID, altMovieId.substring(2));
         } else {
             properties.put(ApiBuilder.PROPERTY_ID, altMovieId);
         }
