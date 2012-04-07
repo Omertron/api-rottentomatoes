@@ -591,6 +591,10 @@ public class RottenTomatoes {
         }
     }
 
+    public List<RTMovie> getMoviesSimilar(int movieId) throws RottenTomatoesException {
+        return getMoviesSimilar(movieId, DEFAULT_LIMIT);
+    }
+
     /**
      * Provides a movie lookup by an id from a different vendor
      *
@@ -658,6 +662,10 @@ public class RottenTomatoes {
         } catch (IOException ex) {
             throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
         }
+    }
+
+    public List<RTMovie> getMoviesSearch(String query) throws RottenTomatoesException {
+        return getMoviesSearch(query, DEFAULT_PAGE_LIMIT, DEFAULT_PAGE);
     }
 
     /**
