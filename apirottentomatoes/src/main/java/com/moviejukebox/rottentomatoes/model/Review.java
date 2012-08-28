@@ -1,26 +1,37 @@
 /*
  *      Copyright (c) 2004-2012 YAMJ Members
- *      http://code.google.com/p/moviejukebox/people/list 
- *  
+ *      http://code.google.com/p/moviejukebox/people/list
+ *
  *      Web: http://code.google.com/p/moviejukebox/
- *  
+ *
  *      This software is licensed under a Creative Commons License
  *      See this page: http://code.google.com/p/moviejukebox/wiki/License
- *  
- *      For any reuse or distribution, you must make clear to others the 
- *      license terms of this work.  
+ *
+ *      For any reuse or distribution, you must make clear to others the
+ *      license terms of this work.
  */
 package com.moviejukebox.rottentomatoes.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.annotate.JsonAnySetter;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class Review {
+public class Review implements Serializable {
 
+    /*
+     * Logger
+     */
     private static final Logger LOGGER = Logger.getLogger(Review.class);
+    /*
+     * Serial Version
+     */
+    private static final long serialVersionUID = 1L;
+    /*
+     * Properties
+     */
     @JsonProperty("critic")
     private String critic;
     @JsonProperty("date")
@@ -40,7 +51,7 @@ public class Review {
     public String getCritic() {
         return critic;
     }
-    
+
     public String getDate() {
         return date;
     }
@@ -48,19 +59,19 @@ public class Review {
     public String getOriginalScore() {
         return originalScore;
     }
-    
+
     public String getFreshness() {
         return freshness;
     }
-    
+
     public Map<String, String> getLinks() {
         return links;
     }
-    
+
     public String getPublication() {
         return publication;
     }
-    
+
     public String getQuote() {
         return quote;
     }
@@ -70,7 +81,7 @@ public class Review {
     public void setCritic(String critic) {
         this.critic = critic;
     }
-    
+
     public void setDate(String date) {
         this.date = date;
     }
@@ -78,24 +89,24 @@ public class Review {
     public void setOriginalScore(String originalScore) {
         this.originalScore = originalScore;
     }
-    
+
     public void setFreshness(String freshness) {
         this.freshness = freshness;
     }
-    
+
     public void setLinks(Map<String, String> links) {
         this.links = links;
     }
-    
+
     public void setPublication(String publication) {
         this.publication = publication;
     }
-    
+
     public void setQuote(String quote) {
         this.quote = quote;
     }
     //</editor-fold>
-    
+
     /**
      * Handle unknown properties and print a message
      *
