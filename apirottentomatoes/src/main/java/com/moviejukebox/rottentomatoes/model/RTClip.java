@@ -19,12 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.log4j.Logger;
 
-public class Clip implements Serializable {
+public class RTClip implements Serializable {
 
     /*
      * Logger
      */
-    private static final Logger LOGGER = Logger.getLogger(Clip.class);
+    private static final Logger LOGGER = Logger.getLogger(RTClip.class);
     /*
      * Serial Version
      */

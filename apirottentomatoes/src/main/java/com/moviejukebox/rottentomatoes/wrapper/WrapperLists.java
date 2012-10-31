@@ -14,8 +14,8 @@ package com.moviejukebox.rottentomatoes.wrapper;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.moviejukebox.rottentomatoes.model.Cast;
-import com.moviejukebox.rottentomatoes.model.Clip;
+import com.moviejukebox.rottentomatoes.model.RTCast;
+import com.moviejukebox.rottentomatoes.model.RTClip;
 import com.moviejukebox.rottentomatoes.model.RTMovie;
 import com.moviejukebox.rottentomatoes.model.Review;
 import java.util.ArrayList;
@@ -39,9 +39,9 @@ public class WrapperLists {
     @JsonProperty("links")
     private Map<String, String> links = new HashMap<String, String>();
     @JsonProperty("cast")
-    private List<Cast> cast = new ArrayList<Cast>();
+    private List<RTCast> cast = new ArrayList<RTCast>();
     @JsonProperty("clips")
-    private List<Clip> clips = new ArrayList<Clip>();
+    private List<RTClip> clips = new ArrayList<RTClip>();
     @JsonProperty("reviews")
     private List<Review> reviews = new ArrayList<Review>();
     @JsonProperty("link_template")
@@ -90,19 +90,19 @@ public class WrapperLists {
         this.links = links;
     }
 
-    public List<Cast> getCast() {
+    public List<RTCast> getCast() {
         return cast;
     }
 
-    public void setCast(List<Cast> cast) {
+    public void setCast(List<RTCast> cast) {
         this.cast = cast;
     }
 
-    public List<Clip> getClips() {
+    public List<RTClip> getClips() {
         return clips;
     }
 
-    public void setClips(List<Clip> clips) {
+    public void setClips(List<RTClip> clips) {
         this.clips = clips;
     }
 

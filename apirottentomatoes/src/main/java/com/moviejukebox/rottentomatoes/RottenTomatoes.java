@@ -14,8 +14,8 @@ package com.moviejukebox.rottentomatoes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moviejukebox.rottentomatoes.RottenTomatoesException.RottenTomatoesExceptionType;
-import com.moviejukebox.rottentomatoes.model.Cast;
-import com.moviejukebox.rottentomatoes.model.Clip;
+import com.moviejukebox.rottentomatoes.model.RTCast;
+import com.moviejukebox.rottentomatoes.model.RTClip;
 import com.moviejukebox.rottentomatoes.model.RTMovie;
 import com.moviejukebox.rottentomatoes.model.Review;
 import com.moviejukebox.rottentomatoes.tools.ApiBuilder;
@@ -487,7 +487,7 @@ public class RottenTomatoes {
      * @return
      * @throws RottenTomatoesException
      */
-    public List<Cast> getCastInfo(int movieId) throws RottenTomatoesException {
+    public List<RTCast> getCastInfo(int movieId) throws RottenTomatoesException {
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_URL, URL_CAST_INFO);
 
@@ -514,7 +514,7 @@ public class RottenTomatoes {
      * @return
      * @throws RottenTomatoesException
      */
-    public List<Clip> getMovieClips(int movieId) throws RottenTomatoesException {
+    public List<RTClip> getMovieClips(int movieId) throws RottenTomatoesException {
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIE_CLIPS);
 

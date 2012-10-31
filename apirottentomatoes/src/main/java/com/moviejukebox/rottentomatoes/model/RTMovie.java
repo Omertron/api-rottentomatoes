@@ -56,7 +56,7 @@ public class RTMovie implements Serializable {
     @JsonProperty("posters")
     private Map<String, String> artwork = new HashMap<String, String>();
     @JsonProperty("abridged_cast")
-    private Set<Cast> cast = new HashSet<Cast>();
+    private Set<RTCast> cast = new HashSet<RTCast>();
     @JsonProperty("alternate_ids")
     private Map<String, String> alternateIds = new HashMap<String, String>();
     @JsonProperty("links")
@@ -66,7 +66,7 @@ public class RTMovie implements Serializable {
     @JsonProperty("certification")
     private String certification;
     @JsonProperty("abridged_directors")
-    private Set<String> directors = new HashSet<String>();
+    private Set<RTPerson> directors = new HashSet<RTPerson>();
     @JsonProperty("studio")
     private String studio;
     // Error property
@@ -84,7 +84,7 @@ public class RTMovie implements Serializable {
         return artwork;
     }
 
-    public Set<Cast> getCast() {
+    public Set<RTCast> getCast() {
         return cast;
     }
 
@@ -96,7 +96,7 @@ public class RTMovie implements Serializable {
         return criticsConsensus;
     }
 
-    public Set<String> getDirectors() {
+    public Set<RTPerson> getDirectors() {
         return directors;
     }
 
@@ -162,7 +162,7 @@ public class RTMovie implements Serializable {
         this.artwork = artwork;
     }
 
-    public void setCast(Set<Cast> cast) {
+    public void setCast(Set<RTCast> cast) {
         this.cast = cast;
     }
 
@@ -174,7 +174,7 @@ public class RTMovie implements Serializable {
         this.criticsConsensus = criticsConsensus;
     }
 
-    public void setDirectors(Set<String> directors) {
+    public void setDirectors(Set<RTPerson> directors) {
         this.directors = directors;
     }
 

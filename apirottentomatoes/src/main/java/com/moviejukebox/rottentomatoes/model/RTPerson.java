@@ -19,12 +19,12 @@ import java.util.HashSet;
 import java.util.Set;
 import org.apache.log4j.Logger;
 
-public class Cast implements Serializable {
+public class RTPerson implements Serializable {
 
     /*
      * Logger
      */
-    private static final Logger LOGGER = Logger.getLogger(Cast.class);
+    private static final Logger LOGGER = Logger.getLogger(RTPerson.class);
     /*
      * Serial Version
      */
@@ -32,40 +32,16 @@ public class Cast implements Serializable {
     /*
      * Properties
      */
-    @JsonProperty("id")
-    private int id;
     @JsonProperty("name")
-    private String castName;
-    @JsonProperty("characters")
-    //<editor-fold defaultstate="collapsed" desc="Setter methods">
-    private Set<String> characters = new HashSet<String>();
+    private String name;
 
-    public String getCastName() {
-        return castName;
+    public String getName() {
+        return name;
     }
 
-    public Set<String> getCharacters() {
-        return characters;
+    public void setName(String name) {
+        this.name = name;
     }
-
-    public int getId() {
-        return id;
-    }
-    //</editor-fold>
-
-    //<editor-fold defaultstate="collapsed" desc="Setter methods">
-    public void setCastName(String castName) {
-        this.castName = castName;
-    }
-
-    public void setCharacters(Set<String> characters) {
-        this.characters = characters;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-    //</editor-fold>
 
     /**
      * Handle unknown properties and print a message
@@ -83,12 +59,7 @@ public class Cast implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[Cast=");
-        builder.append("[id=").append(id);
-        builder.append("], [castName=").append(castName);
-        builder.append("], [characters=").append(characters);
-        builder.append("]]");
-        return builder.toString();
+        return "RTPerson{" + "name=" + name + '}';
     }
+
 }
