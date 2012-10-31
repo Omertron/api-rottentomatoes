@@ -12,6 +12,7 @@
  */
 package com.moviejukebox.rottentomatoes;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moviejukebox.rottentomatoes.RottenTomatoesException.RottenTomatoesExceptionType;
 import com.moviejukebox.rottentomatoes.model.Cast;
 import com.moviejukebox.rottentomatoes.model.Clip;
@@ -29,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
 
 /**
  * Connect to the Rotten Tomatoes web site and get the rating for a specific
