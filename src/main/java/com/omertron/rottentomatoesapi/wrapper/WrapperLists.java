@@ -7,14 +7,14 @@
  *      For any reuse or distribution, you must make clear to others the
  *      license terms of this work.
  */
-package com.moviejukebox.rottentomatoes.wrapper;
+package com.omertron.rottentomatoesapi.wrapper;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.moviejukebox.rottentomatoes.model.RTCast;
-import com.moviejukebox.rottentomatoes.model.RTClip;
-import com.moviejukebox.rottentomatoes.model.RTMovie;
-import com.moviejukebox.rottentomatoes.model.Review;
+import com.omertron.rottentomatoesapi.model.RTCast;
+import com.omertron.rottentomatoesapi.model.RTClip;
+import com.omertron.rottentomatoesapi.model.RTMovie;
+import com.omertron.rottentomatoesapi.model.Review;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

@@ -7,13 +7,14 @@
  *      For any reuse or distribution, you must make clear to others the
  *      license terms of this work.
  */
-package com.moviejukebox.rottentomatoes;
+package com.omertron.rottentomatoesapi;
 
-import com.moviejukebox.rottentomatoes.model.RTCast;
-import com.moviejukebox.rottentomatoes.model.RTClip;
-import com.moviejukebox.rottentomatoes.model.RTMovie;
-import com.moviejukebox.rottentomatoes.model.Review;
-import com.moviejukebox.rottentomatoes.tools.FilteringLayout;
+import com.omertron.rottentomatoesapi.RottenTomatoesApi;
+import com.omertron.rottentomatoesapi.model.RTCast;
+import com.omertron.rottentomatoesapi.model.RTClip;
+import com.omertron.rottentomatoesapi.model.RTMovie;
+import com.omertron.rottentomatoesapi.model.Review;
+import com.omertron.rottentomatoesapi.tools.FilteringLayout;
 import java.util.List;
 import java.util.Map;
 import junit.framework.TestCase;
@@ -22,10 +23,10 @@ import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
-public class RottenTomatoesTest extends TestCase {
+public class RottenTomatoesApiTest extends TestCase {
 
-    private static final Logger LOGGER = Logger.getLogger(RottenTomatoesTest.class);
-    public RottenTomatoes rt;
+    private static final Logger LOGGER = Logger.getLogger(RottenTomatoesApiTest.class);
+    public RottenTomatoesApi rt;
     // Test values
     private static final String country = "us";
     private static final int limit = 5;
@@ -39,17 +40,17 @@ public class RottenTomatoesTest extends TestCase {
     @Before
     @Override
     public void setUp() throws Exception {
-        rt = new RottenTomatoes("rnt8xak564a8sxkts5xkqj5z");
+        rt = new RottenTomatoesApi("rnt8xak564a8sxkts5xkqj5z");
         // Set the logger level to TRACE
         Logger.getRootLogger().setLevel(Level.TRACE);
         // Make sure the filter isn't applied to the test output
         FilteringLayout.addApiKey("DO_NOT_MATCH");
         // Show the version of the API
-        RottenTomatoes.showVersion();
+        RottenTomatoesApi.showVersion();
     }
 
     /**
-     * Test of getBoxOffice method, of class RottenTomatoes.
+     * Test of getBoxOffice method, of class RottenTomatoesApi.
      */
     @Test
     public void testGetBoxOffice() throws Exception {
@@ -59,7 +60,7 @@ public class RottenTomatoesTest extends TestCase {
     }
 
     /**
-     * Test of getInTheaters method, of class RottenTomatoes.
+     * Test of getInTheaters method, of class RottenTomatoesApi.
      */
     @Test
     public void testGetInTheaters() throws Exception {
@@ -69,7 +70,7 @@ public class RottenTomatoesTest extends TestCase {
     }
 
     /**
-     * Test of getOpeningMovies method, of class RottenTomatoes.
+     * Test of getOpeningMovies method, of class RottenTomatoesApi.
      */
     @Test
     public void testGetOpeningMovies() throws Exception {
@@ -79,7 +80,7 @@ public class RottenTomatoesTest extends TestCase {
     }
 
     /**
-     * Test of getUpcomingMovies method, of class RottenTomatoes.
+     * Test of getUpcomingMovies method, of class RottenTomatoesApi.
      */
     @Test
     public void testGetUpcomingMovies() throws Exception {
@@ -89,7 +90,7 @@ public class RottenTomatoesTest extends TestCase {
     }
 
     /**
-     * Test of getTopRentals method, of class RottenTomatoes.
+     * Test of getTopRentals method, of class RottenTomatoesApi.
      */
     @Test
     public void testGetTopRentals() throws Exception {
@@ -99,7 +100,7 @@ public class RottenTomatoesTest extends TestCase {
     }
 
     /**
-     * Test of getCurrentReleaseDvds method, of class RottenTomatoes.
+     * Test of getCurrentReleaseDvds method, of class RottenTomatoesApi.
      */
     @Test
     public void testGetCurrentReleaseDvds() throws Exception {
@@ -109,7 +110,7 @@ public class RottenTomatoesTest extends TestCase {
     }
 
     /**
-     * Test of getNewReleaseDvds method, of class RottenTomatoes.
+     * Test of getNewReleaseDvds method, of class RottenTomatoesApi.
      */
     @Test
     public void testGetNewReleaseDvds() throws Exception {
@@ -119,7 +120,7 @@ public class RottenTomatoesTest extends TestCase {
     }
 
     /**
-     * Test of getUpcomingDvds method, of class RottenTomatoes.
+     * Test of getUpcomingDvds method, of class RottenTomatoesApi.
      */
     @Test
     public void testGetUpcomingDvds() throws Exception {
@@ -129,7 +130,7 @@ public class RottenTomatoesTest extends TestCase {
     }
 
     /**
-     * Test of getDetailedInfo method, of class RottenTomatoes.
+     * Test of getDetailedInfo method, of class RottenTomatoesApi.
      */
     @Test
     public void testGetDetailedInfo() throws Exception {
@@ -139,7 +140,7 @@ public class RottenTomatoesTest extends TestCase {
     }
 
     /**
-     * Test of getCastInfo method, of class RottenTomatoes.
+     * Test of getCastInfo method, of class RottenTomatoesApi.
      */
     @Test
     public void testGetCastInfo() throws Exception {
@@ -149,7 +150,7 @@ public class RottenTomatoesTest extends TestCase {
     }
 
     /**
-     * Test of getMovieClips method, of class RottenTomatoes.
+     * Test of getMovieClips method, of class RottenTomatoesApi.
      */
     @Test
     public void testGetMovieClips() throws Exception {
@@ -159,7 +160,7 @@ public class RottenTomatoesTest extends TestCase {
     }
 
     /**
-     * Test of getMoviesReviews method, of class RottenTomatoes.
+     * Test of getMoviesReviews method, of class RottenTomatoesApi.
      */
     @Test
     public void testGetMoviesReviews() throws Exception {
@@ -169,7 +170,7 @@ public class RottenTomatoesTest extends TestCase {
     }
 
     /**
-     * Test of getMoviesSimilar method, of class RottenTomatoes.
+     * Test of getMoviesSimilar method, of class RottenTomatoesApi.
      */
     @Test
     public void testGetMoviesSimilar() throws Exception {
@@ -179,7 +180,7 @@ public class RottenTomatoesTest extends TestCase {
     }
 
     /**
-     * Test of getMoviesAlias method, of class RottenTomatoes.
+     * Test of getMoviesAlias method, of class RottenTomatoesApi.
      */
     @Test
     public void testGetMoviesAlias() throws Exception {
@@ -189,7 +190,7 @@ public class RottenTomatoesTest extends TestCase {
     }
 
     /**
-     * Test of getMoviesSearch method, of class RottenTomatoes.
+     * Test of getMoviesSearch method, of class RottenTomatoesApi.
      */
     @Test
     public void testGetMoviesSearch() throws Exception {
@@ -199,7 +200,7 @@ public class RottenTomatoesTest extends TestCase {
     }
 
     /**
-     * Test of getListsDirectory method, of class RottenTomatoes.
+     * Test of getListsDirectory method, of class RottenTomatoesApi.
      */
     @Test
     public void testGetListsDirectory() throws Exception {
@@ -209,7 +210,7 @@ public class RottenTomatoesTest extends TestCase {
     }
 
     /**
-     * Test of getMovieListsDirectory method, of class RottenTomatoes.
+     * Test of getMovieListsDirectory method, of class RottenTomatoesApi.
      */
     @Test
     public void testGetMovieListsDirectory() throws Exception {
@@ -219,7 +220,7 @@ public class RottenTomatoesTest extends TestCase {
     }
 
     /**
-     * Test of getDvdListsDirectory method, of class RottenTomatoes.
+     * Test of getDvdListsDirectory method, of class RottenTomatoesApi.
      */
     @Test
     public void testGetDvdListsDirectory() throws Exception {

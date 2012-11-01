@@ -7,10 +7,10 @@
  *      For any reuse or distribution, you must make clear to others the
  *      license terms of this work.
  */
-package com.moviejukebox.rottentomatoes.tools;
+package com.omertron.rottentomatoesapi.tools;
 
-import com.moviejukebox.rottentomatoes.RottenTomatoesException;
-import com.moviejukebox.rottentomatoes.RottenTomatoesException.RottenTomatoesExceptionType;
+import com.omertron.rottentomatoesapi.RottenTomatoesException;
+import com.omertron.rottentomatoesapi.RottenTomatoesException.RottenTomatoesExceptionType;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;

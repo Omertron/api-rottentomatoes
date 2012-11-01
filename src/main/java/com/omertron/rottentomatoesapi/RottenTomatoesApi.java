@@ -7,18 +7,18 @@
  *      For any reuse or distribution, you must make clear to others the
  *      license terms of this work.
  */
-package com.moviejukebox.rottentomatoes;
+package com.omertron.rottentomatoesapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.moviejukebox.rottentomatoes.RottenTomatoesException.RottenTomatoesExceptionType;
-import com.moviejukebox.rottentomatoes.model.RTCast;
-import com.moviejukebox.rottentomatoes.model.RTClip;
-import com.moviejukebox.rottentomatoes.model.RTMovie;
-import com.moviejukebox.rottentomatoes.model.Review;
-import com.moviejukebox.rottentomatoes.tools.ApiBuilder;
-import com.moviejukebox.rottentomatoes.tools.FilteringLayout;
-import com.moviejukebox.rottentomatoes.tools.WebBrowser;
-import com.moviejukebox.rottentomatoes.wrapper.WrapperLists;
+import com.omertron.rottentomatoesapi.RottenTomatoesException.RottenTomatoesExceptionType;
+import com.omertron.rottentomatoesapi.model.RTCast;
+import com.omertron.rottentomatoesapi.model.RTClip;
+import com.omertron.rottentomatoesapi.model.RTMovie;
+import com.omertron.rottentomatoesapi.model.Review;
+import com.omertron.rottentomatoesapi.tools.ApiBuilder;
+import com.omertron.rottentomatoesapi.tools.FilteringLayout;
+import com.omertron.rottentomatoesapi.tools.WebBrowser;
+import com.omertron.rottentomatoesapi.wrapper.WrapperLists;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -35,10 +35,10 @@ import org.apache.log4j.Logger;
  * @author Stuart.Boston
  *
  */
-public class RottenTomatoes {
+public class RottenTomatoesApi {
 
     // Logger
-    private static final Logger LOGGER = Logger.getLogger(RottenTomatoes.class);
+    private static final Logger LOGGER = Logger.getLogger(RottenTomatoesApi.class);
     // Properties map
     private Map<String, String> properties = new HashMap<String, String>();
 
@@ -92,7 +92,7 @@ public class RottenTomatoes {
     private static final String DEFAULT_COUNTRY = "";
     private static final String DEFAULT_REVIEW = "";
 
-    public RottenTomatoes(String apiKey) throws RottenTomatoesException {
+    public RottenTomatoesApi(String apiKey) throws RottenTomatoesException {
         if (StringUtils.isBlank(apiKey)) {
             throw new RottenTomatoesException(RottenTomatoesExceptionType.NO_API_KEY, "No API Key provided!");
         }
@@ -105,11 +105,11 @@ public class RottenTomatoes {
      * Output the API version information to the debug log
      */
     public static void showVersion() {
-        String apiTitle = RottenTomatoes.class.getPackage().getSpecificationTitle();
+        String apiTitle = RottenTomatoesApi.class.getPackage().getSpecificationTitle();
 
         if (StringUtils.isNotBlank(apiTitle)) {
-            String apiVersion = RottenTomatoes.class.getPackage().getSpecificationVersion();
-            String apiRevision = RottenTomatoes.class.getPackage().getImplementationVersion();
+            String apiVersion = RottenTomatoesApi.class.getPackage().getSpecificationVersion();
+            String apiRevision = RottenTomatoesApi.class.getPackage().getImplementationVersion();
             StringBuilder sv = new StringBuilder();
             sv.append(apiTitle).append(" ");
             sv.append(apiVersion).append(" r");

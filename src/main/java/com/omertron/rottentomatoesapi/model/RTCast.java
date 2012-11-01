@@ -7,21 +7,21 @@
  *      For any reuse or distribution, you must make clear to others the
  *      license terms of this work.
  */
-package com.moviejukebox.rottentomatoes.model;
+package com.omertron.rottentomatoesapi.model;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 import org.apache.log4j.Logger;
 
-public class RTClip implements Serializable {
+public class RTCast implements Serializable {
 
     /*
      * Logger
      */
-    private static final Logger LOGGER = Logger.getLogger(RTClip.class);
+    private static final Logger LOGGER = Logger.getLogger(RTCast.class);
     /*
      * Serial Version
      */
@@ -29,48 +29,38 @@ public class RTClip implements Serializable {
     /*
      * Properties
      */
-    @JsonProperty("title")
-    private String title;
-    @JsonProperty("duration")
-    private int duration;
-    @JsonProperty("thumbnail")
-    private String thumbnail;
-    @JsonProperty("links")
-    private Map<String, String> links = new HashMap<String, String>();
+    @JsonProperty("id")
+    private int id;
+    @JsonProperty("name")
+    private String castName;
+    @JsonProperty("characters")
+    private Set<String> characters = new HashSet<String>();
 
     //<editor-fold defaultstate="collapsed" desc="Getter methods">
-    public int getDuration() {
-        return duration;
+    public String getCastName() {
+        return castName;
     }
 
-    public Map<String, String> getLinks() {
-        return links;
+    public Set<String> getCharacters() {
+        return characters;
     }
 
-    public String getThumbnail() {
-        return thumbnail;
-    }
-
-    public String getTitle() {
-        return title;
+    public int getId() {
+        return id;
     }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Setter methods">
-    public void setDuration(int duration) {
-        this.duration = duration;
+    public void setCastName(String castName) {
+        this.castName = castName;
     }
 
-    public void setLinks(Map<String, String> links) {
-        this.links = links;
+    public void setCharacters(Set<String> characters) {
+        this.characters = characters;
     }
 
-    public void setThumbnail(String thumbnail) {
-        this.thumbnail = thumbnail;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
+    public void setId(int id) {
+        this.id = id;
     }
     //</editor-fold>
 
@@ -91,11 +81,10 @@ public class RTClip implements Serializable {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("[Clip=");
-        builder.append("[title=").append(title);
-        builder.append("], [duration=").append(duration);
-        builder.append("], [thumbnail=").append(thumbnail);
-        builder.append("], [links=").append(links);
+        builder.append("[Cast=");
+        builder.append("[id=").append(id);
+        builder.append("], [castName=").append(castName);
+        builder.append("], [characters=").append(characters);
         builder.append("]]");
         return builder.toString();
     }
