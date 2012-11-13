@@ -12,8 +12,6 @@ package com.omertron.rottentomatoesapi.model;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 import org.apache.log4j.Logger;
 
 public class RTPerson implements Serializable {
