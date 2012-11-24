@@ -38,7 +38,7 @@ import org.apache.log4j.Logger;
 public class RottenTomatoesApi {
 
     // Logger
-    private static final Logger LOGGER = Logger.getLogger(RottenTomatoesApi.class);
+    private static final Logger logger = Logger.getLogger(RottenTomatoesApi.class);
     // Properties map
     private Map<String, String> properties = new HashMap<String, String>();
 
@@ -99,25 +99,6 @@ public class RottenTomatoesApi {
 
         FilteringLayout.addApiKey(apiKey);
         ApiBuilder.addApiKey(apiKey);
-    }
-
-    /**
-     * Output the API version information to the debug log
-     */
-    public static void showVersion() {
-        String apiTitle = RottenTomatoesApi.class.getPackage().getSpecificationTitle();
-
-        if (StringUtils.isNotBlank(apiTitle)) {
-            String apiVersion = RottenTomatoesApi.class.getPackage().getSpecificationVersion();
-            String apiRevision = RottenTomatoesApi.class.getPackage().getImplementationVersion();
-            StringBuilder sv = new StringBuilder();
-            sv.append(apiTitle).append(" ");
-            sv.append(apiVersion).append(" r");
-            sv.append(apiRevision);
-            LOGGER.debug(sv.toString());
-        } else {
-            LOGGER.debug("API-RottenTomatoes version/revision information not available");
-        }
     }
 
     /**

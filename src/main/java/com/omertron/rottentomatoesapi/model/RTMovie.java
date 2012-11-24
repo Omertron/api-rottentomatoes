@@ -24,7 +24,7 @@ public class RTMovie implements Serializable {
     /*
      * Logger
      */
-    private static final Logger LOGGER = Logger.getLogger(RTMovie.class);
+    private static final Logger logger = Logger.getLogger(RTMovie.class);
     /*
      * Serial Version
      */
@@ -239,7 +239,7 @@ public class RTMovie implements Serializable {
         StringBuilder unknownBuilder = new StringBuilder();
         unknownBuilder.append("Unknown property: '").append(key);
         unknownBuilder.append("' value: '").append(value).append("'");
-        LOGGER.warn(unknownBuilder.toString());
+        logger.warn(unknownBuilder.toString());
     }
 
     @Override

@@ -21,7 +21,7 @@ public class RTCast implements Serializable {
     /*
      * Logger
      */
-    private static final Logger LOGGER = Logger.getLogger(RTCast.class);
+    private static final Logger logger = Logger.getLogger(RTCast.class);
     /*
      * Serial Version
      */
@@ -75,7 +75,7 @@ public class RTCast implements Serializable {
         StringBuilder unknownBuilder = new StringBuilder();
         unknownBuilder.append("Unknown property: '").append(key);
         unknownBuilder.append("' value: '").append(value).append("'");
-        LOGGER.warn(unknownBuilder.toString());
+        logger.warn(unknownBuilder.toString());
     }
 
     @Override

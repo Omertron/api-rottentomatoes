@@ -17,7 +17,7 @@ import org.apache.log4j.Logger;
 
 public class ApiBuilder {
 
-    private static final Logger LOGGER = Logger.getLogger(ApiBuilder.class);
+    private static final Logger logger = Logger.getLogger(ApiBuilder.class);
     private static String apiKey;
     // Properties
     public static final String PROPERTY_URL = "url";
@@ -77,7 +77,7 @@ public class ApiBuilder {
             }
         }
 
-        LOGGER.trace("URL: " + urlBuilder.toString());
+        logger.trace("URL: " + urlBuilder.toString());
         return urlBuilder.toString();
     }
 

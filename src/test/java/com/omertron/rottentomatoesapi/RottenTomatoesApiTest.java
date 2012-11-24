@@ -25,7 +25,7 @@ import org.junit.Test;
 
 public class RottenTomatoesApiTest extends TestCase {
 
-    private static final Logger LOGGER = Logger.getLogger(RottenTomatoesApiTest.class);
+    private static final Logger logger = Logger.getLogger(RottenTomatoesApiTest.class);
     public RottenTomatoesApi rt;
     // Test values
     private static final String country = "us";
@@ -45,8 +45,6 @@ public class RottenTomatoesApiTest extends TestCase {
         Logger.getRootLogger().setLevel(Level.TRACE);
         // Make sure the filter isn't applied to the test output
         FilteringLayout.addApiKey("DO_NOT_MATCH");
-        // Show the version of the API
-        RottenTomatoesApi.showVersion();
     }
 
     /**
@@ -54,7 +52,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetBoxOffice() throws Exception {
-        LOGGER.info("getBoxOffice");
+        logger.info("getBoxOffice");
         List<RTMovie> result = rt.getBoxOffice(country, limit);
         assertEquals("Wrong number of results", limit, result.size());
     }
@@ -64,7 +62,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetInTheaters() throws Exception {
-        LOGGER.info("getInTheaters");
+        logger.info("getInTheaters");
         List<RTMovie> result = rt.getInTheaters(country, page, pageLimit);
         assertEquals("Wrong number of results", pageLimit, result.size());
     }
@@ -74,7 +72,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetOpeningMovies() throws Exception {
-        LOGGER.info("getOpeningMovies");
+        logger.info("getOpeningMovies");
         List<RTMovie> result = rt.getOpeningMovies(country, limit);
         assertEquals("Wrong number of results", limit, result.size());
     }
@@ -84,7 +82,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetUpcomingMovies() throws Exception {
-        LOGGER.info("getUpcomingMovies");
+        logger.info("getUpcomingMovies");
         List<RTMovie> result = rt.getUpcomingMovies(country, page, pageLimit);
         assertEquals("Wrong number of results", pageLimit, result.size());
     }
@@ -94,7 +92,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetTopRentals() throws Exception {
-        LOGGER.info("getTopRentals");
+        logger.info("getTopRentals");
         List<RTMovie> result = rt.getTopRentals(country, limit);
         assertEquals("Wrong number of results", limit, result.size());
     }
@@ -104,7 +102,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetCurrentReleaseDvds() throws Exception {
-        LOGGER.info("getCurrentReleaseDvds");
+        logger.info("getCurrentReleaseDvds");
         List<RTMovie> result = rt.getCurrentReleaseDvds(country, page, pageLimit);
         assertEquals("Wrong number of results", pageLimit, result.size());
     }
@@ -114,7 +112,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetNewReleaseDvds() throws Exception {
-        LOGGER.info("getNewReleaseDvds");
+        logger.info("getNewReleaseDvds");
         List<RTMovie> result = rt.getNewReleaseDvds(country, page, pageLimit);
         assertEquals("Wrong number of results", pageLimit, result.size());
     }
@@ -124,7 +122,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetUpcomingDvds() throws Exception {
-        LOGGER.info("getUpcomingDvds");
+        logger.info("getUpcomingDvds");
         List<RTMovie> result = rt.getUpcomingDvds(country, page, pageLimit);
         assertNotNull("Null object returned", result);
     }
@@ -134,7 +132,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetDetailedInfo() throws Exception {
-        LOGGER.info("getDetailedInfo");
+        logger.info("getDetailedInfo");
         RTMovie result = rt.getDetailedInfo(movieId);
         assertEquals("Incorrect movie returned", "Blade Runner", result.getTitle());
     }
@@ -144,7 +142,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetCastInfo() throws Exception {
-        LOGGER.info("getCastInfo");
+        logger.info("getCastInfo");
         List<RTCast> result = rt.getCastInfo(movieId);
         assertFalse("No cast information!", result.isEmpty());
     }
@@ -154,7 +152,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetMovieClips() throws Exception {
-        LOGGER.info("getMovieClips");
+        logger.info("getMovieClips");
         List<RTClip> result = rt.getMovieClips(movieId);
         assertFalse("No clip information!", result.isEmpty());
     }
@@ -164,7 +162,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetMoviesReviews() throws Exception {
-        LOGGER.info("getMoviesReviews");
+        logger.info("getMoviesReviews");
         List<Review> result = rt.getMoviesReviews(movieId, "", pageLimit, page, country);
         assertFalse("No review information!", result.isEmpty());
     }
@@ -174,7 +172,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetMoviesSimilar() throws Exception {
-        LOGGER.info("getMoviesSimilar");
+        logger.info("getMoviesSimilar");
         List<RTMovie> result = rt.getMoviesSimilar(movieId, limit);
         assertFalse("No similar movies information!", result.isEmpty());
     }
@@ -184,7 +182,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetMoviesAlias() throws Exception {
-        LOGGER.info("getMoviesAlias - This is a very buggy method");
+        logger.info("getMoviesAlias - This is a very buggy method");
         RTMovie result = rt.getMoviesAlias(altMovieId, type);
         assertFalse("Something really wrong here!", result == null);
     }
@@ -194,7 +192,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetMoviesSearch() throws Exception {
-        LOGGER.info("getMoviesSearch");
+        logger.info("getMoviesSearch");
         List<RTMovie> result = rt.getMoviesSearch(query, pageLimit, page);
         assertFalse("No movies found!", result.isEmpty());
     }
@@ -204,7 +202,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetListsDirectory() throws Exception {
-        LOGGER.info("getListsDirectory");
+        logger.info("getListsDirectory");
         Map result = rt.getListsDirectory();
         assertFalse("No lists found!", result.isEmpty());
     }
@@ -214,7 +212,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetMovieListsDirectory() throws Exception {
-        LOGGER.info("getMovieListsDirectory");
+        logger.info("getMovieListsDirectory");
         Map result = rt.getMovieListsDirectory();
         assertFalse("No lists found!", result.isEmpty());
     }
@@ -224,7 +222,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetDvdListsDirectory() throws Exception {
-        LOGGER.info("getDvdListsDirectory");
+        logger.info("getDvdListsDirectory");
         Map result = rt.getDvdListsDirectory();
         assertFalse("No lists found!", result.isEmpty());
     }

@@ -25,7 +25,7 @@ import org.apache.log4j.Logger;
 public class WrapperLists {
     // Logger
 
-    private static final Logger LOGGER = Logger.getLogger(WrapperLists.class);
+    private static final Logger logger = Logger.getLogger(WrapperLists.class);
     /*
      * Properties
      */
@@ -124,7 +124,7 @@ public class WrapperLists {
         StringBuilder unknownBuilder = new StringBuilder();
         unknownBuilder.append("Unknown property: '").append(key);
         unknownBuilder.append("' value: '").append(value).append("'");
-        LOGGER.warn(unknownBuilder.toString());
+        logger.warn(unknownBuilder.toString());
     }
 
     /**
