@@ -179,7 +179,6 @@ public class RottenTomatoesApi {
      * @param country Provides localized data for the selected country
      * @param page The selected page of in theaters movies
      * @param pageLimit The amount of movies in theaters to show per page
-     * @return
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getInTheaters(String country, int page, int pageLimit) throws RottenTomatoesException {
@@ -217,7 +216,6 @@ public class RottenTomatoesApi {
      *
      * @param country Provides localized data for the selected country
      * @param limit Limits the number of opening movies returned
-     * @return
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getOpeningMovies(String country, int limit) throws RottenTomatoesException {
@@ -255,7 +253,6 @@ public class RottenTomatoesApi {
      * @param country Provides localized data for the selected country
      * @param page The selected page of in theaters movies
      * @param pageLimit The amount of movies in theaters to show per page
-     * @return
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getUpcomingMovies(String country, int page, int pageLimit) throws RottenTomatoesException {
@@ -293,7 +290,6 @@ public class RottenTomatoesApi {
      *
      * @param country Provides localized data for the selected country
      * @param limit Limits the number of opening movies returned
-     * @return
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getTopRentals(String country, int limit) throws RottenTomatoesException {
@@ -331,7 +327,6 @@ public class RottenTomatoesApi {
      * @param country Provides localized data for the selected country
      * @param page The selected page of in theaters movies
      * @param pageLimit The amount of movies in theaters to show per page
-     * @return
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getCurrentReleaseDvds(String country, int page, int pageLimit) throws RottenTomatoesException {
@@ -370,7 +365,6 @@ public class RottenTomatoesApi {
      * @param country Provides localized data for the selected country
      * @param page The selected page of in theaters movies
      * @param pageLimit The amount of movies in theaters to show per page
-     * @return
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getNewReleaseDvds(String country, int page, int pageLimit) throws RottenTomatoesException {
@@ -409,7 +403,6 @@ public class RottenTomatoesApi {
      * @param country Provides localized data for the selected country
      * @param page The selected page of in theaters movies
      * @param pageLimit The amount of movies in theaters to show per page
-     * @return
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getUpcomingDvds(String country, int page, int pageLimit) throws RottenTomatoesException {
@@ -446,7 +439,6 @@ public class RottenTomatoesApi {
      * Detailed information on a specific movie specified by Id.
      *
      * @param movieId RT Movie ID to locate
-     * @return
      * @throws RottenTomatoesException
      */
     public RTMovie getDetailedInfo(int movieId) throws RottenTomatoesException {
@@ -472,7 +464,6 @@ public class RottenTomatoesApi {
      * Pulls the complete movie cast for a movie
      *
      * @param movieId RT Movie ID
-     * @return
      * @throws RottenTomatoesException
      */
     public List<RTCast> getCastInfo(int movieId) throws RottenTomatoesException {
@@ -499,7 +490,6 @@ public class RottenTomatoesApi {
      * Related movie clips and trailers for a movie
      *
      * @param movieId RT Movie ID
-     * @return
      * @throws RottenTomatoesException
      */
     public List<RTClip> getMovieClips(int movieId) throws RottenTomatoesException {
@@ -530,7 +520,6 @@ public class RottenTomatoesApi {
      * @param pageLimit
      * @param page
      * @param country
-     * @return
      * @throws RottenTomatoesException
      */
     public List<Review> getMoviesReviews(int movieId, String reviewType, int pageLimit, int page, String country) throws RottenTomatoesException {
@@ -574,7 +563,6 @@ public class RottenTomatoesApi {
      *
      * @param movieId RT Movie ID
      * @param limit Limit number of returned movies
-     * @return
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getMoviesSimilar(int movieId, int limit) throws RottenTomatoesException {
@@ -607,7 +595,6 @@ public class RottenTomatoesApi {
      *
      * @param altMovieId
      * @param type
-     * @return
      * @throws RottenTomatoesException
      */
     public RTMovie getMoviesAlias(String altMovieId, String type) throws RottenTomatoesException {
@@ -643,7 +630,6 @@ public class RottenTomatoesApi {
      * @param query
      * @param pageLimit
      * @param page
-     * @return
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getMoviesSearch(String query, int pageLimit, int page) throws RottenTomatoesException {
@@ -678,7 +664,6 @@ public class RottenTomatoesApi {
     /**
      * Displays the top level lists available in the API
      *
-     * @return
      * @throws RottenTomatoesException
      */
     public Map<String, String> getListsDirectory() throws RottenTomatoesException {
@@ -704,7 +689,6 @@ public class RottenTomatoesApi {
     /**
      * Shows the movie lists available
      *
-     * @return
      * @throws RottenTomatoesException
      */
     public Map<String, String> getMovieListsDirectory() throws RottenTomatoesException {
@@ -730,7 +714,6 @@ public class RottenTomatoesApi {
     /**
      * Shows the DVD lists available
      *
-     * @return
      * @throws RottenTomatoesException
      */
     public Map<String, String> getDvdListsDirectory() throws RottenTomatoesException {

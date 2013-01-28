@@ -40,7 +40,6 @@ public class FilteringLayout extends PatternLayout {
     /**
      * Extend the format to remove the API_KEYS from the output
      * @param event
-     * @return
      */
     @Override
     public String format(LoggingEvent event) {

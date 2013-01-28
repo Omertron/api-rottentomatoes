@@ -278,8 +278,6 @@ public class RTMovie implements Serializable {
 
     /**
      * Check to see if the returned values are valid
-     *
-     * @return
      */
     public boolean isValid() {
         // If the error string is empty, everything is OK
