@@ -23,11 +23,12 @@ import com.omertron.rottentomatoesapi.RottenTomatoesException;
 import com.omertron.rottentomatoesapi.RottenTomatoesException.RottenTomatoesExceptionType;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ApiBuilder {
 
-    private static final Logger logger = Logger.getLogger(ApiBuilder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ApiBuilder.class);
     private static String apiKey;
     // Properties
     public static final String PROPERTY_URL = "url";
@@ -86,7 +87,7 @@ public class ApiBuilder {
             }
         }
 
-        logger.trace("URL: " + urlBuilder.toString());
+        LOG.trace("URL: " + urlBuilder.toString());
         return urlBuilder.toString();
     }
 

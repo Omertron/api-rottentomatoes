@@ -23,18 +23,17 @@ import com.omertron.rottentomatoesapi.model.RTCast;
 import com.omertron.rottentomatoesapi.model.RTClip;
 import com.omertron.rottentomatoesapi.model.RTMovie;
 import com.omertron.rottentomatoesapi.model.Review;
-import com.omertron.rottentomatoesapi.tools.FilteringLayout;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import junit.framework.TestCase;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
 public class RottenTomatoesApiTest extends TestCase {
 
-    private static final Logger logger = Logger.getLogger(RottenTomatoesApiTest.class);
+    private static final Logger LOG = Logger.getLogger(RottenTomatoesApiTest.class.getSimpleName());
     public RottenTomatoesApi rt;
     // Test values
     private static final String country = "us";
@@ -50,10 +49,9 @@ public class RottenTomatoesApiTest extends TestCase {
     @Override
     public void setUp() throws Exception {
         rt = new RottenTomatoesApi("rnt8xak564a8sxkts5xkqj5z");
-        // Set the logger level to TRACE
-        Logger.getRootLogger().setLevel(Level.TRACE);
-        // Make sure the filter isn't applied to the test output
-        FilteringLayout.addApiKey("DO_NOT_MATCH");
+        
+        // Set the logger level to ALL
+        LOG.setLevel(Level.ALL);
     }
 
     /**
@@ -61,7 +59,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetBoxOffice() throws Exception {
-        logger.info("getBoxOffice");
+        LOG.info("getBoxOffice");
         List<RTMovie> result = rt.getBoxOffice(country, limit);
         assertEquals("Wrong number of results", limit, result.size());
     }
@@ -71,7 +69,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetInTheaters() throws Exception {
-        logger.info("getInTheaters");
+        LOG.info("getInTheaters");
         List<RTMovie> result = rt.getInTheaters(country, page, pageLimit);
         assertEquals("Wrong number of results", pageLimit, result.size());
     }
@@ -81,7 +79,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetOpeningMovies() throws Exception {
-        logger.info("getOpeningMovies");
+        LOG.info("getOpeningMovies");
         List<RTMovie> result = rt.getOpeningMovies(country, limit);
         assertEquals("Wrong number of results", limit, result.size());
     }
@@ -91,7 +89,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetUpcomingMovies() throws Exception {
-        logger.info("getUpcomingMovies");
+        LOG.info("getUpcomingMovies");
         List<RTMovie> result = rt.getUpcomingMovies(country, page, pageLimit);
         assertEquals("Wrong number of results", pageLimit, result.size());
     }
@@ -101,7 +99,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetTopRentals() throws Exception {
-        logger.info("getTopRentals");
+        LOG.info("getTopRentals");
         List<RTMovie> result = rt.getTopRentals(country, limit);
         assertEquals("Wrong number of results", limit, result.size());
     }
@@ -111,7 +109,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetCurrentReleaseDvds() throws Exception {
-        logger.info("getCurrentReleaseDvds");
+        LOG.info("getCurrentReleaseDvds");
         List<RTMovie> result = rt.getCurrentReleaseDvds(country, page, pageLimit);
         assertEquals("Wrong number of results", pageLimit, result.size());
     }
@@ -121,7 +119,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetNewReleaseDvds() throws Exception {
-        logger.info("getNewReleaseDvds");
+        LOG.info("getNewReleaseDvds");
         List<RTMovie> result = rt.getNewReleaseDvds(country, page, pageLimit);
         assertEquals("Wrong number of results", pageLimit, result.size());
     }
@@ -131,7 +129,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetUpcomingDvds() throws Exception {
-        logger.info("getUpcomingDvds");
+        LOG.info("getUpcomingDvds");
         List<RTMovie> result = rt.getUpcomingDvds(country, page, pageLimit);
         assertNotNull("Null object returned", result);
     }
@@ -141,7 +139,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetDetailedInfo() throws Exception {
-        logger.info("getDetailedInfo");
+        LOG.info("getDetailedInfo");
         RTMovie result = rt.getDetailedInfo(movieId);
         assertEquals("Incorrect movie returned", "Blade Runner", result.getTitle());
     }
@@ -151,7 +149,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetCastInfo() throws Exception {
-        logger.info("getCastInfo");
+        LOG.info("getCastInfo");
         List<RTCast> result = rt.getCastInfo(movieId);
         assertFalse("No cast information!", result.isEmpty());
     }
@@ -161,7 +159,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetMovieClips() throws Exception {
-        logger.info("getMovieClips");
+        LOG.info("getMovieClips");
         List<RTClip> result = rt.getMovieClips(movieId);
         assertFalse("No clip information!", result.isEmpty());
     }
@@ -171,7 +169,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetMoviesReviews() throws Exception {
-        logger.info("getMoviesReviews");
+        LOG.info("getMoviesReviews");
         List<Review> result = rt.getMoviesReviews(movieId, "", pageLimit, page, country);
         assertFalse("No review information!", result.isEmpty());
     }
@@ -181,7 +179,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetMoviesSimilar() throws Exception {
-        logger.info("getMoviesSimilar");
+        LOG.info("getMoviesSimilar");
         List<RTMovie> result = rt.getMoviesSimilar(movieId, limit);
         assertFalse("No similar movies information!", result.isEmpty());
     }
@@ -191,7 +189,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetMoviesAlias() throws Exception {
-        logger.info("getMoviesAlias - This is a very buggy method");
+        LOG.info("getMoviesAlias - This is a very buggy method");
         RTMovie result = rt.getMoviesAlias(altMovieId, type);
         assertFalse("Something really wrong here!", result == null);
     }
@@ -201,7 +199,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetMoviesSearch() throws Exception {
-        logger.info("getMoviesSearch");
+        LOG.info("getMoviesSearch");
         List<RTMovie> result = rt.getMoviesSearch(query, pageLimit, page);
         assertFalse("No movies found!", result.isEmpty());
     }
@@ -211,7 +209,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetListsDirectory() throws Exception {
-        logger.info("getListsDirectory");
+        LOG.info("getListsDirectory");
         Map result = rt.getListsDirectory();
         assertFalse("No lists found!", result.isEmpty());
     }
@@ -221,7 +219,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetMovieListsDirectory() throws Exception {
-        logger.info("getMovieListsDirectory");
+        LOG.info("getMovieListsDirectory");
         Map result = rt.getMovieListsDirectory();
         assertFalse("No lists found!", result.isEmpty());
     }
@@ -231,7 +229,7 @@ public class RottenTomatoesApiTest extends TestCase {
      */
     @Test
     public void testGetDvdListsDirectory() throws Exception {
-        logger.info("getDvdListsDirectory");
+        LOG.info("getDvdListsDirectory");
         Map result = rt.getDvdListsDirectory();
         assertFalse("No lists found!", result.isEmpty());
     }

@@ -22,14 +22,15 @@ package com.omertron.rottentomatoesapi.model;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RTPerson implements Serializable {
 
     /*
      * Logger
      */
-    private static final Logger logger = Logger.getLogger(RTPerson.class);
+    private static final Logger logger = LoggerFactory.getLogger(RTPerson.class);
     /*
      * Serial Version
      */

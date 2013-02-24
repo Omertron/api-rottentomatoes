@@ -26,7 +26,6 @@ import com.omertron.rottentomatoesapi.model.RTClip;
 import com.omertron.rottentomatoesapi.model.RTMovie;
 import com.omertron.rottentomatoesapi.model.Review;
 import com.omertron.rottentomatoesapi.tools.ApiBuilder;
-import com.omertron.rottentomatoesapi.tools.FilteringLayout;
 import com.omertron.rottentomatoesapi.tools.WebBrowser;
 import com.omertron.rottentomatoesapi.wrapper.WrapperLists;
 import java.io.IOException;
@@ -36,7 +35,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Connect to the Rotten Tomatoes web site and get the rating for a specific
@@ -48,7 +48,7 @@ import org.apache.log4j.Logger;
 public class RottenTomatoesApi {
 
     // Logger
-    private static final Logger logger = Logger.getLogger(RottenTomatoesApi.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RottenTomatoesApi.class);
     // Properties map
     private Map<String, String> properties = new HashMap<String, String>();
 
@@ -107,7 +107,6 @@ public class RottenTomatoesApi {
             throw new RottenTomatoesException(RottenTomatoesExceptionType.NO_API_KEY, "No API Key provided!");
         }
 
-        FilteringLayout.addApiKey(apiKey);
         ApiBuilder.addApiKey(apiKey);
     }
 

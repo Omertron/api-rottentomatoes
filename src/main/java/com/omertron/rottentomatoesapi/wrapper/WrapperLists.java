@@ -30,12 +30,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WrapperLists {
     // Logger
 
-    private static final Logger logger = Logger.getLogger(WrapperLists.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WrapperLists.class);
     /*
      * Properties
      */
@@ -134,7 +135,7 @@ public class WrapperLists {
         StringBuilder unknownBuilder = new StringBuilder();
         unknownBuilder.append("Unknown property: '").append(key);
         unknownBuilder.append("' value: '").append(value).append("'");
-        logger.warn(unknownBuilder.toString());
+        LOG.warn(unknownBuilder.toString());
     }
 
     /**

@@ -24,14 +24,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RTCast implements Serializable {
 
     /*
      * Logger
      */
-    private static final Logger logger = Logger.getLogger(RTCast.class);
+    private static final Logger logger = LoggerFactory.getLogger(RTCast.class);
     /*
      * Serial Version
      */

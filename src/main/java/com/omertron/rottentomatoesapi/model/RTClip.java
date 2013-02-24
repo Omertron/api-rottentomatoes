@@ -24,14 +24,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RTClip implements Serializable {
 
     /*
      * Logger
      */
-    private static final Logger logger = Logger.getLogger(RTClip.class);
+    private static final Logger logger = LoggerFactory.getLogger(RTClip.class);
     /*
      * Serial Version
      */
