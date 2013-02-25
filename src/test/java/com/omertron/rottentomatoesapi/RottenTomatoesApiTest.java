@@ -26,6 +26,7 @@ import com.omertron.rottentomatoesapi.model.Review;
 import java.util.List;
 import java.util.Map;
 import junit.framework.TestCase;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -46,10 +47,15 @@ public class RottenTomatoesApiTest extends TestCase {
     private static final String SEARCH_IMDB = "imdb";
     private static final String SEARCH_QUERY = "Blade Runner 1982";
 
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        rt = new RottenTomatoesApi(API_KEY);
+    }
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         TestLogger.Configure();
-        rt = new RottenTomatoesApi(API_KEY);
     }
 
     /**
