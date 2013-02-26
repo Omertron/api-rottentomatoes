@@ -32,7 +32,7 @@ public class RTCast implements Serializable {
     /*
      * Logger
      */
-    private static final Logger logger = LoggerFactory.getLogger(RTCast.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RTCast.class);
     /*
      * Serial Version
      */
@@ -86,7 +86,7 @@ public class RTCast implements Serializable {
         StringBuilder unknownBuilder = new StringBuilder();
         unknownBuilder.append("Unknown property: '").append(key);
         unknownBuilder.append("' value: '").append(value).append("'");
-        logger.warn(unknownBuilder.toString());
+        LOG.warn(unknownBuilder.toString());
     }
 
     @Override

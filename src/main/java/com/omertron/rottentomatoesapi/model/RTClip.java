@@ -32,7 +32,7 @@ public class RTClip implements Serializable {
     /*
      * Logger
      */
-    private static final Logger logger = LoggerFactory.getLogger(RTClip.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RTClip.class);
     /*
      * Serial Version
      */
@@ -96,7 +96,7 @@ public class RTClip implements Serializable {
         StringBuilder unknownBuilder = new StringBuilder();
         unknownBuilder.append("Unknown property: '").append(key);
         unknownBuilder.append("' value: '").append(value).append("'");
-        logger.warn(unknownBuilder.toString());
+        LOG.warn(unknownBuilder.toString());
     }
 
     @Override

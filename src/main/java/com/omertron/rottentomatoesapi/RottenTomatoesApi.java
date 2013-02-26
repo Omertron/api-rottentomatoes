@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 public class RottenTomatoesApi {
 
     // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(RottenTomatoesApi.class);
+//    private static final Logger LOG = LoggerFactory.getLogger(RottenTomatoesApi.class);
     // Properties map
     private Map<String, String> properties = new HashMap<String, String>();
 

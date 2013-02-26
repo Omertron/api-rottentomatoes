@@ -32,7 +32,7 @@ public class Review implements Serializable {
     /*
      * Logger
      */
-    private static final Logger logger = LoggerFactory.getLogger(Review.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Review.class);
     /*
      * Serial Version
      */
@@ -126,7 +126,7 @@ public class Review implements Serializable {
         StringBuilder unknownBuilder = new StringBuilder();
         unknownBuilder.append("Unknown property: '").append(key);
         unknownBuilder.append("' value: '").append(value).append("'");
-        logger.warn(unknownBuilder.toString());
+        LOG.warn(unknownBuilder.toString());
     }
 
     @Override
