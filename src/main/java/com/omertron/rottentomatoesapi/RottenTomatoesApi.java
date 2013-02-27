@@ -35,8 +35,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Connect to the Rotten Tomatoes web site and get the rating for a specific
@@ -47,8 +45,6 @@ import org.slf4j.LoggerFactory;
  */
 public class RottenTomatoesApi {
 
-    // Logger
-//    private static final Logger LOG = LoggerFactory.getLogger(RottenTomatoesApi.class);
     // Properties map
     private Map<String, String> properties = new HashMap<String, String>();
 
