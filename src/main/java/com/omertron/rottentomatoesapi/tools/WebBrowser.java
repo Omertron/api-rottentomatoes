@@ -40,8 +40,8 @@ import org.apache.commons.codec.binary.Base64;
  */
 public final class WebBrowser {
 
-    private static Map<String, String> browserProperties = new HashMap<String, String>();
-    private static Map<String, Map<String, String>> cookies = new HashMap<String, Map<String, String>>();
+    private static final Map<String, String> browserProperties = new HashMap<String, String>();
+    private static final Map<String, Map<String, String>> cookies = new HashMap<String, Map<String, String>>();
     private static String proxyHost = null;
     private static String proxyPort = null;
     private static String proxyUsername = null;
@@ -174,15 +174,18 @@ public final class WebBrowser {
                                 break;
                             }
                         }
+
                         if (cookieDomain == null) {
                             // if domain isn't set take current host
                             cookieDomain = cnx.getURL().getHost();
                         }
+
                         Map<String, String> domainCookies = cookies.get(cookieDomain);
                         if (domainCookies == null) {
                             domainCookies = new HashMap<String, String>();
                             cookies.put(cookieDomain, domainCookies);
                         }
+                        
                         // add or replace cookie
                         domainCookies.put(cookieName, cookieValue);
                     }

@@ -61,6 +61,8 @@ public class ApiBuilder {
      * Create the URL
      *
      * @param properties
+     * @return
+     * @throws RottenTomatoesException
      */
     public static String create(Map<String, String> properties) throws RottenTomatoesException {
         if (StringUtils.isBlank(apiKey)) {
@@ -96,24 +98,30 @@ public class ApiBuilder {
      *
      * @param properties
      * @param movieId
+     * @return
+     * @throws RottenTomatoesException
      */
     public static String create(Map<String, String> properties, int movieId) throws RottenTomatoesException {
         String urlBuilder = create(properties);
         return urlBuilder.replace(MOVIE_ID, String.valueOf(movieId));
     }
 
+    /**
+     * Validate the key and value of a property
+     *
+     * @param key
+     * @param value
+     * @return
+     */
     public static boolean validateProperty(String key, String value) {
-        if (StringUtils.isBlank(key) || StringUtils.isBlank(value)) {
-            return false;
-        }
-
-        return true;
+        return !StringUtils.isBlank(key) && !StringUtils.isBlank(value);
     }
 
     /**
      * Validate and convert the limit property
      *
      * @param limit
+     * @return
      */
     public static String validateLimit(int limit) {
         if (limit < 1) {
@@ -132,6 +140,7 @@ public class ApiBuilder {
      * Validate and convert the page limit property
      *
      * @param pageLimit
+     * @return
      */
     public static String validatePageLimit(int pageLimit) {
         // Same validation as the limit
@@ -142,6 +151,7 @@ public class ApiBuilder {
      * Validate the page property
      *
      * @param page
+     * @return
      */
     public static String validatePage(int page) {
         if (page < 1) {
@@ -155,6 +165,7 @@ public class ApiBuilder {
      * Validate the country property
      *
      * @param country
+     * @return
      */
     public static String validateCountry(String country) {
         if (country.length() > 2) {

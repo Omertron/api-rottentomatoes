@@ -121,7 +121,6 @@ public class WrapperLists {
     public void setReviews(List<Review> reviews) {
         this.reviews = reviews;
     }
-
     //</editor-fold>
 
     /**
@@ -140,12 +139,10 @@ public class WrapperLists {
 
     /**
      * Check to see if the returned values are valid
+     *
+     * @return
      */
     public boolean isValid() {
-        // If the error string is empty, everything is OK
-        if (StringUtils.isBlank(error)) {
-            return true;
-        }
-        return false;
+        return StringUtils.isBlank(error);
     }
 }

@@ -19,20 +19,13 @@
  */
 package com.omertron.rottentomatoesapi.model;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class RTClip implements Serializable {
+public class RTClip extends AbstractJsonMapping implements Serializable {
 
-    /*
-     * Logger
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(RTClip.class);
     /*
      * Serial Version
      */
@@ -85,29 +78,4 @@ public class RTClip implements Serializable {
     }
     //</editor-fold>
 
-    /**
-     * Handle unknown properties and print a message
-     *
-     * @param key
-     * @param value
-     */
-    @JsonAnySetter
-    public void handleUnknown(String key, Object value) {
-        StringBuilder unknownBuilder = new StringBuilder();
-        unknownBuilder.append("Unknown property: '").append(key);
-        unknownBuilder.append("' value: '").append(value).append("'");
-        LOG.warn(unknownBuilder.toString());
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[Clip=");
-        builder.append("[title=").append(title);
-        builder.append("], [duration=").append(duration);
-        builder.append("], [thumbnail=").append(thumbnail);
-        builder.append("], [links=").append(links);
-        builder.append("]]");
-        return builder.toString();
-    }
 }

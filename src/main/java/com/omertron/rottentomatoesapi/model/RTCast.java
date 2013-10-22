@@ -19,20 +19,13 @@
  */
 package com.omertron.rottentomatoesapi.model;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class RTCast implements Serializable {
+public class RTCast extends AbstractJsonMapping implements Serializable {
 
-    /*
-     * Logger
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(RTCast.class);
     /*
      * Serial Version
      */
@@ -75,28 +68,4 @@ public class RTCast implements Serializable {
     }
     //</editor-fold>
 
-    /**
-     * Handle unknown properties and print a message
-     *
-     * @param key
-     * @param value
-     */
-    @JsonAnySetter
-    public void handleUnknown(String key, Object value) {
-        StringBuilder unknownBuilder = new StringBuilder();
-        unknownBuilder.append("Unknown property: '").append(key);
-        unknownBuilder.append("' value: '").append(value).append("'");
-        LOG.warn(unknownBuilder.toString());
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[Cast=");
-        builder.append("[id=").append(id);
-        builder.append("], [castName=").append(castName);
-        builder.append("], [characters=").append(characters);
-        builder.append("]]");
-        return builder.toString();
-    }
 }

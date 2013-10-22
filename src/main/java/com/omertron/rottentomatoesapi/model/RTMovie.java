@@ -19,7 +19,6 @@
  */
 package com.omertron.rottentomatoesapi.model;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -27,15 +26,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class RTMovie implements Serializable {
+public class RTMovie extends AbstractJsonMapping implements Serializable {
 
-    /*
-     * Logger
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(RTMovie.class);
     /*
      * Serial Version
      */
@@ -240,51 +233,11 @@ public class RTMovie implements Serializable {
     //</editor-fold>
 
     /**
-     * Handle unknown properties and print a message
-     *
-     * @param key
-     * @param value
-     */
-    @JsonAnySetter
-    public void handleUnknown(String key, Object value) {
-        StringBuilder unknownBuilder = new StringBuilder();
-        unknownBuilder.append("Unknown property: '").append(key);
-        unknownBuilder.append("' value: '").append(value).append("'");
-        LOG.warn(unknownBuilder.toString());
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder("[RTMovie=[");
-        sb.append("id=").append(id);
-        sb.append("], [title=").append(title);
-        sb.append("], [year=").append(year);
-        sb.append("], [mpaaRating=").append(mpaaRating);
-        sb.append("], [runtime=").append(runtime);
-        sb.append("], [criticsConsensus=").append(criticsConsensus);
-        sb.append("], [releaseDates=").append(releaseDates);
-        sb.append("], [ratings=").append(ratings);
-        sb.append("], [synopsis=").append(synopsis);
-        sb.append("], [artwork=").append(artwork);
-        sb.append("], [cast=").append(cast);
-        sb.append("], [alternateIds=").append(alternateIds);
-        sb.append("], [links=").append(links);
-        sb.append("], [genres=").append(genres);
-        sb.append("], [certification=").append(certification);
-        sb.append("], [directors=").append(directors);
-        sb.append("], [studio=").append(studio);
-        sb.append("]]");
-        return sb.toString();
-    }
-
-    /**
      * Check to see if the returned values are valid
+     *
+     * @return
      */
     public boolean isValid() {
-        // If the error string is empty, everything is OK
-        if (StringUtils.isBlank(error)) {
-            return true;
-        }
-        return false;
+        return StringUtils.isBlank(error);
     }
 }

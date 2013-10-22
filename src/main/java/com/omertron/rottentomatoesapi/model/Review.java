@@ -19,20 +19,13 @@
  */
 package com.omertron.rottentomatoesapi.model;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class Review implements Serializable {
+public class Review extends AbstractJsonMapping implements Serializable {
 
-    /*
-     * Logger
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(Review.class);
     /*
      * Serial Version
      */
@@ -115,32 +108,4 @@ public class Review implements Serializable {
     }
     //</editor-fold>
 
-    /**
-     * Handle unknown properties and print a message
-     *
-     * @param key
-     * @param value
-     */
-    @JsonAnySetter
-    public void handleUnknown(String key, Object value) {
-        StringBuilder unknownBuilder = new StringBuilder();
-        unknownBuilder.append("Unknown property: '").append(key);
-        unknownBuilder.append("' value: '").append(value).append("'");
-        LOG.warn(unknownBuilder.toString());
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[Review=");
-        builder.append("[critic=").append(critic);
-        builder.append("], [date=").append(date);
-        builder.append("], [originalScore=").append(originalScore);
-        builder.append("], [freshness=").append(freshness);
-        builder.append("], [publication=").append(publication);
-        builder.append("], [quote=").append(quote);
-        builder.append("], [links=").append(links);
-        builder.append("]]");
-        return builder.toString();
-    }
 }
