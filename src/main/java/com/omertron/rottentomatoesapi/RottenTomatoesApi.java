@@ -87,7 +87,7 @@ public class RottenTomatoesApi {
     /*
      * Jackson JSON configuration
      */
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
     /*
      * Defaults
      */
@@ -149,7 +149,7 @@ public class RottenTomatoesApi {
             String urlString = ApiBuilder.create(properties);
             String webPage = WebBrowser.request(urlString);
 
-            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
             if (wl.isValid()) {
                 return wl.getMovies();
             } else {
@@ -201,7 +201,7 @@ public class RottenTomatoesApi {
             String urlString = ApiBuilder.create(properties);
             String webPage = WebBrowser.request(urlString);
 
-            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
             if (wl.isValid()) {
                 return wl.getMovies();
             } else {
@@ -251,7 +251,7 @@ public class RottenTomatoesApi {
             String urlString = ApiBuilder.create(properties);
             String webPage = WebBrowser.request(urlString);
 
-            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
             if (wl.isValid()) {
                 return wl.getMovies();
             } else {
@@ -303,7 +303,7 @@ public class RottenTomatoesApi {
             String urlString = ApiBuilder.create(properties);
             String webPage = WebBrowser.request(urlString);
 
-            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
             if (wl.isValid()) {
                 return wl.getMovies();
             } else {
@@ -353,7 +353,7 @@ public class RottenTomatoesApi {
             String urlString = ApiBuilder.create(properties);
             String webPage = WebBrowser.request(urlString);
 
-            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
             if (wl.isValid()) {
                 return wl.getMovies();
             } else {
@@ -405,7 +405,7 @@ public class RottenTomatoesApi {
             String urlString = ApiBuilder.create(properties);
             String webPage = WebBrowser.request(urlString);
 
-            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
             if (wl.isValid()) {
                 return wl.getMovies();
             } else {
@@ -457,7 +457,7 @@ public class RottenTomatoesApi {
             String urlString = ApiBuilder.create(properties);
             String webPage = WebBrowser.request(urlString);
 
-            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
             if (wl.isValid()) {
                 return wl.getMovies();
             } else {
@@ -509,7 +509,7 @@ public class RottenTomatoesApi {
             String urlString = ApiBuilder.create(properties);
             String webPage = WebBrowser.request(urlString);
 
-            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
             if (wl.isValid()) {
                 return wl.getMovies();
             } else {
@@ -556,7 +556,7 @@ public class RottenTomatoesApi {
             String urlString = ApiBuilder.create(properties, movieId);
             String webPage = WebBrowser.request(urlString);
 
-            RTMovie rtMovie = mapper.readValue(webPage, RTMovie.class);
+            RTMovie rtMovie = MAPPER.readValue(webPage, RTMovie.class);
             if (rtMovie.isValid()) {
                 return rtMovie;
             } else {
@@ -582,7 +582,7 @@ public class RottenTomatoesApi {
             String urlString = ApiBuilder.create(properties, movieId);
             String webPage = WebBrowser.request(urlString);
 
-            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
 
             if (wl.isValid()) {
                 return wl.getCast();
@@ -609,7 +609,7 @@ public class RottenTomatoesApi {
             String urlString = ApiBuilder.create(properties, movieId);
             String webPage = WebBrowser.request(urlString);
 
-            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
 
             if (wl.isValid()) {
                 return wl.getClips();
@@ -644,7 +644,7 @@ public class RottenTomatoesApi {
             String urlString = ApiBuilder.create(properties, movieId);
             String webPage = WebBrowser.request(urlString);
 
-            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
 
             if (wl.isValid()) {
                 return wl.getReviews();
@@ -709,7 +709,7 @@ public class RottenTomatoesApi {
             String urlString = ApiBuilder.create(properties, movieId);
             String webPage = WebBrowser.request(urlString);
 
-            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
 
             if (wl.isValid()) {
                 return wl.getMovies();
@@ -755,7 +755,7 @@ public class RottenTomatoesApi {
             String urlString = ApiBuilder.create(properties);
             String webPage = WebBrowser.request(urlString);
 
-            RTMovie rtMovie = mapper.readValue(webPage, RTMovie.class);
+            RTMovie rtMovie = MAPPER.readValue(webPage, RTMovie.class);
             if (rtMovie.isValid()) {
                 return rtMovie;
             } else {
@@ -786,7 +786,7 @@ public class RottenTomatoesApi {
             String urlString = ApiBuilder.create(properties);
             String webPage = WebBrowser.request(urlString);
 
-            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
 
             if (wl.isValid()) {
                 return wl.getMovies();
@@ -818,7 +818,7 @@ public class RottenTomatoesApi {
             String urlString = ApiBuilder.create(properties);
             String webPage = WebBrowser.request(urlString);
 
-            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
 
             if (wl.isValid()) {
                 return wl.getLinks();
@@ -844,7 +844,7 @@ public class RottenTomatoesApi {
             String urlString = ApiBuilder.create(properties);
             String webPage = WebBrowser.request(urlString);
 
-            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
 
             if (wl.isValid()) {
                 return wl.getLinks();
@@ -870,7 +870,7 @@ public class RottenTomatoesApi {
             String urlString = ApiBuilder.create(properties);
             String webPage = WebBrowser.request(urlString);
 
-            WrapperLists wl = mapper.readValue(webPage, WrapperLists.class);
+            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
 
             if (wl.isValid()) {
                 return wl.getLinks();
