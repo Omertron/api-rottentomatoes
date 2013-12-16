@@ -45,7 +45,7 @@ public class ApiBuilder {
     private static final String API_VERSION = "v1.0";
     private static final String API_PREFIX = ".json?apikey=";
     // Movie replacement token
-    private static final String MOVIE_ID = "{movie-id}";
+    public static final String MOVIE_ID = "{movie-id}";
     // Defaults and max
     private static final int LIMIT_MAX = 50;
 
@@ -73,7 +73,15 @@ public class ApiBuilder {
         urlBuilder.append(API_VERSION);
 
         if (properties.containsKey(PROPERTY_URL) && StringUtils.isNotBlank(properties.get(PROPERTY_URL))) {
-            urlBuilder.append(properties.get(PROPERTY_URL));
+            String url = properties.get(PROPERTY_URL);
+
+            // If we have the ID, then we need to replace the "{movie-id}" in the URL
+            if (properties.containsKey(PROPERTY_ID) && StringUtils.isNotBlank(properties.get(PROPERTY_ID))) {
+                url = url.replace(MOVIE_ID, String.valueOf(properties.get(PROPERTY_ID)));
+                // We don't need this property anymore
+                properties.remove(PROPERTY_ID);
+            }
+            urlBuilder.append(url);
             // We don't need this property anymore
             properties.remove(PROPERTY_URL);
         } else {
@@ -91,19 +99,6 @@ public class ApiBuilder {
 
         LOG.trace("URL: " + urlBuilder.toString());
         return urlBuilder.toString();
-    }
-
-    /**
-     * Create the URL with the movie ID
-     *
-     * @param properties
-     * @param movieId
-     * @return
-     * @throws RottenTomatoesException
-     */
-    public static String create(Map<String, String> properties, int movieId) throws RottenTomatoesException {
-        String urlBuilder = create(properties).replace(MOVIE_ID, String.valueOf(movieId));
-        return urlBuilder;
     }
 
     /**

@@ -77,11 +77,11 @@ public class RottenTomatoesApi {
     /*
      * Detailed Info
      */
-    private static final String URL_MOVIES_INFO = "/movies/{movie-id}";
-    private static final String URL_CAST_INFO = "/movies/{movie-id}/cast";
-    private static final String URL_MOVIE_CLIPS = "/movies/{movie-id}/clips";
-    private static final String URL_MOVIES_REVIEWS = "/movies/{movie-id}/reviews";
-    private static final String URL_MOVIES_SIMILAR = "/movies/{movie-id}/similar";
+    private static final String URL_MOVIES_INFO = "/movies/" + ApiBuilder.MOVIE_ID;
+    private static final String URL_CAST_INFO = "/movies/" + ApiBuilder.MOVIE_ID + "/cast";
+    private static final String URL_MOVIE_CLIPS = "/movies/" + ApiBuilder.MOVIE_ID + "/clips";
+    private static final String URL_MOVIES_REVIEWS = "/movies/" + ApiBuilder.MOVIE_ID + "/reviews";
+    private static final String URL_MOVIES_SIMILAR = "/movies/" + ApiBuilder.MOVIE_ID + "/similar";
     private static final String URL_MOVIES_ALIAS = "/movie_alias";
 
     /*
@@ -546,10 +546,11 @@ public class RottenTomatoesApi {
      */
     public RTMovie getDetailedInfo(int movieId) throws RottenTomatoesException {
         properties.clear();
+        properties.put(ApiBuilder.PROPERTY_ID, String.valueOf(movieId));
         properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIES_INFO);
 
         try {
-            String webPage = getContent(ApiBuilder.create(properties, movieId));
+            String webPage = getContent(ApiBuilder.create(properties));
             RTMovie rtMovie = MAPPER.readValue(webPage, RTMovie.class);
             if (rtMovie.isValid()) {
                 return rtMovie;
@@ -570,10 +571,11 @@ public class RottenTomatoesApi {
      */
     public List<RTCast> getCastInfo(int movieId) throws RottenTomatoesException {
         properties.clear();
+        properties.put(ApiBuilder.PROPERTY_ID, String.valueOf(movieId));
         properties.put(ApiBuilder.PROPERTY_URL, URL_CAST_INFO);
 
         try {
-            String webPage = getContent(ApiBuilder.create(properties, movieId));
+            String webPage = getContent(ApiBuilder.create(properties));
             WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
 
             if (wl.isValid()) {
@@ -595,10 +597,11 @@ public class RottenTomatoesApi {
      */
     public List<RTClip> getMovieClips(int movieId) throws RottenTomatoesException {
         properties.clear();
+        properties.put(ApiBuilder.PROPERTY_ID, String.valueOf(movieId));
         properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIE_CLIPS);
 
         try {
-            String webPage = getContent(ApiBuilder.create(properties, movieId));
+            String webPage = getContent(ApiBuilder.create(properties));
             WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
 
             if (wl.isValid()) {
@@ -624,6 +627,7 @@ public class RottenTomatoesApi {
      */
     public List<Review> getMoviesReviews(int movieId, String reviewType, int pageLimit, int page, String country) throws RottenTomatoesException {
         properties.clear();
+        properties.put(ApiBuilder.PROPERTY_ID, String.valueOf(movieId));
         properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIES_REVIEWS);
         properties.put(ApiBuilder.PROPERTY_REVIEW_TYPE, reviewType);
         properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
@@ -631,7 +635,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
 
         try {
-            String webPage = getContent(ApiBuilder.create(properties, movieId));
+            String webPage = getContent(ApiBuilder.create(properties));
             WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
 
             if (wl.isValid()) {
@@ -690,11 +694,12 @@ public class RottenTomatoesApi {
      */
     public List<RTMovie> getMoviesSimilar(int movieId, int limit) throws RottenTomatoesException {
         properties.clear();
+        properties.put(ApiBuilder.PROPERTY_ID, String.valueOf(movieId));
         properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIES_SIMILAR);
         properties.put(ApiBuilder.PROPERTY_LIMIT, ApiBuilder.validateLimit(limit));
 
         try {
-            String webPage = getContent(ApiBuilder.create(properties, movieId));
+            String webPage = getContent(ApiBuilder.create(properties));
             WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
 
             if (wl.isValid()) {
@@ -875,7 +880,7 @@ public class RottenTomatoesApi {
 
             if (entity.getContentEncoding() != null && entity.getContentEncoding().getValue().equalsIgnoreCase("gzip")) {
                 gzis = new GZIPInputStream(entity.getContent());
-                isr = new InputStreamReader(gzis);
+                isr = new InputStreamReader(gzis, "UTF-8");
                 br = new BufferedReader(isr);
 
                 String readed = br.readLine();
