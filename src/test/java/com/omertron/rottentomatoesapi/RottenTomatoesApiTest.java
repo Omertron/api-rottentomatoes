@@ -25,14 +25,18 @@ import com.omertron.rottentomatoesapi.model.RTMovie;
 import com.omertron.rottentomatoesapi.model.Review;
 import java.util.List;
 import java.util.Map;
-import junit.framework.TestCase;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertNotNull;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RottenTomatoesApiTest extends TestCase {
+public class RottenTomatoesApiTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(RottenTomatoesApiTest.class);
     private static final String API_KEY = "rnt8xak564a8sxkts5xkqj5z";
@@ -47,15 +51,22 @@ public class RottenTomatoesApiTest extends TestCase {
     private static final String SEARCH_IMDB = "imdb";
     private static final String SEARCH_QUERY = "Blade Runner 1982";
 
-    @Before
-    @Override
-    public void setUp() throws RottenTomatoesException {
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        TestLogger.Configure();
         rt = new RottenTomatoesApi(API_KEY);
     }
 
-    @BeforeClass
-    public static void setUpClass() throws RottenTomatoesException {
-        TestLogger.Configure();
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
+
+    @Before
+    public void setUp() {
+    }
+
+    @After
+    public void tearDown() {
     }
 
     /**
@@ -66,8 +77,10 @@ public class RottenTomatoesApiTest extends TestCase {
     @Test
     public void testGetBoxOffice() throws RottenTomatoesException {
         LOG.info("getBoxOffice");
+
         List<RTMovie> result = rt.getBoxOffice(COUNTRY_US, LIMIT);
         assertEquals("Wrong number of results", LIMIT, result.size());
+        sleeper();
     }
 
     /**
@@ -80,6 +93,7 @@ public class RottenTomatoesApiTest extends TestCase {
         LOG.info("getInTheaters");
         List<RTMovie> result = rt.getInTheaters(COUNTRY_US, PAGE, PAGE_LIMIT);
         assertEquals("Wrong number of results", PAGE_LIMIT, result.size());
+        sleeper();
     }
 
     /**
@@ -92,6 +106,7 @@ public class RottenTomatoesApiTest extends TestCase {
         LOG.info("getOpeningMovies");
         List<RTMovie> result = rt.getOpeningMovies(COUNTRY_US, LIMIT);
         assertEquals("Wrong number of results", LIMIT, result.size());
+        sleeper();
     }
 
     /**
@@ -104,6 +119,7 @@ public class RottenTomatoesApiTest extends TestCase {
         LOG.info("getUpcomingMovies");
         List<RTMovie> result = rt.getUpcomingMovies(COUNTRY_US, PAGE, PAGE_LIMIT);
         assertEquals("Wrong number of results", PAGE_LIMIT, result.size());
+        sleeper();
     }
 
     /**
@@ -116,6 +132,7 @@ public class RottenTomatoesApiTest extends TestCase {
         LOG.info("getTopRentals");
         List<RTMovie> result = rt.getTopRentals(COUNTRY_US, LIMIT);
         assertEquals("Wrong number of results", LIMIT, result.size());
+        sleeper();
     }
 
     /**
@@ -128,6 +145,7 @@ public class RottenTomatoesApiTest extends TestCase {
         LOG.info("getCurrentReleaseDvds");
         List<RTMovie> result = rt.getCurrentReleaseDvds(COUNTRY_US, PAGE, PAGE_LIMIT);
         assertEquals("Wrong number of results", PAGE_LIMIT, result.size());
+        sleeper();
     }
 
     /**
@@ -140,6 +158,7 @@ public class RottenTomatoesApiTest extends TestCase {
         LOG.info("getNewReleaseDvds");
         List<RTMovie> result = rt.getNewReleaseDvds(COUNTRY_US, PAGE, PAGE_LIMIT);
         assertEquals("Wrong number of results", PAGE_LIMIT, result.size());
+        sleeper();
     }
 
     /**
@@ -152,6 +171,7 @@ public class RottenTomatoesApiTest extends TestCase {
         LOG.info("getUpcomingDvds");
         List<RTMovie> result = rt.getUpcomingDvds(COUNTRY_US, PAGE, PAGE_LIMIT);
         assertNotNull("Null object returned", result);
+        sleeper();
     }
 
     /**
@@ -164,6 +184,7 @@ public class RottenTomatoesApiTest extends TestCase {
         LOG.info("getDetailedInfo");
         RTMovie result = rt.getDetailedInfo(MOVIE_ID);
         assertEquals("Incorrect movie returned", "Blade Runner", result.getTitle());
+        sleeper();
     }
 
     /**
@@ -176,6 +197,7 @@ public class RottenTomatoesApiTest extends TestCase {
         LOG.info("getCastInfo");
         List<RTCast> result = rt.getCastInfo(MOVIE_ID);
         assertFalse("No cast information!", result.isEmpty());
+        sleeper();
     }
 
     /**
@@ -188,6 +210,7 @@ public class RottenTomatoesApiTest extends TestCase {
         LOG.info("getMovieClips");
         List<RTClip> result = rt.getMovieClips(MOVIE_ID);
         assertFalse("No clip information!", result.isEmpty());
+        sleeper();
     }
 
     /**
@@ -200,6 +223,7 @@ public class RottenTomatoesApiTest extends TestCase {
         LOG.info("getMoviesReviews");
         List<Review> result = rt.getMoviesReviews(MOVIE_ID, "", PAGE_LIMIT, PAGE, COUNTRY_US);
         assertFalse("No review information!", result.isEmpty());
+        sleeper();
     }
 
     /**
@@ -212,6 +236,7 @@ public class RottenTomatoesApiTest extends TestCase {
         LOG.info("getMoviesSimilar");
         List<RTMovie> result = rt.getMoviesSimilar(MOVIE_ID, LIMIT);
         assertFalse("No similar movies information!", result.isEmpty());
+        sleeper();
     }
 
     /**
@@ -224,6 +249,7 @@ public class RottenTomatoesApiTest extends TestCase {
         LOG.info("getMoviesAlias - This is a very buggy method");
         RTMovie result = rt.getMoviesAlias(ALT_MOVIE_ID, SEARCH_IMDB);
         assertFalse("Something really wrong here!", result == null);
+        sleeper();
     }
 
     /**
@@ -236,6 +262,7 @@ public class RottenTomatoesApiTest extends TestCase {
         LOG.info("getMoviesSearch");
         List<RTMovie> result = rt.getMoviesSearch(SEARCH_QUERY, PAGE_LIMIT, PAGE);
         assertFalse("No movies found!", result.isEmpty());
+        sleeper();
     }
 
     /**
@@ -248,6 +275,7 @@ public class RottenTomatoesApiTest extends TestCase {
         LOG.info("getListsDirectory");
         Map result = rt.getListsDirectory();
         assertFalse("No lists found!", result.isEmpty());
+        sleeper();
     }
 
     /**
@@ -260,6 +288,7 @@ public class RottenTomatoesApiTest extends TestCase {
         LOG.info("getMovieListsDirectory");
         Map result = rt.getMovieListsDirectory();
         assertFalse("No lists found!", result.isEmpty());
+        sleeper();
     }
 
     /**
@@ -272,5 +301,17 @@ public class RottenTomatoesApiTest extends TestCase {
         LOG.info("getDvdListsDirectory");
         Map result = rt.getDvdListsDirectory();
         assertFalse("No lists found!", result.isEmpty());
+        sleeper();
+    }
+
+    /**
+     * We have a QoS limit of 5 queries per second, so slow the tests down
+     */
+    private void sleeper() {
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException ex) {
+            // No need to worry
+        }
     }
 }

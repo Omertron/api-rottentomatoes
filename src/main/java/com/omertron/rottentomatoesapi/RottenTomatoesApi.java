@@ -27,13 +27,20 @@ import com.omertron.rottentomatoesapi.model.RTMovie;
 import com.omertron.rottentomatoesapi.model.Review;
 import com.omertron.rottentomatoesapi.tools.ApiBuilder;
 import com.omertron.rottentomatoesapi.wrapper.WrapperLists;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yamj.api.common.http.CommonHttpClient;
 import org.yamj.api.common.http.DefaultPoolingHttpClient;
 
@@ -45,6 +52,7 @@ import org.yamj.api.common.http.DefaultPoolingHttpClient;
  */
 public class RottenTomatoesApi {
 
+    private static final Logger LOG = LoggerFactory.getLogger(RottenTomatoesApi.class);
     private CommonHttpClient httpClient;
 
     // Properties map
@@ -110,7 +118,6 @@ public class RottenTomatoesApi {
         }
 
         ApiBuilder.addApiKey(apiKey);
-
         this.httpClient = httpClient;
     }
 
@@ -151,9 +158,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
 
         try {
-            String urlString = ApiBuilder.create(properties);
-            String webPage = httpClient.requestContent(urlString);
-
+            String webPage = getContent(ApiBuilder.create(properties));
             WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
             if (wl.isValid()) {
                 return wl.getMovies();
@@ -203,9 +208,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
 
         try {
-            String urlString = ApiBuilder.create(properties);
-            String webPage = httpClient.requestContent(urlString);
-
+            String webPage = getContent(ApiBuilder.create(properties));
             WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
             if (wl.isValid()) {
                 return wl.getMovies();
@@ -253,9 +256,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
 
         try {
-            String urlString = ApiBuilder.create(properties);
-            String webPage = httpClient.requestContent(urlString);
-
+            String webPage = getContent(ApiBuilder.create(properties));
             WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
             if (wl.isValid()) {
                 return wl.getMovies();
@@ -305,9 +306,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
 
         try {
-            String urlString = ApiBuilder.create(properties);
-            String webPage = httpClient.requestContent(urlString);
-
+            String webPage = getContent(ApiBuilder.create(properties));
             WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
             if (wl.isValid()) {
                 return wl.getMovies();
@@ -355,9 +354,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
 
         try {
-            String urlString = ApiBuilder.create(properties);
-            String webPage = httpClient.requestContent(urlString);
-
+            String webPage = getContent(ApiBuilder.create(properties));
             WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
             if (wl.isValid()) {
                 return wl.getMovies();
@@ -407,9 +404,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
 
         try {
-            String urlString = ApiBuilder.create(properties);
-            String webPage = httpClient.requestContent(urlString);
-
+            String webPage = getContent(ApiBuilder.create(properties));
             WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
             if (wl.isValid()) {
                 return wl.getMovies();
@@ -459,9 +454,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
 
         try {
-            String urlString = ApiBuilder.create(properties);
-            String webPage = httpClient.requestContent(urlString);
-
+            String webPage = getContent(ApiBuilder.create(properties));
             WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
             if (wl.isValid()) {
                 return wl.getMovies();
@@ -511,9 +504,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
 
         try {
-            String urlString = ApiBuilder.create(properties);
-            String webPage = httpClient.requestContent(urlString);
-
+            String webPage = getContent(ApiBuilder.create(properties));
             WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
             if (wl.isValid()) {
                 return wl.getMovies();
@@ -558,9 +549,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIES_INFO);
 
         try {
-            String urlString = ApiBuilder.create(properties, movieId);
-            String webPage = httpClient.requestContent(urlString);
-
+            String webPage = getContent(ApiBuilder.create(properties, movieId));
             RTMovie rtMovie = MAPPER.readValue(webPage, RTMovie.class);
             if (rtMovie.isValid()) {
                 return rtMovie;
@@ -584,9 +573,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_URL, URL_CAST_INFO);
 
         try {
-            String urlString = ApiBuilder.create(properties, movieId);
-            String webPage = httpClient.requestContent(urlString);
-
+            String webPage = getContent(ApiBuilder.create(properties, movieId));
             WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
 
             if (wl.isValid()) {
@@ -611,9 +598,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIE_CLIPS);
 
         try {
-            String urlString = ApiBuilder.create(properties, movieId);
-            String webPage = httpClient.requestContent(urlString);
-
+            String webPage = getContent(ApiBuilder.create(properties, movieId));
             WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
 
             if (wl.isValid()) {
@@ -646,9 +631,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
 
         try {
-            String urlString = ApiBuilder.create(properties, movieId);
-            String webPage = httpClient.requestContent(urlString);
-
+            String webPage = getContent(ApiBuilder.create(properties, movieId));
             WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
 
             if (wl.isValid()) {
@@ -711,9 +694,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_LIMIT, ApiBuilder.validateLimit(limit));
 
         try {
-            String urlString = ApiBuilder.create(properties, movieId);
-            String webPage = httpClient.requestContent(urlString);
-
+            String webPage = getContent(ApiBuilder.create(properties, movieId));
             WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
 
             if (wl.isValid()) {
@@ -757,9 +738,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_TYPE, type);
 
         try {
-            String urlString = ApiBuilder.create(properties);
-            String webPage = httpClient.requestContent(urlString);
-
+            String webPage = getContent(ApiBuilder.create(properties));
             RTMovie rtMovie = MAPPER.readValue(webPage, RTMovie.class);
             if (rtMovie.isValid()) {
                 return rtMovie;
@@ -788,9 +767,7 @@ public class RottenTomatoesApi {
 
         try {
             properties.put(ApiBuilder.PROPERTY_QUERY, URLEncoder.encode(query, "UTF-8"));
-            String urlString = ApiBuilder.create(properties);
-            String webPage = httpClient.requestContent(urlString);
-
+            String webPage = getContent(ApiBuilder.create(properties));
             WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
 
             if (wl.isValid()) {
@@ -820,9 +797,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_URL, URL_LISTS_DIRECTORY);
 
         try {
-            String urlString = ApiBuilder.create(properties);
-            String webPage = httpClient.requestContent(urlString);
-
+            String webPage = getContent(ApiBuilder.create(properties));
             WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
 
             if (wl.isValid()) {
@@ -844,11 +819,8 @@ public class RottenTomatoesApi {
     public Map<String, String> getMovieListsDirectory() throws RottenTomatoesException {
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIE_LISTS);
-
         try {
-            String urlString = ApiBuilder.create(properties);
-            String webPage = httpClient.requestContent(urlString);
-
+            String webPage = getContent(ApiBuilder.create(properties));
             WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
 
             if (wl.isValid()) {
@@ -872,9 +844,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_URL, URL_DVD_LISTS);
 
         try {
-            String urlString = ApiBuilder.create(properties);
-            String webPage = httpClient.requestContent(urlString);
-
+            String webPage = getContent(ApiBuilder.create(properties));
             WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
 
             if (wl.isValid()) {
@@ -885,5 +855,62 @@ public class RottenTomatoesApi {
         } catch (IOException ex) {
             throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
         }
+    }
+
+    /**
+     * Get the content from a string, decoding it if it is in GZIP format
+     *
+     * @param urlString
+     * @return
+     * @throws RottenTomatoesException
+     */
+    private String getContent(String urlString) throws RottenTomatoesException {
+        StringBuilder content = new StringBuilder();
+        GZIPInputStream gzis = null;
+        InputStreamReader isr = null;
+        BufferedReader br = null;
+
+        try {
+            HttpEntity entity = httpClient.requestResource(urlString);
+
+            if (entity.getContentEncoding() != null && entity.getContentEncoding().getValue().equalsIgnoreCase("gzip")) {
+                gzis = new GZIPInputStream(entity.getContent());
+                isr = new InputStreamReader(gzis);
+                br = new BufferedReader(isr);
+
+                String readed = br.readLine();
+                while (readed != null) {
+                    content.append(readed);
+                    readed = br.readLine();
+                }
+            } else {
+                content.append(EntityUtils.toString(entity));
+            }
+        } catch (IOException ex) {
+            throw new RottenTomatoesException(RottenTomatoesExceptionType.MAPPING_FAILED, "Failed to read JSON data from " + urlString, ex);
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException ex) {
+                    LOG.trace("Failed to close BufferedReader", ex);
+                }
+            }
+            if (isr != null) {
+                try {
+                    isr.close();
+                } catch (IOException ex) {
+                    LOG.trace("Failed to close InputStreamReader", ex);
+                }
+            }
+            if (gzis != null) {
+                try {
+                    gzis.close();
+                } catch (IOException ex) {
+                    LOG.trace("Failed to close GZIPInputStream", ex);
+                }
+            }
+        }
+        return content.toString();
     }
 }

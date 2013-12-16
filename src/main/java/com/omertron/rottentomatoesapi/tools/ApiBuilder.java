@@ -102,8 +102,8 @@ public class ApiBuilder {
      * @throws RottenTomatoesException
      */
     public static String create(Map<String, String> properties, int movieId) throws RottenTomatoesException {
-        String urlBuilder = create(properties);
-        return urlBuilder.replace(MOVIE_ID, String.valueOf(movieId));
+        String urlBuilder = create(properties).replace(MOVIE_ID, String.valueOf(movieId));
+        return urlBuilder;
     }
 
     /**

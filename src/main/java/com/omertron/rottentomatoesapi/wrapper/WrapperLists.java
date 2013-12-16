@@ -19,8 +19,8 @@
  */
 package com.omertron.rottentomatoesapi.wrapper;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.omertron.rottentomatoesapi.model.AbstractJsonMapping;
 import com.omertron.rottentomatoesapi.model.RTCast;
 import com.omertron.rottentomatoesapi.model.RTClip;
 import com.omertron.rottentomatoesapi.model.RTMovie;
@@ -33,8 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WrapperLists {
-    // Logger
+public class WrapperLists extends AbstractJsonMapping {
 
     private static final Logger LOG = LoggerFactory.getLogger(WrapperLists.class);
     /*
@@ -122,20 +121,6 @@ public class WrapperLists {
         this.reviews = reviews;
     }
     //</editor-fold>
-
-    /**
-     * Handle unknown properties and print a message
-     *
-     * @param key
-     * @param value
-     */
-    @JsonAnySetter
-    public void handleUnknown(String key, Object value) {
-        StringBuilder unknownBuilder = new StringBuilder();
-        unknownBuilder.append("Unknown property: '").append(key);
-        unknownBuilder.append("' value: '").append(value).append("'");
-        LOG.warn(unknownBuilder.toString());
-    }
 
     /**
      * Check to see if the returned values are valid
