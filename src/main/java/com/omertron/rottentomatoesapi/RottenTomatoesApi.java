@@ -54,8 +54,10 @@ public class RottenTomatoesApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(RottenTomatoesApi.class);
     private CommonHttpClient httpClient;
-
-    // Properties map
+    private static final String ENCODING_UTF8 = "UTF-8";
+    /*
+     * Properties map
+     */
     private final Map<String, String> properties = new HashMap<String, String>();
 
     /*
@@ -77,7 +79,8 @@ public class RottenTomatoesApi {
     /*
      * Detailed Info
      */
-    private static final String URL_MOVIES_INFO = "/movies/" + ApiBuilder.MOVIE_ID;
+    private static final String BASE_MOVIES = "/movies/";
+    private static final String URL_MOVIES_INFO = BASE_MOVIES + ApiBuilder.MOVIE_ID;
     private static final String URL_CAST_INFO = "/movies/" + ApiBuilder.MOVIE_ID + "/cast";
     private static final String URL_MOVIE_CLIPS = "/movies/" + ApiBuilder.MOVIE_ID + "/clips";
     private static final String URL_MOVIES_REVIEWS = "/movies/" + ApiBuilder.MOVIE_ID + "/reviews";
@@ -771,7 +774,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_PAGE, ApiBuilder.validatePage(page));
 
         try {
-            properties.put(ApiBuilder.PROPERTY_QUERY, URLEncoder.encode(query, "UTF-8"));
+            properties.put(ApiBuilder.PROPERTY_QUERY, URLEncoder.encode(query, ENCODING_UTF8));
             String webPage = getContent(ApiBuilder.create(properties));
             WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
 
@@ -880,7 +883,7 @@ public class RottenTomatoesApi {
 
             if (entity.getContentEncoding() != null && entity.getContentEncoding().getValue().equalsIgnoreCase("gzip")) {
                 gzis = new GZIPInputStream(entity.getContent());
-                isr = new InputStreamReader(gzis, "UTF-8");
+                isr = new InputStreamReader(gzis, ENCODING_UTF8);
                 br = new BufferedReader(isr);
 
                 String readed = br.readLine();
