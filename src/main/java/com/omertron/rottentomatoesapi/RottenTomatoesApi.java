@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -892,7 +893,7 @@ public class RottenTomatoesApi {
                     readed = br.readLine();
                 }
             } else {
-                content.append(EntityUtils.toString(entity));
+                content.append(EntityUtils.toString(entity, Charset.forName(ENCODING_UTF8)));
             }
         } catch (IOException ex) {
             throw new RottenTomatoesException(RottenTomatoesExceptionType.MAPPING_FAILED, "Failed to read JSON data from " + urlString, ex);
