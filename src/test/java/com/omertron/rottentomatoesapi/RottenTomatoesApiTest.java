@@ -80,7 +80,6 @@ public class RottenTomatoesApiTest {
 
         List<RTMovie> result = rt.getBoxOffice(COUNTRY_US, LIMIT);
         assertEquals("Wrong number of results", LIMIT, result.size());
-        sleeper();
     }
 
     /**
@@ -91,9 +90,9 @@ public class RottenTomatoesApiTest {
     @Test
     public void testGetInTheaters() throws RottenTomatoesException {
         LOG.info("getInTheaters");
+
         List<RTMovie> result = rt.getInTheaters(COUNTRY_US, PAGE, PAGE_LIMIT);
         assertEquals("Wrong number of results", PAGE_LIMIT, result.size());
-        sleeper();
     }
 
     /**
@@ -104,9 +103,9 @@ public class RottenTomatoesApiTest {
     @Test
     public void testGetOpeningMovies() throws RottenTomatoesException {
         LOG.info("getOpeningMovies");
+
         List<RTMovie> result = rt.getOpeningMovies(COUNTRY_US, LIMIT);
         assertEquals("Wrong number of results", LIMIT, result.size());
-        sleeper();
     }
 
     /**
@@ -117,9 +116,9 @@ public class RottenTomatoesApiTest {
     @Test
     public void testGetUpcomingMovies() throws RottenTomatoesException {
         LOG.info("getUpcomingMovies");
+
         List<RTMovie> result = rt.getUpcomingMovies(COUNTRY_US, PAGE, PAGE_LIMIT);
         assertEquals("Wrong number of results", PAGE_LIMIT, result.size());
-        sleeper();
     }
 
     /**
@@ -130,9 +129,9 @@ public class RottenTomatoesApiTest {
     @Test
     public void testGetTopRentals() throws RottenTomatoesException {
         LOG.info("getTopRentals");
+
         List<RTMovie> result = rt.getTopRentals(COUNTRY_US, LIMIT);
         assertEquals("Wrong number of results", LIMIT, result.size());
-        sleeper();
     }
 
     /**
@@ -143,9 +142,9 @@ public class RottenTomatoesApiTest {
     @Test
     public void testGetCurrentReleaseDvds() throws RottenTomatoesException {
         LOG.info("getCurrentReleaseDvds");
+
         List<RTMovie> result = rt.getCurrentReleaseDvds(COUNTRY_US, PAGE, PAGE_LIMIT);
         assertEquals("Wrong number of results", PAGE_LIMIT, result.size());
-        sleeper();
     }
 
     /**
@@ -156,9 +155,9 @@ public class RottenTomatoesApiTest {
     @Test
     public void testGetNewReleaseDvds() throws RottenTomatoesException {
         LOG.info("getNewReleaseDvds");
+
         List<RTMovie> result = rt.getNewReleaseDvds(COUNTRY_US, PAGE, PAGE_LIMIT);
         assertEquals("Wrong number of results", PAGE_LIMIT, result.size());
-        sleeper();
     }
 
     /**
@@ -169,9 +168,9 @@ public class RottenTomatoesApiTest {
     @Test
     public void testGetUpcomingDvds() throws RottenTomatoesException {
         LOG.info("getUpcomingDvds");
+
         List<RTMovie> result = rt.getUpcomingDvds(COUNTRY_US, PAGE, PAGE_LIMIT);
         assertNotNull("Null object returned", result);
-        sleeper();
     }
 
     /**
@@ -182,9 +181,9 @@ public class RottenTomatoesApiTest {
     @Test
     public void testGetDetailedInfo() throws RottenTomatoesException {
         LOG.info("getDetailedInfo");
+
         RTMovie result = rt.getDetailedInfo(MOVIE_ID);
         assertEquals("Incorrect movie returned", "Blade Runner", result.getTitle());
-        sleeper();
     }
 
     /**
@@ -195,9 +194,9 @@ public class RottenTomatoesApiTest {
     @Test
     public void testGetCastInfo() throws RottenTomatoesException {
         LOG.info("getCastInfo");
+
         List<RTCast> result = rt.getCastInfo(MOVIE_ID);
         assertFalse("No cast information!", result.isEmpty());
-        sleeper();
     }
 
     /**
@@ -208,9 +207,9 @@ public class RottenTomatoesApiTest {
     @Test
     public void testGetMovieClips() throws RottenTomatoesException {
         LOG.info("getMovieClips");
+
         List<RTClip> result = rt.getMovieClips(MOVIE_ID);
         assertFalse("No clip information!", result.isEmpty());
-        sleeper();
     }
 
     /**
@@ -221,9 +220,9 @@ public class RottenTomatoesApiTest {
     @Test
     public void testGetMoviesReviews() throws RottenTomatoesException {
         LOG.info("getMoviesReviews");
+
         List<Review> result = rt.getMoviesReviews(MOVIE_ID, "", PAGE_LIMIT, PAGE, COUNTRY_US);
         assertFalse("No review information!", result.isEmpty());
-        sleeper();
     }
 
     /**
@@ -234,9 +233,9 @@ public class RottenTomatoesApiTest {
     @Test
     public void testGetMoviesSimilar() throws RottenTomatoesException {
         LOG.info("getMoviesSimilar");
+
         List<RTMovie> result = rt.getMoviesSimilar(MOVIE_ID, LIMIT);
         assertFalse("No similar movies information!", result.isEmpty());
-        sleeper();
     }
 
     /**
@@ -247,9 +246,9 @@ public class RottenTomatoesApiTest {
     @Test
     public void testGetMoviesAlias() throws RottenTomatoesException {
         LOG.info("getMoviesAlias - This is a very buggy method");
+
         RTMovie result = rt.getMoviesAlias(ALT_MOVIE_ID, SEARCH_IMDB);
         assertFalse("Something really wrong here!", result == null);
-        sleeper();
     }
 
     /**
@@ -260,9 +259,9 @@ public class RottenTomatoesApiTest {
     @Test
     public void testGetMoviesSearch() throws RottenTomatoesException {
         LOG.info("getMoviesSearch");
+
         List<RTMovie> result = rt.getMoviesSearch(SEARCH_QUERY, PAGE_LIMIT, PAGE);
         assertFalse("No movies found!", result.isEmpty());
-        sleeper();
     }
 
     /**
@@ -273,9 +272,9 @@ public class RottenTomatoesApiTest {
     @Test
     public void testGetListsDirectory() throws RottenTomatoesException {
         LOG.info("getListsDirectory");
+
         Map result = rt.getListsDirectory();
         assertFalse("No lists found!", result.isEmpty());
-        sleeper();
     }
 
     /**
@@ -286,9 +285,9 @@ public class RottenTomatoesApiTest {
     @Test
     public void testGetMovieListsDirectory() throws RottenTomatoesException {
         LOG.info("getMovieListsDirectory");
+
         Map result = rt.getMovieListsDirectory();
         assertFalse("No lists found!", result.isEmpty());
-        sleeper();
     }
 
     /**
@@ -299,9 +298,9 @@ public class RottenTomatoesApiTest {
     @Test
     public void testGetDvdListsDirectory() throws RottenTomatoesException {
         LOG.info("getDvdListsDirectory");
+
         Map result = rt.getDvdListsDirectory();
         assertFalse("No lists found!", result.isEmpty());
-        sleeper();
     }
 
     /**
@@ -309,6 +308,7 @@ public class RottenTomatoesApiTest {
      */
     private void sleeper() {
         try {
+            LOG.info("Sleeping...");
             Thread.sleep(250);
         } catch (InterruptedException ex) {
             // No need to worry
