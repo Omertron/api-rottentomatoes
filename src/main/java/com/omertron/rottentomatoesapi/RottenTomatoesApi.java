@@ -58,7 +58,7 @@ public class RottenTomatoesApi {
     private static final Logger LOG = LoggerFactory.getLogger(RottenTomatoesApi.class);
     private CommonHttpClient httpClient;
     private static final String ENCODING_UTF8 = "UTF-8";
-    private int retryDelay = 500;
+    private long retryDelay = 500;
     private int retryLimit = 5;
     /*
      * Properties map
@@ -86,10 +86,10 @@ public class RottenTomatoesApi {
      */
     private static final String BASE_MOVIES = "/movies/";
     private static final String URL_MOVIES_INFO = BASE_MOVIES + ApiBuilder.MOVIE_ID;
-    private static final String URL_CAST_INFO = "/movies/" + ApiBuilder.MOVIE_ID + "/cast";
-    private static final String URL_MOVIE_CLIPS = "/movies/" + ApiBuilder.MOVIE_ID + "/clips";
-    private static final String URL_MOVIES_REVIEWS = "/movies/" + ApiBuilder.MOVIE_ID + "/reviews";
-    private static final String URL_MOVIES_SIMILAR = "/movies/" + ApiBuilder.MOVIE_ID + "/similar";
+    private static final String URL_CAST_INFO = BASE_MOVIES + ApiBuilder.MOVIE_ID + "/cast";
+    private static final String URL_MOVIE_CLIPS = BASE_MOVIES + ApiBuilder.MOVIE_ID + "/clips";
+    private static final String URL_MOVIES_REVIEWS = BASE_MOVIES + ApiBuilder.MOVIE_ID + "/reviews";
+    private static final String URL_MOVIES_SIMILAR = BASE_MOVIES + ApiBuilder.MOVIE_ID + "/similar";
     private static final String URL_MOVIES_ALIAS = "/movie_alias";
 
     /*
@@ -154,11 +154,11 @@ public class RottenTomatoesApi {
     /**
      * Set the delay time between API retries when the account is over it's limit
      *
-     * @param delay milliseconds to delay for, default is 500ms
+     * @param retryDelay milliseconds to delay for, default is 500ms
      */
-    public void setRetryDelay(int delay) {
-        if (delay > 250) {
-            this.retryDelay = delay;
+    public void setRetryDelay(long retryDelay) {
+        if (retryDelay > 250) {
+            this.retryDelay = retryDelay;
         }
     }
 
@@ -914,7 +914,7 @@ public class RottenTomatoesApi {
      */
     private void sleeper(int count) {
         try {
-            Thread.sleep(retryDelay * count);
+            Thread.sleep(retryDelay * (long) count);
         } catch (InterruptedException ex) {
             LOG.trace("Sleep interrupted", ex);
         }

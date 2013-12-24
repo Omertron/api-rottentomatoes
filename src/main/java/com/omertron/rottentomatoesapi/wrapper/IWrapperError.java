@@ -31,9 +31,9 @@ public interface IWrapperError {
      *
      * @return
      */
-    public boolean isValid();
+    boolean isValid();
 
-    public String getError();
+    String getError();
 
-    public void setError(String error);
+    void setError(String error);
 }
