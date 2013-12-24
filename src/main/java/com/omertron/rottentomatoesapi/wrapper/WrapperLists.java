@@ -20,7 +20,6 @@
 package com.omertron.rottentomatoesapi.wrapper;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.omertron.rottentomatoesapi.model.AbstractJsonMapping;
 import com.omertron.rottentomatoesapi.model.RTCast;
 import com.omertron.rottentomatoesapi.model.RTClip;
 import com.omertron.rottentomatoesapi.model.RTMovie;
@@ -29,9 +28,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang3.StringUtils;
 
-public class WrapperLists extends AbstractJsonMapping {
+public class WrapperLists extends AbstractWrapper {
 
     /*
      * Properties
@@ -50,17 +48,6 @@ public class WrapperLists extends AbstractJsonMapping {
     private List<Review> reviews = new ArrayList<Review>();
     @JsonProperty("link_template")
     private String linkTemplate;
-    @JsonProperty("error")
-    private String error = "";
-
-    //<editor-fold defaultstate="collapsed" desc="Getters and Setters">
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
-    }
 
     public List<RTMovie> getMovies() {
         return movies;
@@ -117,14 +104,5 @@ public class WrapperLists extends AbstractJsonMapping {
     public void setReviews(List<Review> reviews) {
         this.reviews = reviews;
     }
-    //</editor-fold>
 
-    /**
-     * Check to see if the returned values are valid
-     *
-     * @return
-     */
-    public boolean isValid() {
-        return StringUtils.isBlank(error);
-    }
 }

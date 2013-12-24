@@ -26,7 +26,7 @@ import com.omertron.rottentomatoesapi.model.RTClip;
 import com.omertron.rottentomatoesapi.model.RTMovie;
 import com.omertron.rottentomatoesapi.model.Review;
 import com.omertron.rottentomatoesapi.tools.ApiBuilder;
-import com.omertron.rottentomatoesapi.tools.RequestThrottler;
+import com.omertron.rottentomatoesapi.wrapper.AbstractWrapper;
 import com.omertron.rottentomatoesapi.wrapper.WrapperLists;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,6 +34,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,12 +58,8 @@ public class RottenTomatoesApi {
     private static final Logger LOG = LoggerFactory.getLogger(RottenTomatoesApi.class);
     private CommonHttpClient httpClient;
     private static final String ENCODING_UTF8 = "UTF-8";
-    /*
-     * Throttler
-     */
-    RequestThrottler throttler;
-    private static final int THROTTLE_RATE = 5;
-    private static final long THROTTLE_PERIOD = 1000;
+    private int retryDelay = 500;
+    private int retryLimit = 5;
     /*
      * Properties map
      */
@@ -130,7 +127,6 @@ public class RottenTomatoesApi {
 
         ApiBuilder.addApiKey(apiKey);
         this.httpClient = httpClient;
-        this.throttler = new RequestThrottler(THROTTLE_RATE, THROTTLE_PERIOD);
     }
 
     /**
@@ -156,6 +152,30 @@ public class RottenTomatoesApi {
     }
 
     /**
+     * Set the delay time between API retries when the account is over it's limit
+     *
+     * @param delay milliseconds to delay for, default is 500ms
+     */
+    public void setRetryDelay(int delay) {
+        if (delay > 250) {
+            this.retryDelay = delay;
+        }
+    }
+
+    /**
+     * Number of times to retry the API call when the account limit is hit.
+     *
+     * Once this limit is hit an exception is thrown.
+     *
+     * @param retryLimit Number of retries, default is 5
+     */
+    public void setRetryLimit(int retryLimit) {
+        if (retryLimit > 1) {
+            this.retryLimit = retryLimit;
+        }
+    }
+
+    /**
      * Displays top box office earning movies, sorted by most recent weekend gross ticket sales.
      *
      * @param limit Limits the number of movies returned
@@ -164,22 +184,16 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getBoxOffice(String country, int limit) throws RottenTomatoesException {
-        throttler.startRequest();
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_URL, URL_BOX_OFFICE);
         properties.put(ApiBuilder.PROPERTY_LIMIT, ApiBuilder.validateLimit(limit));
         properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
 
-        try {
-            String webPage = getContent(ApiBuilder.create(properties));
-            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
-            if (wl.isValid()) {
-                return wl.getMovies();
-            } else {
-                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
-            }
-        } catch (IOException ex) {
-            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        if (wrapper != null && wrapper.getMovies() != null) {
+            return wrapper.getMovies();
+        } else {
+            return Collections.emptyList();
         }
     }
 
@@ -190,7 +204,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getBoxOffice() throws RottenTomatoesException {
-        throttler.startRequest();
         return getBoxOffice(DEFAULT_COUNTRY, DEFAULT_LIMIT);
     }
 
@@ -202,7 +215,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getBoxOffice(String country) throws RottenTomatoesException {
-        throttler.startRequest();
         return getBoxOffice(country, DEFAULT_LIMIT);
     }
 
@@ -216,23 +228,17 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getInTheaters(String country, int page, int pageLimit) throws RottenTomatoesException {
-        throttler.startRequest();
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_URL, URL_IN_THEATERS);
         properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
         properties.put(ApiBuilder.PROPERTY_PAGE, ApiBuilder.validatePage(page));
         properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
 
-        try {
-            String webPage = getContent(ApiBuilder.create(properties));
-            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
-            if (wl.isValid()) {
-                return wl.getMovies();
-            } else {
-                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
-            }
-        } catch (IOException ex) {
-            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        if (wrapper != null && wrapper.getMovies() != null) {
+            return wrapper.getMovies();
+        } else {
+            return Collections.emptyList();
         }
     }
 
@@ -244,7 +250,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getInTheaters(String country) throws RottenTomatoesException {
-        throttler.startRequest();
         return getInTheaters(country, DEFAULT_PAGE, DEFAULT_PAGE_LIMIT);
     }
 
@@ -255,7 +260,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getInTheaters() throws RottenTomatoesException {
-        throttler.startRequest();
         return getInTheaters(DEFAULT_COUNTRY);
     }
 
@@ -268,22 +272,16 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getOpeningMovies(String country, int limit) throws RottenTomatoesException {
-        throttler.startRequest();
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_URL, URL_OPENING_MOVIES);
         properties.put(ApiBuilder.PROPERTY_LIMIT, ApiBuilder.validateLimit(limit));
         properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
 
-        try {
-            String webPage = getContent(ApiBuilder.create(properties));
-            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
-            if (wl.isValid()) {
-                return wl.getMovies();
-            } else {
-                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
-            }
-        } catch (IOException ex) {
-            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        if (wrapper != null && wrapper.getMovies() != null) {
+            return wrapper.getMovies();
+        } else {
+            return Collections.emptyList();
         }
     }
 
@@ -295,7 +293,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getOpeningMovies(String country) throws RottenTomatoesException {
-        throttler.startRequest();
         return getOpeningMovies(country, DEFAULT_LIMIT);
     }
 
@@ -306,7 +303,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getOpeningMovies() throws RottenTomatoesException {
-        throttler.startRequest();
         return getOpeningMovies(DEFAULT_COUNTRY);
     }
 
@@ -320,23 +316,17 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getUpcomingMovies(String country, int page, int pageLimit) throws RottenTomatoesException {
-        throttler.startRequest();
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_URL, URL_UPCOMING_MOVIES);
         properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
         properties.put(ApiBuilder.PROPERTY_PAGE, ApiBuilder.validatePage(page));
         properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
 
-        try {
-            String webPage = getContent(ApiBuilder.create(properties));
-            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
-            if (wl.isValid()) {
-                return wl.getMovies();
-            } else {
-                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
-            }
-        } catch (IOException ex) {
-            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        if (wrapper != null && wrapper.getMovies() != null) {
+            return wrapper.getMovies();
+        } else {
+            return Collections.emptyList();
         }
     }
 
@@ -348,7 +338,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getUpcomingMovies(String country) throws RottenTomatoesException {
-        throttler.startRequest();
         return getUpcomingMovies(country, DEFAULT_PAGE, DEFAULT_PAGE_LIMIT);
     }
 
@@ -359,7 +348,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getUpcomingMovies() throws RottenTomatoesException {
-        throttler.startRequest();
         return getUpcomingMovies(DEFAULT_COUNTRY);
     }
 
@@ -372,22 +360,16 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getTopRentals(String country, int limit) throws RottenTomatoesException {
-        throttler.startRequest();
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_URL, URL_TOP_RENTALS);
         properties.put(ApiBuilder.PROPERTY_LIMIT, ApiBuilder.validateLimit(limit));
         properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
 
-        try {
-            String webPage = getContent(ApiBuilder.create(properties));
-            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
-            if (wl.isValid()) {
-                return wl.getMovies();
-            } else {
-                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
-            }
-        } catch (IOException ex) {
-            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        if (wrapper != null && wrapper.getMovies() != null) {
+            return wrapper.getMovies();
+        } else {
+            return Collections.emptyList();
         }
     }
 
@@ -399,7 +381,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getTopRentals(String country) throws RottenTomatoesException {
-        throttler.startRequest();
         return getTopRentals(DEFAULT_COUNTRY, DEFAULT_LIMIT);
     }
 
@@ -410,7 +391,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getTopRentals() throws RottenTomatoesException {
-        throttler.startRequest();
         return getTopRentals(DEFAULT_COUNTRY);
     }
 
@@ -424,23 +404,17 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getCurrentReleaseDvds(String country, int page, int pageLimit) throws RottenTomatoesException {
-        throttler.startRequest();
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_URL, URL_CURRENT_RELEASE_DVDS);
         properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
         properties.put(ApiBuilder.PROPERTY_PAGE, ApiBuilder.validatePage(page));
         properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
 
-        try {
-            String webPage = getContent(ApiBuilder.create(properties));
-            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
-            if (wl.isValid()) {
-                return wl.getMovies();
-            } else {
-                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
-            }
-        } catch (IOException ex) {
-            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        if (wrapper != null && wrapper.getMovies() != null) {
+            return wrapper.getMovies();
+        } else {
+            return Collections.emptyList();
         }
     }
 
@@ -452,7 +426,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getCurrentReleaseDvds(String country) throws RottenTomatoesException {
-        throttler.startRequest();
         return getCurrentReleaseDvds(DEFAULT_COUNTRY, DEFAULT_PAGE, DEFAULT_PAGE_LIMIT);
     }
 
@@ -463,7 +436,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getCurrentReleaseDvds() throws RottenTomatoesException {
-        throttler.startRequest();
         return getCurrentReleaseDvds(DEFAULT_COUNTRY);
     }
 
@@ -477,23 +449,17 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getNewReleaseDvds(String country, int page, int pageLimit) throws RottenTomatoesException {
-        throttler.startRequest();
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_URL, URL_NEW_RELEASE_DVDS);
         properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
         properties.put(ApiBuilder.PROPERTY_PAGE, ApiBuilder.validatePage(page));
         properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
 
-        try {
-            String webPage = getContent(ApiBuilder.create(properties));
-            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
-            if (wl.isValid()) {
-                return wl.getMovies();
-            } else {
-                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
-            }
-        } catch (IOException ex) {
-            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        if (wrapper != null && wrapper.getMovies() != null) {
+            return wrapper.getMovies();
+        } else {
+            return Collections.emptyList();
         }
     }
 
@@ -505,7 +471,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getNewReleaseDvds(String country) throws RottenTomatoesException {
-        throttler.startRequest();
         return getNewReleaseDvds(DEFAULT_COUNTRY, DEFAULT_PAGE, DEFAULT_PAGE_LIMIT);
     }
 
@@ -516,7 +481,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getNewReleaseDvds() throws RottenTomatoesException {
-        throttler.startRequest();
         return getNewReleaseDvds(DEFAULT_COUNTRY);
     }
 
@@ -530,23 +494,17 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getUpcomingDvds(String country, int page, int pageLimit) throws RottenTomatoesException {
-        throttler.startRequest();
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_URL, URL_UPCOMING_DVDS);
         properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
         properties.put(ApiBuilder.PROPERTY_PAGE, ApiBuilder.validatePage(page));
         properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
 
-        try {
-            String webPage = getContent(ApiBuilder.create(properties));
-            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
-            if (wl.isValid()) {
-                return wl.getMovies();
-            } else {
-                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
-            }
-        } catch (IOException ex) {
-            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        if (wrapper != null && wrapper.getMovies() != null) {
+            return wrapper.getMovies();
+        } else {
+            return Collections.emptyList();
         }
     }
 
@@ -558,7 +516,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getUpcomingDvds(String country) throws RottenTomatoesException {
-        throttler.startRequest();
         return getUpcomingDvds(country, DEFAULT_PAGE, DEFAULT_PAGE_LIMIT);
     }
 
@@ -569,7 +526,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getUpcomingDvds() throws RottenTomatoesException {
-        throttler.startRequest();
         return getUpcomingDvds(DEFAULT_COUNTRY);
     }
 
@@ -581,7 +537,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public RTMovie getDetailedInfo(int movieId) throws RottenTomatoesException {
-        throttler.startRequest();
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_ID, String.valueOf(movieId));
         properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIES_INFO);
@@ -607,22 +562,15 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTCast> getCastInfo(int movieId) throws RottenTomatoesException {
-        throttler.startRequest();
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_ID, String.valueOf(movieId));
         properties.put(ApiBuilder.PROPERTY_URL, URL_CAST_INFO);
 
-        try {
-            String webPage = getContent(ApiBuilder.create(properties));
-            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
-
-            if (wl.isValid()) {
-                return wl.getCast();
-            } else {
-                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
-            }
-        } catch (IOException ex) {
-            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        if (wrapper != null && wrapper.getCast() != null) {
+            return wrapper.getCast();
+        } else {
+            return Collections.emptyList();
         }
     }
 
@@ -634,22 +582,15 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTClip> getMovieClips(int movieId) throws RottenTomatoesException {
-        throttler.startRequest();
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_ID, String.valueOf(movieId));
         properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIE_CLIPS);
 
-        try {
-            String webPage = getContent(ApiBuilder.create(properties));
-            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
-
-            if (wl.isValid()) {
-                return wl.getClips();
-            } else {
-                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
-            }
-        } catch (IOException ex) {
-            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        if (wrapper != null && wrapper.getClass() != null) {
+            return wrapper.getClips();
+        } else {
+            return Collections.emptyList();
         }
     }
 
@@ -665,7 +606,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<Review> getMoviesReviews(int movieId, String reviewType, int pageLimit, int page, String country) throws RottenTomatoesException {
-        throttler.startRequest();
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_ID, String.valueOf(movieId));
         properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIES_REVIEWS);
@@ -674,17 +614,11 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_PAGE, ApiBuilder.validatePage(page));
         properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
 
-        try {
-            String webPage = getContent(ApiBuilder.create(properties));
-            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
-
-            if (wl.isValid()) {
-                return wl.getReviews();
-            } else {
-                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
-            }
-        } catch (IOException ex) {
-            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        if (wrapper != null && wrapper.getReviews() != null) {
+            return wrapper.getReviews();
+        } else {
+            return Collections.emptyList();
         }
     }
 
@@ -698,7 +632,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<Review> getMoviesReviews(int movieId, String reviewType, String country) throws RottenTomatoesException {
-        throttler.startRequest();
         return getMoviesReviews(movieId, reviewType, DEFAULT_PAGE_LIMIT, DEFAULT_PAGE, country);
     }
 
@@ -711,7 +644,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<Review> getMoviesReviews(int movieId, String country) throws RottenTomatoesException {
-        throttler.startRequest();
         return getMoviesReviews(movieId, DEFAULT_REVIEW, DEFAULT_PAGE_LIMIT, DEFAULT_PAGE, country);
     }
 
@@ -723,7 +655,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<Review> getMoviesReviews(int movieId) throws RottenTomatoesException {
-        throttler.startRequest();
         return getMoviesReviews(movieId, DEFAULT_COUNTRY);
     }
 
@@ -736,23 +667,16 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getMoviesSimilar(int movieId, int limit) throws RottenTomatoesException {
-        throttler.startRequest();
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_ID, String.valueOf(movieId));
         properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIES_SIMILAR);
         properties.put(ApiBuilder.PROPERTY_LIMIT, ApiBuilder.validateLimit(limit));
 
-        try {
-            String webPage = getContent(ApiBuilder.create(properties));
-            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
-
-            if (wl.isValid()) {
-                return wl.getMovies();
-            } else {
-                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
-            }
-        } catch (IOException ex) {
-            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        if (wrapper != null && wrapper.getMovies() != null) {
+            return wrapper.getMovies();
+        } else {
+            return Collections.emptyList();
         }
     }
 
@@ -764,7 +688,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getMoviesSimilar(int movieId) throws RottenTomatoesException {
-        throttler.startRequest();
         return getMoviesSimilar(movieId, DEFAULT_LIMIT);
     }
 
@@ -777,7 +700,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public RTMovie getMoviesAlias(String altMovieId, String type) throws RottenTomatoesException {
-        throttler.startRequest();
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIES_ALIAS);
         // remove the "tt" from the start of the ID if it's imdb
@@ -811,7 +733,6 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getMoviesSearch(String query, int pageLimit, int page) throws RottenTomatoesException {
-        throttler.startRequest();
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIES_SEARCH);
         properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
@@ -819,23 +740,26 @@ public class RottenTomatoesApi {
 
         try {
             properties.put(ApiBuilder.PROPERTY_QUERY, URLEncoder.encode(query, ENCODING_UTF8));
-            String webPage = getContent(ApiBuilder.create(properties));
-            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
-
-            if (wl.isValid()) {
-                return wl.getMovies();
-            } else {
-                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
-            }
         } catch (UnsupportedEncodingException ex) {
             throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
-        } catch (IOException ex) {
-            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        }
+
+        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        if (wrapper != null && wrapper.getMovies() != null) {
+            return wrapper.getMovies();
+        } else {
+            return Collections.emptyList();
         }
     }
 
+    /**
+     * The movies search endpoint for plain text queries. Let's you search for movies!
+     *
+     * @param query
+     * @return
+     * @throws RottenTomatoesException
+     */
     public List<RTMovie> getMoviesSearch(String query) throws RottenTomatoesException {
-        throttler.startRequest();
         return getMoviesSearch(query, DEFAULT_PAGE_LIMIT, DEFAULT_PAGE);
     }
 
@@ -846,21 +770,14 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public Map<String, String> getListsDirectory() throws RottenTomatoesException {
-        throttler.startRequest();
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_URL, URL_LISTS_DIRECTORY);
 
-        try {
-            String webPage = getContent(ApiBuilder.create(properties));
-            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
-
-            if (wl.isValid()) {
-                return wl.getLinks();
-            } else {
-                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
-            }
-        } catch (IOException ex) {
-            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        if (wrapper != null && wrapper.getLinks() != null) {
+            return wrapper.getLinks();
+        } else {
+            return Collections.emptyMap();
         }
     }
 
@@ -871,20 +788,14 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public Map<String, String> getMovieListsDirectory() throws RottenTomatoesException {
-        throttler.startRequest();
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIE_LISTS);
-        try {
-            String webPage = getContent(ApiBuilder.create(properties));
-            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
 
-            if (wl.isValid()) {
-                return wl.getLinks();
-            } else {
-                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
-            }
-        } catch (IOException ex) {
-            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        if (wrapper != null && wrapper.getLinks() != null) {
+            return wrapper.getLinks();
+        } else {
+            return Collections.emptyMap();
         }
     }
 
@@ -895,21 +806,14 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public Map<String, String> getDvdListsDirectory() throws RottenTomatoesException {
-        throttler.startRequest();
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_URL, URL_DVD_LISTS);
 
-        try {
-            String webPage = getContent(ApiBuilder.create(properties));
-            WrapperLists wl = MAPPER.readValue(webPage, WrapperLists.class);
-
-            if (wl.isValid()) {
-                return wl.getLinks();
-            } else {
-                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wl.getError());
-            }
-        } catch (IOException ex) {
-            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        if (wrapper != null && wrapper.getLinks() != null) {
+            return wrapper.getLinks();
+        } else {
+            return Collections.emptyMap();
         }
     }
 
@@ -968,5 +872,51 @@ public class RottenTomatoesApi {
             }
         }
         return content.toString();
+    }
+
+    /**
+     * Get the wrapper for the passed properties
+     *
+     * Will retry up to retry limit
+     *
+     * @param <T>
+     * @param clazz
+     * @param properties
+     * @return
+     * @throws RottenTomatoesException
+     */
+    private <T extends AbstractWrapper> T getWrapper(Class<T> clazz, Map<String, String> properties) throws RottenTomatoesException {
+        try {
+            String url = ApiBuilder.create(properties);
+            T wrapper = clazz.cast(MAPPER.readValue(getContent(url), clazz));
+            int retry = 1;
+
+            while (!wrapper.isValid() && wrapper.getError().equalsIgnoreCase("Account Over Queries Per Second Limit") && retry <= retryLimit) {
+                LOG.trace("Account over queries limit, waiting for {}ms.", retryDelay * retry);
+                sleeper(retry++);
+                wrapper = MAPPER.readValue(getContent(url), clazz);
+            }
+
+            if (wrapper.isValid()) {
+                return wrapper;
+            } else {
+                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wrapper.getError());
+            }
+        } catch (IOException ex) {
+            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+        }
+    }
+
+    /**
+     * Sleep for a short period
+     *
+     * @param count
+     */
+    private void sleeper(int count) {
+        try {
+            Thread.sleep(retryDelay * count);
+        } catch (InterruptedException ex) {
+            LOG.trace("Sleep interrupted", ex);
+        }
     }
 }
