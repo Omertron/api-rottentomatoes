@@ -19,31 +19,21 @@
  */
 package com.omertron.rottentomatoesapi;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.omertron.rottentomatoesapi.RottenTomatoesException.RottenTomatoesExceptionType;
 import com.omertron.rottentomatoesapi.model.RTCast;
 import com.omertron.rottentomatoesapi.model.RTClip;
 import com.omertron.rottentomatoesapi.model.RTMovie;
 import com.omertron.rottentomatoesapi.model.Review;
 import com.omertron.rottentomatoesapi.tools.ApiBuilder;
-import com.omertron.rottentomatoesapi.wrapper.AbstractWrapper;
+import com.omertron.rottentomatoesapi.tools.ResponseBuilder;
 import com.omertron.rottentomatoesapi.wrapper.WrapperLists;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.GZIPInputStream;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.yamj.api.common.http.CommonHttpClient;
 import org.yamj.api.common.http.DefaultPoolingHttpClient;
 
@@ -55,11 +45,9 @@ import org.yamj.api.common.http.DefaultPoolingHttpClient;
  */
 public class RottenTomatoesApi {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RottenTomatoesApi.class);
     private CommonHttpClient httpClient;
     private static final String ENCODING_UTF8 = "UTF-8";
-    private long retryDelay = 500;
-    private int retryLimit = 5;
+    private ResponseBuilder response;
     /*
      * Properties map
      */
@@ -104,10 +92,6 @@ public class RottenTomatoesApi {
     private static final String URL_MOVIE_LISTS = "/lists/movies";
     private static final String URL_DVD_LISTS = "/lists/dvds";
     /*
-     * Jackson JSON configuration
-     */
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-    /*
      * Defaults
      */
     private static final int DEFAULT_PAGE = 0;
@@ -127,6 +111,7 @@ public class RottenTomatoesApi {
 
         ApiBuilder.addApiKey(apiKey);
         this.httpClient = httpClient;
+        this.response = new ResponseBuilder(httpClient);
     }
 
     /**
@@ -158,7 +143,7 @@ public class RottenTomatoesApi {
      */
     public void setRetryDelay(long retryDelay) {
         if (retryDelay > 250) {
-            this.retryDelay = retryDelay;
+            response.setRetryDelay(retryDelay);
         }
     }
 
@@ -171,7 +156,7 @@ public class RottenTomatoesApi {
      */
     public void setRetryLimit(int retryLimit) {
         if (retryLimit > 1) {
-            this.retryLimit = retryLimit;
+            response.setRetryLimit(retryLimit);
         }
     }
 
@@ -189,7 +174,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_LIMIT, ApiBuilder.validateLimit(limit));
         properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
 
-        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        WrapperLists wrapper = response.getResponse(WrapperLists.class, properties);
         if (wrapper != null && wrapper.getMovies() != null) {
             return wrapper.getMovies();
         } else {
@@ -234,7 +219,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_PAGE, ApiBuilder.validatePage(page));
         properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
 
-        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        WrapperLists wrapper = response.getResponse(WrapperLists.class, properties);
         if (wrapper != null && wrapper.getMovies() != null) {
             return wrapper.getMovies();
         } else {
@@ -277,7 +262,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_LIMIT, ApiBuilder.validateLimit(limit));
         properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
 
-        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        WrapperLists wrapper = response.getResponse(WrapperLists.class, properties);
         if (wrapper != null && wrapper.getMovies() != null) {
             return wrapper.getMovies();
         } else {
@@ -322,7 +307,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_PAGE, ApiBuilder.validatePage(page));
         properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
 
-        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        WrapperLists wrapper = response.getResponse(WrapperLists.class, properties);
         if (wrapper != null && wrapper.getMovies() != null) {
             return wrapper.getMovies();
         } else {
@@ -365,7 +350,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_LIMIT, ApiBuilder.validateLimit(limit));
         properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
 
-        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        WrapperLists wrapper = response.getResponse(WrapperLists.class, properties);
         if (wrapper != null && wrapper.getMovies() != null) {
             return wrapper.getMovies();
         } else {
@@ -410,7 +395,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_PAGE, ApiBuilder.validatePage(page));
         properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
 
-        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        WrapperLists wrapper = response.getResponse(WrapperLists.class, properties);
         if (wrapper != null && wrapper.getMovies() != null) {
             return wrapper.getMovies();
         } else {
@@ -455,7 +440,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_PAGE, ApiBuilder.validatePage(page));
         properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
 
-        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        WrapperLists wrapper = response.getResponse(WrapperLists.class, properties);
         if (wrapper != null && wrapper.getMovies() != null) {
             return wrapper.getMovies();
         } else {
@@ -500,7 +485,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_PAGE, ApiBuilder.validatePage(page));
         properties.put(ApiBuilder.PROPERTY_PAGE_LIMIT, ApiBuilder.validatePageLimit(pageLimit));
 
-        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        WrapperLists wrapper = response.getResponse(WrapperLists.class, properties);
         if (wrapper != null && wrapper.getMovies() != null) {
             return wrapper.getMovies();
         } else {
@@ -541,17 +526,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_ID, String.valueOf(movieId));
         properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIES_INFO);
 
-        try {
-            String webPage = getContent(ApiBuilder.create(properties));
-            RTMovie rtMovie = MAPPER.readValue(webPage, RTMovie.class);
-            if (rtMovie.isValid()) {
-                return rtMovie;
-            } else {
-                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, rtMovie.getError());
-            }
-        } catch (IOException ex) {
-            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
-        }
+        return response.getResponse(RTMovie.class, properties);
     }
 
     /**
@@ -566,7 +541,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_ID, String.valueOf(movieId));
         properties.put(ApiBuilder.PROPERTY_URL, URL_CAST_INFO);
 
-        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        WrapperLists wrapper = response.getResponse(WrapperLists.class, properties);
         if (wrapper != null && wrapper.getCast() != null) {
             return wrapper.getCast();
         } else {
@@ -586,7 +561,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_ID, String.valueOf(movieId));
         properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIE_CLIPS);
 
-        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        WrapperLists wrapper = response.getResponse(WrapperLists.class, properties);
         if (wrapper != null && wrapper.getClass() != null) {
             return wrapper.getClips();
         } else {
@@ -614,7 +589,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_PAGE, ApiBuilder.validatePage(page));
         properties.put(ApiBuilder.PROPERTY_COUNTRY, ApiBuilder.validateCountry(country));
 
-        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        WrapperLists wrapper = response.getResponse(WrapperLists.class, properties);
         if (wrapper != null && wrapper.getReviews() != null) {
             return wrapper.getReviews();
         } else {
@@ -672,7 +647,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIES_SIMILAR);
         properties.put(ApiBuilder.PROPERTY_LIMIT, ApiBuilder.validateLimit(limit));
 
-        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        WrapperLists wrapper = response.getResponse(WrapperLists.class, properties);
         if (wrapper != null && wrapper.getMovies() != null) {
             return wrapper.getMovies();
         } else {
@@ -710,17 +685,7 @@ public class RottenTomatoesApi {
         }
         properties.put(ApiBuilder.PROPERTY_TYPE, type);
 
-        try {
-            String webPage = getContent(ApiBuilder.create(properties));
-            RTMovie rtMovie = MAPPER.readValue(webPage, RTMovie.class);
-            if (rtMovie.isValid()) {
-                return rtMovie;
-            } else {
-                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, rtMovie.getError());
-            }
-        } catch (IOException ex) {
-            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
-        }
+        return response.getResponse(RTMovie.class, properties);
     }
 
     /**
@@ -744,7 +709,7 @@ public class RottenTomatoesApi {
             throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
         }
 
-        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        WrapperLists wrapper = response.getResponse(WrapperLists.class, properties);
         if (wrapper != null && wrapper.getMovies() != null) {
             return wrapper.getMovies();
         } else {
@@ -773,7 +738,7 @@ public class RottenTomatoesApi {
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_URL, URL_LISTS_DIRECTORY);
 
-        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        WrapperLists wrapper = response.getResponse(WrapperLists.class, properties);
         if (wrapper != null && wrapper.getLinks() != null) {
             return wrapper.getLinks();
         } else {
@@ -791,7 +756,7 @@ public class RottenTomatoesApi {
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIE_LISTS);
 
-        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        WrapperLists wrapper = response.getResponse(WrapperLists.class, properties);
         if (wrapper != null && wrapper.getLinks() != null) {
             return wrapper.getLinks();
         } else {
@@ -809,7 +774,7 @@ public class RottenTomatoesApi {
         properties.clear();
         properties.put(ApiBuilder.PROPERTY_URL, URL_DVD_LISTS);
 
-        WrapperLists wrapper = getWrapper(WrapperLists.class, properties);
+        WrapperLists wrapper = response.getResponse(WrapperLists.class, properties);
         if (wrapper != null && wrapper.getLinks() != null) {
             return wrapper.getLinks();
         } else {
@@ -817,106 +782,4 @@ public class RottenTomatoesApi {
         }
     }
 
-    /**
-     * Get the content from a string, decoding it if it is in GZIP format
-     *
-     * @param urlString
-     * @return
-     * @throws RottenTomatoesException
-     */
-    private String getContent(String urlString) throws RottenTomatoesException {
-        StringBuilder content = new StringBuilder();
-        GZIPInputStream gzis = null;
-        InputStreamReader isr = null;
-        BufferedReader br = null;
-
-        try {
-            HttpEntity entity = httpClient.requestResource(urlString);
-
-            if (entity.getContentEncoding() != null && entity.getContentEncoding().getValue().equalsIgnoreCase("gzip")) {
-                gzis = new GZIPInputStream(entity.getContent());
-                isr = new InputStreamReader(gzis, ENCODING_UTF8);
-                br = new BufferedReader(isr);
-
-                String readed = br.readLine();
-                while (readed != null) {
-                    content.append(readed);
-                    readed = br.readLine();
-                }
-            } else {
-                content.append(EntityUtils.toString(entity, Charset.forName(ENCODING_UTF8)));
-            }
-        } catch (IOException ex) {
-            throw new RottenTomatoesException(RottenTomatoesExceptionType.MAPPING_FAILED, "Failed to read JSON data from " + urlString, ex);
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException ex) {
-                    LOG.trace("Failed to close BufferedReader", ex);
-                }
-            }
-            if (isr != null) {
-                try {
-                    isr.close();
-                } catch (IOException ex) {
-                    LOG.trace("Failed to close InputStreamReader", ex);
-                }
-            }
-            if (gzis != null) {
-                try {
-                    gzis.close();
-                } catch (IOException ex) {
-                    LOG.trace("Failed to close GZIPInputStream", ex);
-                }
-            }
-        }
-        return content.toString();
-    }
-
-    /**
-     * Get the wrapper for the passed properties
-     *
-     * Will retry up to retry limit
-     *
-     * @param <T>
-     * @param clazz
-     * @param properties
-     * @return
-     * @throws RottenTomatoesException
-     */
-    private <T extends AbstractWrapper> T getWrapper(Class<T> clazz, Map<String, String> properties) throws RottenTomatoesException {
-        try {
-            String url = ApiBuilder.create(properties);
-            T wrapper = clazz.cast(MAPPER.readValue(getContent(url), clazz));
-            int retry = 1;
-
-            while (!wrapper.isValid() && wrapper.getError().equalsIgnoreCase("Account Over Queries Per Second Limit") && retry <= retryLimit) {
-                LOG.trace("Account over queries limit, waiting for {}ms.", retryDelay * retry);
-                sleeper(retry++);
-                wrapper = MAPPER.readValue(getContent(url), clazz);
-            }
-
-            if (wrapper.isValid()) {
-                return wrapper;
-            } else {
-                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wrapper.getError());
-            }
-        } catch (IOException ex) {
-            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
-        }
-    }
-
-    /**
-     * Sleep for a short period
-     *
-     * @param count
-     */
-    private void sleeper(int count) {
-        try {
-            Thread.sleep(retryDelay * (long) count);
-        } catch (InterruptedException ex) {
-            LOG.trace("Sleep interrupted", ex);
-        }
-    }
 }

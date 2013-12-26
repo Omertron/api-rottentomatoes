@@ -20,21 +20,49 @@
 package com.omertron.rottentomatoesapi.model;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.omertron.rottentomatoesapi.wrapper.IWrapperError;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import org.apache.commons.lang3.StringUtils;
 
 /**
- * Abstract class to handle any unknown properties by outputting a log message
+ * Abstract base class for the RT objects
+ *
+ * Handles any unknown properties by outputting a log message<br/>
+ * Handles error messages
  *
  * @author stuart.boston
  */
-public abstract class AbstractJsonMapping implements Serializable {
+public abstract class AbstractJsonMapping implements Serializable, IWrapperError {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractJsonMapping.class);
+    @JsonProperty("error")
+    private String error = "";
+
+    @Override
+    public String getError() {
+        return error;
+    }
+
+    @Override
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    /**
+     * Check to see if the returned values are valid
+     *
+     * @return
+     */
+    @Override
+    public boolean isValid() {
+        return StringUtils.isBlank(error);
+    }
 
     /**
      * Handle unknown properties and print a message

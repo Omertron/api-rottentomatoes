@@ -20,6 +20,7 @@
 package com.omertron.rottentomatoesapi.wrapper;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.omertron.rottentomatoesapi.model.AbstractJsonMapping;
 import com.omertron.rottentomatoesapi.model.RTCast;
 import com.omertron.rottentomatoesapi.model.RTClip;
 import com.omertron.rottentomatoesapi.model.RTMovie;
@@ -29,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WrapperLists extends AbstractWrapper {
+public class WrapperLists extends AbstractJsonMapping {
 
     /*
      * Properties

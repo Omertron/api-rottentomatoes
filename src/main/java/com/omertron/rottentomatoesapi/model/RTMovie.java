@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.apache.commons.lang3.StringUtils;
 
 public class RTMovie extends AbstractJsonMapping implements Serializable {
 
@@ -71,8 +70,6 @@ public class RTMovie extends AbstractJsonMapping implements Serializable {
     @JsonProperty("studio")
     private String studio;
     // Error property
-    @JsonProperty("error")
-    private String error = "";
     @JsonProperty("link_template")
     private String linkTemplate;
 
@@ -139,10 +136,6 @@ public class RTMovie extends AbstractJsonMapping implements Serializable {
 
     public int getYear() {
         return year;
-    }
-
-    public String getError() {
-        return error;
     }
 
     public String getLinkTemplate() {
@@ -219,10 +212,6 @@ public class RTMovie extends AbstractJsonMapping implements Serializable {
         this.year = year;
     }
 
-    public void setError(String error) {
-        this.error = error;
-    }
-
     public void setLinkTemplate(String linkTemplate) {
         this.linkTemplate = linkTemplate;
     }
@@ -232,12 +221,4 @@ public class RTMovie extends AbstractJsonMapping implements Serializable {
     }
     //</editor-fold>
 
-    /**
-     * Check to see if the returned values are valid
-     *
-     * @return
-     */
-    public boolean isValid() {
-        return StringUtils.isBlank(error);
-    }
 }
