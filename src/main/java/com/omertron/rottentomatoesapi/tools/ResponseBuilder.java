@@ -45,7 +45,7 @@ public class ResponseBuilder {
      * Constants
      */
     private static final int RETRY_DELAY_MS = 500;
-    private static final int RETRY_LIMIT = 5;
+    private static final int RETRY_DEFAULT_LIMIT = 5;
 
     /*
      * Jackson JSON configuration
@@ -56,7 +56,7 @@ public class ResponseBuilder {
      * Retry settings
      */
     private long retryDelay = RETRY_DELAY_MS;
-    private int retryLimit = RETRY_LIMIT;
+    private int retryLimit = RETRY_DEFAULT_LIMIT;
     /*
      * HTTP Client for web requests
      */
@@ -156,29 +156,56 @@ public class ResponseBuilder {
         } catch (IOException ex) {
             throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, "Failed to read JSON data from " + urlString, ex);
         } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException ex) {
-                    LOG.trace("Failed to close BufferedReader", ex);
-                }
-            }
-            if (isr != null) {
-                try {
-                    isr.close();
-                } catch (IOException ex) {
-                    LOG.trace("Failed to close InputStreamReader", ex);
-                }
-            }
-            if (gzis != null) {
-                try {
-                    gzis.close();
-                } catch (IOException ex) {
-                    LOG.trace("Failed to close GZIPInputStream", ex);
-                }
-            }
+            close(br);
+            close(isr);
+            close(gzis);
         }
         return content.toString();
+    }
+
+    /**
+     * Close a BufferedReader
+     *
+     * @param br
+     */
+    private void close(BufferedReader br) {
+        if (br != null) {
+            try {
+                br.close();
+            } catch (IOException ex) {
+                LOG.trace("Failed to close BufferedReader", ex);
+            }
+        }
+    }
+
+    /**
+     * Close an InputStreamReader
+     *
+     * @param isr
+     */
+    private void close(InputStreamReader isr) {
+        if (isr != null) {
+            try {
+                isr.close();
+            } catch (IOException ex) {
+                LOG.trace("Failed to close InputStreamReader", ex);
+            }
+        }
+    }
+
+    /**
+     * Close a GZIPInputStream
+     *
+     * @param gzis
+     */
+    private void close(GZIPInputStream gzis) {
+        if (gzis != null) {
+            try {
+                gzis.close();
+            } catch (IOException ex) {
+                LOG.trace("Failed to close GZIPInputStream", ex);
+            }
+        }
     }
 
     /**

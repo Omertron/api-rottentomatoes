@@ -74,22 +74,8 @@ public class ApiBuilder {
         StringBuilder urlBuilder = new StringBuilder(API_SITE);
         urlBuilder.append(API_VERSION);
 
-        if (properties.containsKey(PROPERTY_URL) && StringUtils.isNotBlank(properties.get(PROPERTY_URL))) {
-            String url = properties.get(PROPERTY_URL);
-
-            // If we have the ID, then we need to replace the "{movie-id}" in the URL
-            if (properties.containsKey(PROPERTY_ID) && StringUtils.isNotBlank(properties.get(PROPERTY_ID))) {
-                url = url.replace(MOVIE_ID, String.valueOf(properties.get(PROPERTY_ID)));
-                // We don't need this property anymore
-                properties.remove(PROPERTY_ID);
-            }
-            urlBuilder.append(url);
-            // We don't need this property anymore
-            properties.remove(PROPERTY_URL);
-        } else {
-            throw new RottenTomatoesException(RottenTomatoesExceptionType.INVALID_URL, "No URL specified");
-        }
-
+        urlBuilder.append(getUrlFromProps(properties));
+        
         urlBuilder.append(API_PREFIX).append(apiKey);
 
         for (Map.Entry<String, String> property : properties.entrySet()) {
@@ -101,6 +87,31 @@ public class ApiBuilder {
 
         LOG.trace("URL: " + urlBuilder.toString());
         return urlBuilder.toString();
+    }
+
+    /**
+     * Get and process the URL from the properties map
+     *
+     * @param properties
+     * @return The processed URL
+     * @throws RottenTomatoesException
+     */
+    private static String getUrlFromProps(Map<String, String> properties) throws RottenTomatoesException {
+        if (properties.containsKey(PROPERTY_URL) && StringUtils.isNotBlank(properties.get(PROPERTY_URL))) {
+            String url = properties.get(PROPERTY_URL);
+
+            // If we have the ID, then we need to replace the "{movie-id}" in the URL
+            if (properties.containsKey(PROPERTY_ID) && StringUtils.isNotBlank(properties.get(PROPERTY_ID))) {
+                url = url.replace(MOVIE_ID, String.valueOf(properties.get(PROPERTY_ID)));
+                // We don't need this property anymore
+                properties.remove(PROPERTY_ID);
+            }
+            // We don't need this property anymore
+            properties.remove(PROPERTY_URL);
+            return url;
+        } else {
+            throw new RottenTomatoesException(RottenTomatoesExceptionType.INVALID_URL, "No URL specified");
+        }
     }
 
     /**
