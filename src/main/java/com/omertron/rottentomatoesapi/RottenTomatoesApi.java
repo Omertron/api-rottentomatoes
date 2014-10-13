@@ -366,7 +366,7 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getTopRentals(String country) throws RottenTomatoesException {
-        return getTopRentals(DEFAULT_COUNTRY, DEFAULT_LIMIT);
+        return getTopRentals(country, DEFAULT_LIMIT);
     }
 
     /**
@@ -411,7 +411,7 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getCurrentReleaseDvds(String country) throws RottenTomatoesException {
-        return getCurrentReleaseDvds(DEFAULT_COUNTRY, DEFAULT_PAGE, DEFAULT_PAGE_LIMIT);
+        return getCurrentReleaseDvds(country, DEFAULT_PAGE, DEFAULT_PAGE_LIMIT);
     }
 
     /**
@@ -456,7 +456,7 @@ public class RottenTomatoesApi {
      * @throws RottenTomatoesException
      */
     public List<RTMovie> getNewReleaseDvds(String country) throws RottenTomatoesException {
-        return getNewReleaseDvds(DEFAULT_COUNTRY, DEFAULT_PAGE, DEFAULT_PAGE_LIMIT);
+        return getNewReleaseDvds(country, DEFAULT_PAGE, DEFAULT_PAGE_LIMIT);
     }
 
     /**
