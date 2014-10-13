@@ -38,7 +38,8 @@ import org.yamj.api.common.http.CommonHttpClient;
 import org.yamj.api.common.http.DefaultPoolingHttpClient;
 
 /**
- * Connect to the Rotten Tomatoes web site and get the rating for a specific movie
+ * Connect to the Rotten Tomatoes web site and get the rating for a specific
+ * movie
  *
  * @author Stuart.Boston
  *
@@ -99,6 +100,10 @@ public class RottenTomatoesApi {
     private static final int DEFAULT_LIMIT = 0;
     private static final String DEFAULT_COUNTRY = "";
     private static final String DEFAULT_REVIEW = "";
+    /*
+     * Constants
+     */
+    private static final int LENGTH_OF_IMDB_PREFIX = 2;
 
     public RottenTomatoesApi(String apiKey) throws RottenTomatoesException {
         this(apiKey, new DefaultPoolingHttpClient());
@@ -137,14 +142,13 @@ public class RottenTomatoesApi {
     }
 
     /**
-     * Set the delay time between API retries when the account is over it's limit
+     * Set the delay time between API retries when the account is over it's
+     * limit
      *
      * @param retryDelay milliseconds to delay for, default is 500ms
      */
     public void setRetryDelay(long retryDelay) {
-        if (retryDelay > 250) {
-            response.setRetryDelay(retryDelay);
-        }
+        response.setRetryDelay(retryDelay);
     }
 
     /**
@@ -155,13 +159,12 @@ public class RottenTomatoesApi {
      * @param retryLimit Number of retries, default is 5
      */
     public void setRetryLimit(int retryLimit) {
-        if (retryLimit > 1) {
-            response.setRetryLimit(retryLimit);
-        }
+        response.setRetryLimit(retryLimit);
     }
 
     /**
-     * Displays top box office earning movies, sorted by most recent weekend gross ticket sales.
+     * Displays top box office earning movies, sorted by most recent weekend
+     * gross ticket sales.
      *
      * @param limit Limits the number of movies returned
      * @param country Provides localized data for the selected country
@@ -183,7 +186,8 @@ public class RottenTomatoesApi {
     }
 
     /**
-     * Displays top box office earning movies, sorted by most recent weekend gross ticket sales.
+     * Displays top box office earning movies, sorted by most recent weekend
+     * gross ticket sales.
      *
      * @return
      * @throws RottenTomatoesException
@@ -193,7 +197,8 @@ public class RottenTomatoesApi {
     }
 
     /**
-     * Displays top box office earning movies, sorted by most recent weekend gross ticket sales.
+     * Displays top box office earning movies, sorted by most recent weekend
+     * gross ticket sales.
      *
      * @param country Provides localized data for the selected country
      * @return
@@ -679,7 +684,7 @@ public class RottenTomatoesApi {
         properties.put(ApiBuilder.PROPERTY_URL, URL_MOVIES_ALIAS);
         // remove the "tt" from the start of the ID if it's imdb
         if ("imdb".equalsIgnoreCase(type) && altMovieId.toLowerCase().startsWith("tt")) {
-            properties.put(ApiBuilder.PROPERTY_ID, altMovieId.substring(2));
+            properties.put(ApiBuilder.PROPERTY_ID, altMovieId.substring(LENGTH_OF_IMDB_PREFIX));
         } else {
             properties.put(ApiBuilder.PROPERTY_ID, altMovieId);
         }
@@ -689,7 +694,8 @@ public class RottenTomatoesApi {
     }
 
     /**
-     * The movies search endpoint for plain text queries. Let's you search for movies!
+     * The movies search endpoint for plain text queries. Let's you search for
+     * movies!
      *
      * @param query
      * @param pageLimit
@@ -718,7 +724,8 @@ public class RottenTomatoesApi {
     }
 
     /**
-     * The movies search endpoint for plain text queries. Let's you search for movies!
+     * The movies search endpoint for plain text queries. Let's you search for
+     * movies!
      *
      * @param query
      * @return

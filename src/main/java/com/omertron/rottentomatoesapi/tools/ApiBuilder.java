@@ -48,6 +48,8 @@ public class ApiBuilder {
     public static final String MOVIE_ID = "{movie-id}";
     // Defaults and max
     private static final int LIMIT_MAX = 50;
+    // Constants
+    private static final int DEFAULT_COUNTRY_LEN = 2;
 
     protected ApiBuilder() {
         throw new UnsupportedOperationException("Class can not be instantiated");
@@ -163,12 +165,10 @@ public class ApiBuilder {
      * @return
      */
     public static String validateCountry(String country) {
-        if (country.length() > 2) {
-            return country.substring(0, 2);
+        if (country.length() > DEFAULT_COUNTRY_LEN) {
+            return country.substring(0, DEFAULT_COUNTRY_LEN);
         }
 
         return country;
     }
-
-    
 }

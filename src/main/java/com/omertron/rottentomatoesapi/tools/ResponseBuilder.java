@@ -42,6 +42,12 @@ public class ResponseBuilder {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResponseBuilder.class);
     /*
+     * Constants
+     */
+    private static final int RETRY_DELAY_MS = 500;
+    private static final int RETRY_LIMIT = 5;
+
+    /*
      * Jackson JSON configuration
      */
     private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -49,8 +55,8 @@ public class ResponseBuilder {
     /*
      * Retry settings
      */
-    private long retryDelay = 500;
-    private int retryLimit = 5;
+    private long retryDelay = RETRY_DELAY_MS;
+    private int retryLimit = RETRY_LIMIT;
     /*
      * HTTP Client for web requests
      */
@@ -60,12 +66,29 @@ public class ResponseBuilder {
         this.httpClient = httpClient;
     }
 
+    /**
+     * Set the delay time between API retries when the account is over it's
+     * limit
+     *
+     * @param retryDelay milliseconds to delay for, default is 500ms
+     */
     public void setRetryDelay(long retryDelay) {
-        this.retryDelay = retryDelay;
+        if (retryDelay > RETRY_DELAY_MS) {
+            this.retryDelay = retryDelay;
+        }
     }
 
+    /**
+     * Number of times to retry the API call when the account limit is hit.
+     *
+     * Once this limit is hit an exception is thrown.
+     *
+     * @param retryLimit Number of retries, default is 5
+     */
     public void setRetryLimit(int retryLimit) {
-        this.retryLimit = retryLimit;
+        if (retryLimit > 1) {
+            this.retryLimit = retryLimit;
+        }
     }
 
     /**
