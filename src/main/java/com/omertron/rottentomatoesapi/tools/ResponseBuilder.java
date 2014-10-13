@@ -85,7 +85,7 @@ public class ResponseBuilder {
             T wrapper = clazz.cast(MAPPER.readValue(getContent(url), clazz));
             int retry = 1;
 
-            while (!wrapper.isValid() && wrapper.getError().equalsIgnoreCase("Account Over Queries Per Second Limit") && retry <= retryLimit) {
+            while (!wrapper.isValid() && "Account Over Queries Per Second Limit".equalsIgnoreCase(wrapper.getError()) && retry <= retryLimit) {
                 LOG.trace("Account over queries limit, waiting for {}ms.", retryDelay * retry);
                 sleeper(retry++);
                 wrapper = MAPPER.readValue(getContent(url), clazz);
@@ -117,7 +117,7 @@ public class ResponseBuilder {
         try {
             HttpEntity entity = httpClient.requestResource(urlString);
 
-            if (entity.getContentEncoding() != null && entity.getContentEncoding().getValue().equalsIgnoreCase("gzip")) {
+            if (entity.getContentEncoding() != null && "gzip".equalsIgnoreCase(entity.getContentEncoding().getValue())) {
                 gzis = new GZIPInputStream(entity.getContent());
                 isr = new InputStreamReader(gzis, ENCODING_UTF8);
                 br = new BufferedReader(isr);
