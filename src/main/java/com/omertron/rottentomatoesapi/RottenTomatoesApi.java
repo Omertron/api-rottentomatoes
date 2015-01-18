@@ -19,7 +19,6 @@
  */
 package com.omertron.rottentomatoesapi;
 
-import com.omertron.rottentomatoesapi.RottenTomatoesException.RottenTomatoesExceptionType;
 import com.omertron.rottentomatoesapi.model.RTCast;
 import com.omertron.rottentomatoesapi.model.RTClip;
 import com.omertron.rottentomatoesapi.model.RTMovie;
@@ -34,12 +33,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
+import org.yamj.api.common.exception.ApiExceptionType;
 import org.yamj.api.common.http.CommonHttpClient;
 import org.yamj.api.common.http.DefaultPoolingHttpClient;
 
 /**
- * Connect to the Rotten Tomatoes web site and get the rating for a specific
- * movie
+ * Connect to the Rotten Tomatoes web site and get the rating for a specific movie
  *
  * @author Stuart.Boston
  *
@@ -111,7 +110,7 @@ public class RottenTomatoesApi {
 
     public RottenTomatoesApi(String apiKey, CommonHttpClient httpClient) throws RottenTomatoesException {
         if (StringUtils.isBlank(apiKey)) {
-            throw new RottenTomatoesException(RottenTomatoesExceptionType.NO_API_KEY, "No API Key provided!");
+            throw new RottenTomatoesException(ApiExceptionType.AUTH_FAILURE, "No API Key provided!");
         }
 
         ApiBuilder.addApiKey(apiKey);
@@ -142,8 +141,7 @@ public class RottenTomatoesApi {
     }
 
     /**
-     * Set the delay time between API retries when the account is over it's
-     * limit
+     * Set the delay time between API retries when the account is over it's limit
      *
      * @param retryDelay milliseconds to delay for, default is 500ms
      */
@@ -163,8 +161,7 @@ public class RottenTomatoesApi {
     }
 
     /**
-     * Displays top box office earning movies, sorted by most recent weekend
-     * gross ticket sales.
+     * Displays top box office earning movies, sorted by most recent weekend gross ticket sales.
      *
      * @param limit Limits the number of movies returned
      * @param country Provides localized data for the selected country
@@ -186,8 +183,7 @@ public class RottenTomatoesApi {
     }
 
     /**
-     * Displays top box office earning movies, sorted by most recent weekend
-     * gross ticket sales.
+     * Displays top box office earning movies, sorted by most recent weekend gross ticket sales.
      *
      * @return
      * @throws RottenTomatoesException
@@ -197,8 +193,7 @@ public class RottenTomatoesApi {
     }
 
     /**
-     * Displays top box office earning movies, sorted by most recent weekend
-     * gross ticket sales.
+     * Displays top box office earning movies, sorted by most recent weekend gross ticket sales.
      *
      * @param country Provides localized data for the selected country
      * @return
@@ -694,8 +689,7 @@ public class RottenTomatoesApi {
     }
 
     /**
-     * The movies search endpoint for plain text queries. Let's you search for
-     * movies!
+     * The movies search endpoint for plain text queries. Let's you search for movies!
      *
      * @param query
      * @param pageLimit
@@ -712,7 +706,7 @@ public class RottenTomatoesApi {
         try {
             properties.put(ApiBuilder.PROPERTY_QUERY, URLEncoder.encode(query, ENCODING_UTF8));
         } catch (UnsupportedEncodingException ex) {
-            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+            throw new RottenTomatoesException(ApiExceptionType.MAPPING_FAILED, "Failed to encode URL", query, ex);
         }
 
         WrapperLists wrapper = response.getResponse(WrapperLists.class, properties);
@@ -724,8 +718,7 @@ public class RottenTomatoesApi {
     }
 
     /**
-     * The movies search endpoint for plain text queries. Let's you search for
-     * movies!
+     * The movies search endpoint for plain text queries. Let's you search for movies!
      *
      * @param query
      * @return

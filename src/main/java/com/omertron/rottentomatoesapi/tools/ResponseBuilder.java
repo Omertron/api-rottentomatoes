@@ -32,6 +32,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yamj.api.common.exception.ApiExceptionType;
 import org.yamj.api.common.http.CommonHttpClient;
 
 /**
@@ -67,8 +68,7 @@ public class ResponseBuilder {
     }
 
     /**
-     * Set the delay time between API retries when the account is over it's
-     * limit
+     * Set the delay time between API retries when the account is over it's limit
      *
      * @param retryDelay milliseconds to delay for, default is 500ms
      */
@@ -103,8 +103,8 @@ public class ResponseBuilder {
      * @throws RottenTomatoesException
      */
     public <T extends AbstractJsonMapping> T getResponse(Class<T> clazz, Map<String, String> properties) throws RottenTomatoesException {
+        String url = ApiBuilder.create(properties);
         try {
-            String url = ApiBuilder.create(properties);
             T wrapper = clazz.cast(MAPPER.readValue(getContent(url), clazz));
             int retry = 1;
 
@@ -117,10 +117,10 @@ public class ResponseBuilder {
             if (wrapper.isValid()) {
                 return wrapper;
             } else {
-                throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, wrapper.getError());
+                throw new RottenTomatoesException(ApiExceptionType.MAPPING_FAILED, wrapper.getError());
             }
         } catch (IOException ex) {
-            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, ex);
+            throw new RottenTomatoesException(ApiExceptionType.MAPPING_FAILED, "Failed to map response", url);
         }
     }
 
@@ -154,7 +154,7 @@ public class ResponseBuilder {
                 content.append(EntityUtils.toString(entity, Charset.forName(ENCODING_UTF8)));
             }
         } catch (IOException ex) {
-            throw new RottenTomatoesException(RottenTomatoesException.RottenTomatoesExceptionType.MAPPING_FAILED, "Failed to read JSON data from " + urlString, ex);
+            throw new RottenTomatoesException(ApiExceptionType.MAPPING_FAILED, "Failed to read JSON data", urlString, ex);
         } finally {
             close(br);
             close(isr);

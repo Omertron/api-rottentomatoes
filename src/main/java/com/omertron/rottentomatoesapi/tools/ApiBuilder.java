@@ -20,11 +20,11 @@
 package com.omertron.rottentomatoesapi.tools;
 
 import com.omertron.rottentomatoesapi.RottenTomatoesException;
-import com.omertron.rottentomatoesapi.RottenTomatoesException.RottenTomatoesExceptionType;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yamj.api.common.exception.ApiExceptionType;
 
 public class ApiBuilder {
 
@@ -68,14 +68,14 @@ public class ApiBuilder {
      */
     public static String create(Map<String, String> properties) throws RottenTomatoesException {
         if (StringUtils.isBlank(apiKey)) {
-            throw new RottenTomatoesException(RottenTomatoesExceptionType.INVALID_URL, "Missing API Key");
+            throw new RottenTomatoesException(ApiExceptionType.INVALID_URL, "Missing API Key");
         }
 
         StringBuilder urlBuilder = new StringBuilder(API_SITE);
         urlBuilder.append(API_VERSION);
 
         urlBuilder.append(getUrlFromProps(properties));
-        
+
         urlBuilder.append(API_PREFIX).append(apiKey);
 
         for (Map.Entry<String, String> property : properties.entrySet()) {
@@ -110,7 +110,7 @@ public class ApiBuilder {
             properties.remove(PROPERTY_URL);
             return url;
         } else {
-            throw new RottenTomatoesException(RottenTomatoesExceptionType.INVALID_URL, "No URL specified");
+            throw new RottenTomatoesException(ApiExceptionType.INVALID_URL, "No URL specified");
         }
     }
 

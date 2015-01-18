@@ -19,40 +19,46 @@
  */
 package com.omertron.rottentomatoesapi;
 
-public class RottenTomatoesException extends Exception {
+import java.net.URL;
+import org.yamj.api.common.exception.ApiException;
+import org.yamj.api.common.exception.ApiExceptionType;
 
-    private static final long serialVersionUID = -8952129102483143278L;
+public class RottenTomatoesException extends ApiException {
 
-    public enum RottenTomatoesExceptionType {
-
-        UNKNOWN_CAUSE, INVALID_URL, HTTP_404_ERROR, MAPPING_FAILED, CONNECTION_ERROR, NO_API_KEY;
-    }
-    private final RottenTomatoesExceptionType exceptionType;
-    private final String response;
-
-    public RottenTomatoesException(final RottenTomatoesExceptionType exceptionType, final String response) {
-        super(response);
-        this.exceptionType = exceptionType;
-        this.response = response;
+    public RottenTomatoesException(ApiExceptionType exceptionType, String response) {
+        super(exceptionType, response);
     }
 
-    public RottenTomatoesException(final RottenTomatoesExceptionType exceptionType, final String response, final Throwable cause) {
-        super(cause);
-        this.exceptionType = exceptionType;
-        this.response = response;
+    public RottenTomatoesException(ApiExceptionType exceptionType, String response, URL url) {
+        super(exceptionType, response, url);
     }
 
-    public RottenTomatoesException(final RottenTomatoesExceptionType exceptionType, final Throwable cause) {
-        super(cause);
-        this.exceptionType = exceptionType;
-        this.response = cause.getMessage();
+    public RottenTomatoesException(ApiExceptionType exceptionType, String response, int responseCode, URL url) {
+        super(exceptionType, response, responseCode, url);
     }
 
-    public RottenTomatoesExceptionType getExceptionType() {
-        return exceptionType;
+    public RottenTomatoesException(ApiExceptionType exceptionType, String response, String url) {
+        super(exceptionType, response, url);
     }
 
-    public String getResponse() {
-        return response;
+    public RottenTomatoesException(ApiExceptionType exceptionType, String response, int responseCode, String url) {
+        super(exceptionType, response, responseCode, url);
     }
+
+    public RottenTomatoesException(ApiExceptionType exceptionType, String response, URL url, Throwable cause) {
+        super(exceptionType, response, url, cause);
+    }
+
+    public RottenTomatoesException(ApiExceptionType exceptionType, String response, int responseCode, URL url, Throwable cause) {
+        super(exceptionType, response, responseCode, url, cause);
+    }
+
+    public RottenTomatoesException(ApiExceptionType exceptionType, String response, String url, Throwable cause) {
+        super(exceptionType, response, url, cause);
+    }
+
+    public RottenTomatoesException(ApiExceptionType exceptionType, String response, int responseCode, String url, Throwable cause) {
+        super(exceptionType, response, responseCode, url, cause);
+    }
+
 }
