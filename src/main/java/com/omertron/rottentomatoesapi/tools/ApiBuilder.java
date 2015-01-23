@@ -85,7 +85,7 @@ public class ApiBuilder {
             }
         }
 
-        LOG.trace("URL: " + urlBuilder.toString());
+        LOG.trace("URL: {}", urlBuilder.toString());
         return urlBuilder.toString();
     }
 
