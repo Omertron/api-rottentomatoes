@@ -28,12 +28,15 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
-import org.apache.http.HttpEntity;
-import org.apache.http.util.EntityUtils;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yamj.api.common.exception.ApiExceptionType;
-import org.yamj.api.common.http.CommonHttpClient;
+import org.yamj.api.common.http.DigestedResponse;
+import org.yamj.api.common.http.DigestedResponseReader;
+import org.yamj.api.common.http.UserAgentSelector;
 
 /**
  *
@@ -47,12 +50,15 @@ public class ResponseBuilder {
      */
     private static final int RETRY_DELAY_MS = 500;
     private static final int RETRY_DEFAULT_LIMIT = 5;
+    private static final int HTTP_STATUS_300 = 300;
+    private static final int HTTP_STATUS_500 = 500;
 
     /*
      * Jackson JSON configuration
      */
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private static final String ENCODING_UTF8 = "UTF-8";
+    private static final String DEFAULT_CHARSET = "UTF-8";
+    private final Charset charset = Charset.forName(DEFAULT_CHARSET);
     /*
      * Retry settings
      */
@@ -61,14 +67,15 @@ public class ResponseBuilder {
     /*
      * HTTP Client for web requests
      */
-    private final CommonHttpClient httpClient;
+    private final CloseableHttpClient httpClient;
 
-    public ResponseBuilder(CommonHttpClient httpClient) {
+    public ResponseBuilder(CloseableHttpClient httpClient) {
         this.httpClient = httpClient;
     }
 
     /**
-     * Set the delay time between API retries when the account is over it's limit
+     * Set the delay time between API retries when the account is over it's
+     * limit
      *
      * @param retryDelay milliseconds to delay for, default is 500ms
      */
@@ -131,36 +138,25 @@ public class ResponseBuilder {
      * @return
      * @throws RottenTomatoesException
      */
-    private String getContent(String urlString) throws RottenTomatoesException {
-        StringBuilder content = new StringBuilder();
-        GZIPInputStream gzis = null;
-        InputStreamReader isr = null;
-        BufferedReader br = null;
-
+    private String getContent(String url) throws RottenTomatoesException {
+        LOG.trace("Requesting: {}", url);
         try {
-            HttpEntity entity = httpClient.requestResource(urlString);
+            final HttpGet httpGet = new HttpGet(url);
+            httpGet.addHeader("accept", "application/json");
+            httpGet.addHeader(HTTP.USER_AGENT, UserAgentSelector.randomUserAgent());
 
-            if (entity.getContentEncoding() != null && "gzip".equalsIgnoreCase(entity.getContentEncoding().getValue())) {
-                gzis = new GZIPInputStream(entity.getContent());
-                isr = new InputStreamReader(gzis, ENCODING_UTF8);
-                br = new BufferedReader(isr);
+            final DigestedResponse response = DigestedResponseReader.requestContent(httpClient, httpGet, charset);
 
-                String readed = br.readLine();
-                while (readed != null) {
-                    content.append(readed);
-                    readed = br.readLine();
-                }
-            } else {
-                content.append(EntityUtils.toString(entity, Charset.forName(ENCODING_UTF8)));
+            if (response.getStatusCode() >= HTTP_STATUS_500) {
+                throw new RottenTomatoesException(ApiExceptionType.HTTP_503_ERROR, response.getContent(), response.getStatusCode(), url);
+            } else if (response.getStatusCode() >= HTTP_STATUS_300) {
+                throw new RottenTomatoesException(ApiExceptionType.HTTP_404_ERROR, response.getContent(), response.getStatusCode(), url);
             }
+
+            return response.getContent();
         } catch (IOException ex) {
-            throw new RottenTomatoesException(ApiExceptionType.MAPPING_FAILED, "Failed to read JSON data", urlString, ex);
-        } finally {
-            close(br);
-            close(isr);
-            close(gzis);
+            throw new RottenTomatoesException(ApiExceptionType.CONNECTION_ERROR, "Error retrieving URL", url, ex);
         }
-        return content.toString();
     }
 
     /**

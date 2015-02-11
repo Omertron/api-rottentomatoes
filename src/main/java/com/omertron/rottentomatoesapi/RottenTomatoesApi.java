@@ -33,19 +33,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.yamj.api.common.exception.ApiExceptionType;
-import org.yamj.api.common.http.CommonHttpClient;
-import org.yamj.api.common.http.DefaultPoolingHttpClient;
+import org.yamj.api.common.http.SimpleHttpClientBuilder;
 
 /**
- * Connect to the Rotten Tomatoes web site and get the rating for a specific movie
+ * Connect to the Rotten Tomatoes web site and get the rating for a specific
+ * movie
  *
  * @author Stuart.Boston
  *
  */
 public class RottenTomatoesApi {
 
-    private CommonHttpClient httpClient;
     private static final String ENCODING_UTF8 = "UTF-8";
     private ResponseBuilder response;
     /*
@@ -105,43 +105,21 @@ public class RottenTomatoesApi {
     private static final int LENGTH_OF_IMDB_PREFIX = 2;
 
     public RottenTomatoesApi(String apiKey) throws RottenTomatoesException {
-        this(apiKey, new DefaultPoolingHttpClient());
+        this(apiKey, new SimpleHttpClientBuilder().build());
     }
 
-    public RottenTomatoesApi(String apiKey, CommonHttpClient httpClient) throws RottenTomatoesException {
+    public RottenTomatoesApi(String apiKey, CloseableHttpClient httpClient) throws RottenTomatoesException {
         if (StringUtils.isBlank(apiKey)) {
             throw new RottenTomatoesException(ApiExceptionType.AUTH_FAILURE, "No API Key provided!");
         }
 
         ApiBuilder.addApiKey(apiKey);
-        this.httpClient = httpClient;
         this.response = new ResponseBuilder(httpClient);
     }
 
     /**
-     * Set the web browser proxy information
-     *
-     * @param host
-     * @param port
-     * @param username
-     * @param password
-     */
-    public void setProxy(String host, int port, String username, String password) {
-        httpClient.setProxy(host, port, username, password);
-    }
-
-    /**
-     * Set the web browser timeout settings
-     *
-     * @param webTimeoutConnect
-     * @param webTimeoutRead
-     */
-    public void setTimeout(int webTimeoutConnect, int webTimeoutRead) {
-        httpClient.setTimeouts(webTimeoutConnect, webTimeoutRead);
-    }
-
-    /**
-     * Set the delay time between API retries when the account is over it's limit
+     * Set the delay time between API retries when the account is over it's
+     * limit
      *
      * @param retryDelay milliseconds to delay for, default is 500ms
      */
@@ -161,7 +139,8 @@ public class RottenTomatoesApi {
     }
 
     /**
-     * Displays top box office earning movies, sorted by most recent weekend gross ticket sales.
+     * Displays top box office earning movies, sorted by most recent weekend
+     * gross ticket sales.
      *
      * @param limit Limits the number of movies returned
      * @param country Provides localized data for the selected country
@@ -183,7 +162,8 @@ public class RottenTomatoesApi {
     }
 
     /**
-     * Displays top box office earning movies, sorted by most recent weekend gross ticket sales.
+     * Displays top box office earning movies, sorted by most recent weekend
+     * gross ticket sales.
      *
      * @return
      * @throws RottenTomatoesException
@@ -193,7 +173,8 @@ public class RottenTomatoesApi {
     }
 
     /**
-     * Displays top box office earning movies, sorted by most recent weekend gross ticket sales.
+     * Displays top box office earning movies, sorted by most recent weekend
+     * gross ticket sales.
      *
      * @param country Provides localized data for the selected country
      * @return
@@ -689,7 +670,8 @@ public class RottenTomatoesApi {
     }
 
     /**
-     * The movies search endpoint for plain text queries. Let's you search for movies!
+     * The movies search endpoint for plain text queries. Let's you search for
+     * movies!
      *
      * @param query
      * @param pageLimit
@@ -718,7 +700,8 @@ public class RottenTomatoesApi {
     }
 
     /**
-     * The movies search endpoint for plain text queries. Let's you search for movies!
+     * The movies search endpoint for plain text queries. Let's you search for
+     * movies!
      *
      * @param query
      * @return
