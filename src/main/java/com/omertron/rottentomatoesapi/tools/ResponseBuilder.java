@@ -124,10 +124,10 @@ public class ResponseBuilder {
             if (wrapper.isValid()) {
                 return wrapper;
             } else {
-                throw new RottenTomatoesException(ApiExceptionType.MAPPING_FAILED, wrapper.getError());
+                throw new RottenTomatoesException(ApiExceptionType.MAPPING_FAILED, wrapper.getError(), url);
             }
         } catch (IOException ex) {
-            throw new RottenTomatoesException(ApiExceptionType.MAPPING_FAILED, "Failed to map response", url);
+            throw new RottenTomatoesException(ApiExceptionType.MAPPING_FAILED, "Failed to map response", url, ex);
         }
     }
 
