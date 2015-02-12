@@ -43,17 +43,17 @@ public class RottenTomatoesApiTest {
     private static final Logger LOG = LoggerFactory.getLogger(RottenTomatoesApiTest.class);
     private static final String API_KEY = "rnt8xak564a8sxkts5xkqj5z";
     public static RottenTomatoesApi rt;
-    private static final boolean SIMPLE_TEST = false;
+    private static final boolean SHORT_TEST = false;
     private static final boolean FULL_TEST = true;
     // Test values
     private static final String COUNTRY_US = "us";
     private static final int LIMIT = 5;
     private static final int PAGE = 1;
     private static final int PAGE_LIMIT = 2;
-    private static final int MOVIE_ID = 12886;
-    private static final String ALT_MOVIE_ID = "tt0083658";
+    private static final int MOVIE_ID = 770672122;
+    private static final String ALT_MOVIE_ID = "tt0435761";
     private static final String SEARCH_IMDB = "imdb";
-    private static final String SEARCH_QUERY = "Blade Runner 1982";
+    private static final String SEARCH_QUERY = "Toy Story 3 2010";
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -85,7 +85,7 @@ public class RottenTomatoesApiTest {
         List<RTMovie> result = rt.getBoxOffice(COUNTRY_US, LIMIT);
         assertEquals("Wrong number of results", LIMIT, result.size());
         // Do the list tests
-        assertMovieList(result, SIMPLE_TEST);
+        assertMovieList(result, SHORT_TEST);
     }
 
     /**
@@ -100,7 +100,7 @@ public class RottenTomatoesApiTest {
         List<RTMovie> result = rt.getInTheaters(COUNTRY_US, PAGE, PAGE_LIMIT);
         assertEquals("Wrong number of results", PAGE_LIMIT, result.size());
         // Do the list tests
-        assertMovieList(result, SIMPLE_TEST);
+        assertMovieList(result, SHORT_TEST);
     }
 
     /**
@@ -115,7 +115,7 @@ public class RottenTomatoesApiTest {
         List<RTMovie> result = rt.getOpeningMovies(COUNTRY_US, LIMIT);
         assertEquals("Wrong number of results", LIMIT, result.size());
         // Do the list tests
-        assertMovieList(result, SIMPLE_TEST);
+        assertMovieList(result, SHORT_TEST);
     }
 
     /**
@@ -130,7 +130,7 @@ public class RottenTomatoesApiTest {
         List<RTMovie> result = rt.getUpcomingMovies(COUNTRY_US, PAGE, PAGE_LIMIT);
         assertEquals("Wrong number of results", PAGE_LIMIT, result.size());
         // Do the list tests
-        assertMovieList(result, SIMPLE_TEST);
+        assertMovieList(result, SHORT_TEST);
     }
 
     /**
@@ -145,7 +145,7 @@ public class RottenTomatoesApiTest {
         List<RTMovie> result = rt.getTopRentals(COUNTRY_US, LIMIT);
         assertEquals("Wrong number of results", LIMIT, result.size());
         // Do the list tests
-        assertMovieList(result, SIMPLE_TEST);
+        assertMovieList(result, SHORT_TEST);
     }
 
     /**
@@ -160,7 +160,7 @@ public class RottenTomatoesApiTest {
         List<RTMovie> result = rt.getCurrentReleaseDvds(COUNTRY_US, PAGE, PAGE_LIMIT);
         assertEquals("Wrong number of results", PAGE_LIMIT, result.size());
         // Do the list tests
-        assertMovieList(result, SIMPLE_TEST);
+        assertMovieList(result, SHORT_TEST);
     }
 
     /**
@@ -175,7 +175,7 @@ public class RottenTomatoesApiTest {
         List<RTMovie> result = rt.getNewReleaseDvds(COUNTRY_US, PAGE, PAGE_LIMIT);
         assertEquals("Wrong number of results", PAGE_LIMIT, result.size());
         // Do the list tests
-        assertMovieList(result, SIMPLE_TEST);
+        assertMovieList(result, SHORT_TEST);
     }
 
     /**
@@ -190,7 +190,7 @@ public class RottenTomatoesApiTest {
         List<RTMovie> result = rt.getUpcomingDvds(COUNTRY_US, PAGE, PAGE_LIMIT);
         assertNotNull("Null object returned", result);
         // Do the list tests
-        assertMovieList(result, SIMPLE_TEST);
+        assertMovieList(result, SHORT_TEST);
     }
 
     /**
@@ -203,7 +203,7 @@ public class RottenTomatoesApiTest {
         LOG.info("getDetailedInfo");
 
         RTMovie result = rt.getDetailedInfo(MOVIE_ID);
-        assertEquals("Incorrect movie returned", "Blade Runner", result.getTitle());
+        assertEquals("Incorrect movie returned", "Toy Story 3", result.getTitle());
         assertMovie(result, FULL_TEST);
     }
 
@@ -258,7 +258,7 @@ public class RottenTomatoesApiTest {
         List<RTMovie> result = rt.getMoviesSimilar(MOVIE_ID, LIMIT);
         assertFalse("No similar movies information!", result.isEmpty());
         // Do the list tests
-        assertMovieList(result, FULL_TEST);
+        assertMovieList(result, SHORT_TEST);
     }
 
     /**
@@ -272,7 +272,6 @@ public class RottenTomatoesApiTest {
 
         RTMovie result = rt.getMoviesAlias(ALT_MOVIE_ID, SEARCH_IMDB);
         assertFalse("Something really wrong here!", result == null);
-        assertMovie(result, FULL_TEST);
     }
 
     /**
@@ -287,7 +286,7 @@ public class RottenTomatoesApiTest {
         List<RTMovie> result = rt.getMoviesSearch(SEARCH_QUERY, PAGE_LIMIT, PAGE);
         assertFalse("No movies found!", result.isEmpty());
         // Do the list tests
-        assertMovieList(result, FULL_TEST);
+        assertMovieList(result, SHORT_TEST);
     }
 
     /**
@@ -354,27 +353,22 @@ public class RottenTomatoesApiTest {
     private void assertMovie(final RTMovie movie, final boolean fullTests) {
         assertNotNull("Null movie object", movie);
         assertTrue("Invalid movie returned", movie.isValid());
+
+        // Short Tests
         assertTrue("No ID", movie.getId() > 0);
         assertTrue("No title", StringUtils.isNotBlank(movie.getTitle()));
-
         assertTrue("No Year", movie.getYear() > 0);
+        assertTrue("No MPAA", StringUtils.isNotBlank(movie.getMpaaRating()));
         assertTrue("No Runtime", movie.getRuntime() > 0);
-        assertFalse("No ratings", movie.getRatings().isEmpty());
+        // Skip the critics
         assertFalse("No release dates", movie.getReleaseDates().isEmpty());
-
-        // Weirdly the blade runner info doesn't have a synopsis!
-        if (movie.getId() != MOVIE_ID) {
-            assertTrue("No synopsis", StringUtils.isNotBlank(movie.getSynopsis()));
-        }
+        assertFalse("No ratings", movie.getRatings().isEmpty());
         assertFalse("No artwork", movie.getArtwork().isEmpty());
         assertFalse("No cast", movie.getCast().isEmpty());
 
         if (fullTests) {
-            LOG.info("Testing: {} - {}", movie.getId(), movie.getTitle());
-            LOG.info("{}", movie);
             assertFalse("No genres", movie.getGenres().isEmpty());
             assertFalse("No directors", movie.getDirectors().isEmpty());
-            assertTrue("No certification", StringUtils.isNotBlank(movie.getCertification()));
             assertTrue("No studio", StringUtils.isNotBlank(movie.getStudio()));
         }
     }

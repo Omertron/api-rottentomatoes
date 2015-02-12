@@ -19,6 +19,7 @@
  */
 package com.omertron.rottentomatoesapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -26,15 +27,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * The Rotten Tomatoes movie details
+ *
+ * Note: Critics Consensus and Synopsis are no longer provided by the API
+ *
+ * @author Stuart.Boston
+ */
+@JsonIgnoreProperties({"critics_consensus", "synopsis"})
 public class RTMovie extends AbstractJsonMapping implements Serializable {
 
-    /*
-     * Serial Version
-     */
     private static final long serialVersionUID = 1L;
-    /*
-     * Properties
-     */
     @JsonProperty("id")
     private int id;
     @JsonProperty("title")
@@ -45,14 +48,10 @@ public class RTMovie extends AbstractJsonMapping implements Serializable {
     private String mpaaRating;
     @JsonProperty("runtime")
     private int runtime;
-    @JsonProperty("critics_consensus")
-    private String criticsConsensus;
     @JsonProperty("release_dates")
     private Map<String, String> releaseDates = new HashMap<String, String>();
     @JsonProperty("ratings")
     private Map<String, String> ratings = new HashMap<String, String>();
-    @JsonProperty("synopsis")
-    private String synopsis;
     @JsonProperty("posters")
     private Map<String, String> artwork = new HashMap<String, String>();
     @JsonProperty("abridged_cast")
@@ -63,162 +62,131 @@ public class RTMovie extends AbstractJsonMapping implements Serializable {
     private Map<String, String> links = new HashMap<String, String>();
     @JsonProperty("genres")
     private Set<String> genres = new HashSet<String>();
-    @JsonProperty("certification")
-    private String certification;
     @JsonProperty("abridged_directors")
     private Set<RTPerson> directors = new HashSet<RTPerson>();
     @JsonProperty("studio")
     private String studio;
-    // Error property
     @JsonProperty("link_template")
     private String linkTemplate;
 
-    //<editor-fold defaultstate="collapsed" desc="Getter Methods">
-    public Map<String, String> getAlternateIds() {
-        return alternateIds;
-    }
-
-    public Map<String, String> getArtwork() {
-        return artwork;
-    }
-
-    public Set<RTCast> getCast() {
-        return cast;
-    }
-
-    public String getCertification() {
-        return certification;
-    }
-
-    public String getCriticsConsensus() {
-        return criticsConsensus;
-    }
-
-    public Set<RTPerson> getDirectors() {
-        return directors;
-    }
-
-    public Set<String> getGenres() {
-        return genres;
-    }
-
     public int getId() {
         return id;
-    }
-
-    public Map<String, String> getLinks() {
-        return links;
-    }
-
-    public String getMpaaRating() {
-        return mpaaRating;
-    }
-
-    public Map<String, String> getRatings() {
-        return ratings;
-    }
-
-    public Map<String, String> getReleaseDates() {
-        return releaseDates;
-    }
-
-    public int getRuntime() {
-        return runtime;
-    }
-
-    public String getSynopsis() {
-        return synopsis;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public String getLinkTemplate() {
-        return linkTemplate;
-    }
-
-    public String getStudio() {
-        return studio;
-    }
-    //</editor-fold>
-
-    //<editor-fold defaultstate="collapsed" desc="Setter Methods">
-    public void setAlternateIds(Map<String, String> alternateIds) {
-        this.alternateIds = alternateIds;
-    }
-
-    public void setArtwork(Map<String, String> artwork) {
-        this.artwork = artwork;
-    }
-
-    public void setCast(Set<RTCast> cast) {
-        this.cast = cast;
-    }
-
-    public void setCertification(String certification) {
-        this.certification = certification;
-    }
-
-    public void setCriticsConsensus(String criticsConsensus) {
-        this.criticsConsensus = criticsConsensus;
-    }
-
-    public void setDirectors(Set<RTPerson> directors) {
-        this.directors = directors;
-    }
-
-    public void setGenres(Set<String> genres) {
-        this.genres = genres;
     }
 
     public void setId(int id) {
         this.id = id;
     }
 
-    public void setLinks(Map<String, String> links) {
-        this.links = links;
-    }
-
-    public void setMpaaRating(String mpaaRating) {
-        this.mpaaRating = mpaaRating;
-    }
-
-    public void setRatings(Map<String, String> ratings) {
-        this.ratings = ratings;
-    }
-
-    public void setReleaseDates(Map<String, String> releaseDates) {
-        this.releaseDates = releaseDates;
-    }
-
-    public void setRuntime(int runtime) {
-        this.runtime = runtime;
-    }
-
-    public void setSynopsis(String synopsis) {
-        this.synopsis = synopsis;
+    public String getTitle() {
+        return title;
     }
 
     public void setTitle(String title) {
         this.title = title;
     }
 
+    public int getYear() {
+        return year;
+    }
+
     public void setYear(int year) {
         this.year = year;
     }
 
-    public void setLinkTemplate(String linkTemplate) {
-        this.linkTemplate = linkTemplate;
+    public String getMpaaRating() {
+        return mpaaRating;
+    }
+
+    public void setMpaaRating(String mpaaRating) {
+        this.mpaaRating = mpaaRating;
+    }
+
+    public int getRuntime() {
+        return runtime;
+    }
+
+    public void setRuntime(int runtime) {
+        this.runtime = runtime;
+    }
+
+    public Map<String, String> getReleaseDates() {
+        return releaseDates;
+    }
+
+    public void setReleaseDates(Map<String, String> releaseDates) {
+        this.releaseDates = releaseDates;
+    }
+
+    public Map<String, String> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(Map<String, String> ratings) {
+        this.ratings = ratings;
+    }
+
+    public Map<String, String> getArtwork() {
+        return artwork;
+    }
+
+    public void setArtwork(Map<String, String> artwork) {
+        this.artwork = artwork;
+    }
+
+    public Set<RTCast> getCast() {
+        return cast;
+    }
+
+    public void setCast(Set<RTCast> cast) {
+        this.cast = cast;
+    }
+
+    public Map<String, String> getAlternateIds() {
+        return alternateIds;
+    }
+
+    public void setAlternateIds(Map<String, String> alternateIds) {
+        this.alternateIds = alternateIds;
+    }
+
+    public Map<String, String> getLinks() {
+        return links;
+    }
+
+    public void setLinks(Map<String, String> links) {
+        this.links = links;
+    }
+
+    public Set<String> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(Set<String> genres) {
+        this.genres = genres;
+    }
+
+    public Set<RTPerson> getDirectors() {
+        return directors;
+    }
+
+    public void setDirectors(Set<RTPerson> directors) {
+        this.directors = directors;
+    }
+
+    public String getStudio() {
+        return studio;
     }
 
     public void setStudio(String studio) {
         this.studio = studio;
     }
-    //</editor-fold>
+
+    public String getLinkTemplate() {
+        return linkTemplate;
+    }
+
+    public void setLinkTemplate(String linkTemplate) {
+        this.linkTemplate = linkTemplate;
+    }
 
 }
