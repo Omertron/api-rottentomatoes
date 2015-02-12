@@ -22,12 +22,9 @@ package com.omertron.rottentomatoesapi.tools;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.omertron.rottentomatoesapi.RottenTomatoesException;
 import com.omertron.rottentomatoesapi.model.AbstractJsonMapping;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.Map;
-import java.util.zip.GZIPInputStream;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.protocol.HTTP;
@@ -156,51 +153,6 @@ public class ResponseBuilder {
             return response.getContent();
         } catch (IOException ex) {
             throw new RottenTomatoesException(ApiExceptionType.CONNECTION_ERROR, "Error retrieving URL", url, ex);
-        }
-    }
-
-    /**
-     * Close a BufferedReader
-     *
-     * @param br
-     */
-    private void close(BufferedReader br) {
-        if (br != null) {
-            try {
-                br.close();
-            } catch (IOException ex) {
-                LOG.trace("Failed to close BufferedReader", ex);
-            }
-        }
-    }
-
-    /**
-     * Close an InputStreamReader
-     *
-     * @param isr
-     */
-    private void close(InputStreamReader isr) {
-        if (isr != null) {
-            try {
-                isr.close();
-            } catch (IOException ex) {
-                LOG.trace("Failed to close InputStreamReader", ex);
-            }
-        }
-    }
-
-    /**
-     * Close a GZIPInputStream
-     *
-     * @param gzis
-     */
-    private void close(GZIPInputStream gzis) {
-        if (gzis != null) {
-            try {
-                gzis.close();
-            } catch (IOException ex) {
-                LOG.trace("Failed to close GZIPInputStream", ex);
-            }
         }
     }
 
