@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.client.HttpClient;
 import org.yamj.api.common.exception.ApiExceptionType;
 import org.yamj.api.common.http.SimpleHttpClientBuilder;
 
@@ -108,7 +108,7 @@ public class RottenTomatoesApi {
         this(apiKey, new SimpleHttpClientBuilder().build());
     }
 
-    public RottenTomatoesApi(String apiKey, CloseableHttpClient httpClient) throws RottenTomatoesException {
+    public RottenTomatoesApi(String apiKey, HttpClient httpClient) throws RottenTomatoesException {
         if (StringUtils.isBlank(apiKey)) {
             throw new RottenTomatoesException(ApiExceptionType.AUTH_FAILURE, "No API Key provided!");
         }

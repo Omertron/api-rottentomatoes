@@ -25,8 +25,8 @@ import com.omertron.rottentomatoesapi.model.AbstractJsonMapping;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Map;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,9 +64,9 @@ public class ResponseBuilder {
     /*
      * HTTP Client for web requests
      */
-    private final CloseableHttpClient httpClient;
+    private final HttpClient httpClient;
 
-    public ResponseBuilder(CloseableHttpClient httpClient) {
+    public ResponseBuilder(HttpClient httpClient) {
         this.httpClient = httpClient;
     }
 
