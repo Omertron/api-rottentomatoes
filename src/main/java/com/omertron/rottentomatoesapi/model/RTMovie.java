@@ -34,7 +34,7 @@ import java.util.Set;
  *
  * @author Stuart.Boston
  */
-@JsonIgnoreProperties({"critics_consensus", "synopsis"})
+@JsonIgnoreProperties({"critics_consensus"})
 public class RTMovie extends AbstractJsonMapping implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -42,6 +42,8 @@ public class RTMovie extends AbstractJsonMapping implements Serializable {
     private int id;
     @JsonProperty("title")
     private String title;
+    @JsonProperty("synopsis")
+    private String synopsis;
     @JsonProperty("year")
     private int year;
     @JsonProperty("mpaa_rating")
