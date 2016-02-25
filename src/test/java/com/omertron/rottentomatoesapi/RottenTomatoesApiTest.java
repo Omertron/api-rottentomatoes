@@ -26,23 +26,20 @@ import com.omertron.rottentomatoesapi.model.Review;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.After;
-import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class RottenTomatoesApiTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(RottenTomatoesApiTest.class);
     private static final String API_KEY = "rnt8xak564a8sxkts5xkqj5z";
-    public static RottenTomatoesApi rt;
+    private static RottenTomatoesApi rt;
     private static final boolean SHORT_TEST = false;
     private static final boolean FULL_TEST = true;
     // Test values
@@ -54,23 +51,13 @@ public class RottenTomatoesApiTest {
     private static final String ALT_MOVIE_ID = "tt0435761";
     private static final String SEARCH_IMDB = "imdb";
     private static final String SEARCH_QUERY = "Toy Story 3 2010";
+    private static final String WRONG_NUMBER_OF_RESULTS = "Wrong number of results";
+    private static final String NO_LISTS_FOUND = "No lists found!";
 
     @BeforeClass
-    public static void setUpClass() throws Exception {
-        TestLogger.Configure();
+    public static void setUpClass() throws RottenTomatoesException {
+        TestLogger.configure();
         rt = new RottenTomatoesApi(API_KEY);
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     /**
@@ -83,7 +70,7 @@ public class RottenTomatoesApiTest {
         LOG.info("getBoxOffice");
 
         List<RTMovie> result = rt.getBoxOffice(COUNTRY_US, LIMIT);
-        assertEquals("Wrong number of results", LIMIT, result.size());
+        assertEquals(WRONG_NUMBER_OF_RESULTS, LIMIT, result.size());
         // Do the list tests
         assertMovieList(result, SHORT_TEST);
     }
@@ -98,7 +85,7 @@ public class RottenTomatoesApiTest {
         LOG.info("getInTheaters");
 
         List<RTMovie> result = rt.getInTheaters(COUNTRY_US, PAGE, PAGE_LIMIT);
-        assertEquals("Wrong number of results", PAGE_LIMIT, result.size());
+        assertEquals(WRONG_NUMBER_OF_RESULTS, PAGE_LIMIT, result.size());
         // Do the list tests
         assertMovieList(result, SHORT_TEST);
     }
@@ -113,7 +100,7 @@ public class RottenTomatoesApiTest {
         LOG.info("getOpeningMovies");
 
         List<RTMovie> result = rt.getOpeningMovies(COUNTRY_US, LIMIT);
-        assertEquals("Wrong number of results", LIMIT, result.size());
+        assertEquals(WRONG_NUMBER_OF_RESULTS, LIMIT, result.size());
         // Do the list tests
         assertMovieList(result, SHORT_TEST);
     }
@@ -128,7 +115,7 @@ public class RottenTomatoesApiTest {
         LOG.info("getUpcomingMovies");
 
         List<RTMovie> result = rt.getUpcomingMovies(COUNTRY_US, PAGE, PAGE_LIMIT);
-        assertEquals("Wrong number of results", PAGE_LIMIT, result.size());
+        assertEquals(WRONG_NUMBER_OF_RESULTS, PAGE_LIMIT, result.size());
         // Do the list tests
         assertMovieList(result, SHORT_TEST);
     }
@@ -143,7 +130,7 @@ public class RottenTomatoesApiTest {
         LOG.info("getTopRentals");
 
         List<RTMovie> result = rt.getTopRentals(COUNTRY_US, LIMIT);
-        assertEquals("Wrong number of results", LIMIT, result.size());
+        assertEquals(WRONG_NUMBER_OF_RESULTS, LIMIT, result.size());
         // Do the list tests
         assertMovieList(result, SHORT_TEST);
     }
@@ -158,7 +145,7 @@ public class RottenTomatoesApiTest {
         LOG.info("getCurrentReleaseDvds");
 
         List<RTMovie> result = rt.getCurrentReleaseDvds(COUNTRY_US, PAGE, PAGE_LIMIT);
-        assertEquals("Wrong number of results", PAGE_LIMIT, result.size());
+        assertEquals(WRONG_NUMBER_OF_RESULTS, PAGE_LIMIT, result.size());
         // Do the list tests
         assertMovieList(result, SHORT_TEST);
     }
@@ -173,7 +160,7 @@ public class RottenTomatoesApiTest {
         LOG.info("getNewReleaseDvds");
 
         List<RTMovie> result = rt.getNewReleaseDvds(COUNTRY_US, PAGE, PAGE_LIMIT);
-        assertEquals("Wrong number of results", PAGE_LIMIT, result.size());
+        assertEquals(WRONG_NUMBER_OF_RESULTS, PAGE_LIMIT, result.size());
         // Do the list tests
         assertMovieList(result, SHORT_TEST);
     }
@@ -299,7 +286,7 @@ public class RottenTomatoesApiTest {
         LOG.info("getListsDirectory");
 
         Map<String, String> result = rt.getListsDirectory();
-        assertFalse("No lists found!", result.isEmpty());
+        assertFalse(NO_LISTS_FOUND, result.isEmpty());
     }
 
     /**
@@ -312,7 +299,7 @@ public class RottenTomatoesApiTest {
         LOG.info("getMovieListsDirectory");
 
         Map<String, String> result = rt.getMovieListsDirectory();
-        assertFalse("No lists found!", result.isEmpty());
+        assertFalse(NO_LISTS_FOUND, result.isEmpty());
     }
 
     /**
@@ -325,7 +312,7 @@ public class RottenTomatoesApiTest {
         LOG.info("getDvdListsDirectory");
 
         Map<String, String> result = rt.getDvdListsDirectory();
-        assertFalse("No lists found!", result.isEmpty());
+        assertFalse(NO_LISTS_FOUND, result.isEmpty());
     }
 
     /**

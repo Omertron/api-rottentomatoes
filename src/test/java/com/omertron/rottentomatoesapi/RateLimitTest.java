@@ -19,9 +19,6 @@
  */
 package com.omertron.rottentomatoesapi;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -35,34 +32,19 @@ public class RateLimitTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(RateLimitTest.class);
     private static final String API_KEY = "rnt8xak564a8sxkts5xkqj5z";
-    public static RottenTomatoesApi rt;
-
-    public RateLimitTest() {
-    }
+    private static RottenTomatoesApi rt;
 
     @BeforeClass
     public static void setUpClass() throws RottenTomatoesException {
-        TestLogger.Configure("INFO");
+        TestLogger.configure("INFO");
         rt = new RottenTomatoesApi(API_KEY);
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test
     public void rateTest() throws RottenTomatoesException {
         LOG.info("rateTest");
         for (int i = 1; i <= 100; i++) {
-            LOG.info("Test #{}",i);
+            LOG.info("Test #{}", i);
             rt.getBoxOffice("us", 5);
         }
     }
